@@ -1,0 +1,10 @@
+# Normaliza as quebras de linha: o repositório guarda LF e o build roda em Linux
+# (Vercel). Sem isso, um commit feito no Windows entra com CRLF e cria diffs
+# inteiros de arquivo sempre que alguém em outro sistema toca no mesmo arquivo.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.webp binary
+*.woff binary
+*.woff2 binary

@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+
+import Hero from '../components/sections/Hero.astro';
+import Context from '../components/sections/Context.astro';
+import Structure from '../components/sections/Structure.astro';
+import Experience from '../components/sections/Experience.astro';
+import Investment from '../components/sections/Investment.astro';
+import Contact from '../components/sections/Contact.astro';
+
+// As oito seções de template (ProductPreview, Problem, HowItWorks, Benefits,
+// Reviews, Pricing, Faq, Cta) saíram da página em 23/09/2026. Os arquivos
+// continuam em sections/ como referência, e quem decide quando apagá-los é o Thiago.
+
+const title = 'Pulsedesk — Gestão de tarefas sem sobrecarga';
+const description =
+  'O Pulsedesk ajuda times pequenos, startups e freelancers a organizar tarefas, ' +
+  'acompanhar prazos e manter o trabalho em um espaço tranquilo, sem configuração ' +
+  'complexa nem curva de aprendizado.';
+---
+
+<Base {title} {description}>
+  <Hero />
+  <Context />
+  <Structure />
+  <Experience />
+  <Investment />
+  <Contact />
+</Base>

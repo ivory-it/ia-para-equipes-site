@@ -1,0 +1,65 @@
+---
+import { Image } from 'astro:assets';
+import vale from '../../assets/clientes/vale.png';
+import lundin from '../../assets/clientes/lundin.png';
+import unilever from '../../assets/clientes/unilever.png';
+import angloAmerican from '../../assets/clientes/anglo-american.png';
+import cemig from '../../assets/clientes/cemig.png';
+import icatu from '../../assets/clientes/icatu.png';
+
+// Os logos têm proporções muito diferentes (Unilever 1,2:1, Lundin 6,5:1). A
+// altura de cada um equilibra o peso visual; `h` é a altura exibida, em px.
+const clients = [
+  { name: 'Vale', src: vale, h: 44 },
+  { name: 'Lundin Mining', src: lundin, h: 20 },
+  { name: 'Unilever', src: unilever, h: 48 },
+  { name: 'Anglo American', src: angloAmerican, h: 28 },
+  { name: 'Cemig', src: cemig, h: 30 },
+  { name: 'Icatu', src: icatu, h: 36 },
+];
+
+const stats = [
+  { value: '+160', label: 'pessoas na Ivory' },
+  { value: '+400', label: 'projetos' },
+  { value: '+60', label: 'clientes' },
+  { value: '17', label: 'anos de mercado' },
+  { value: 'Brasil', label: 'atuação nacional' },
+];
+---
+
+<section class="relative overflow-hidden border-t border-ink/[0.09] px-5 pt-24 pb-24 sm:px-8 lg:px-10" id="experiencia">
+<div class="mx-auto w-full max-w-[1280px]">
+
+{/* Sem parágrafo nem CTA à direita, como na referência: a seção é prova, não chamada. */}
+<div class="reveal max-w-4xl">
+<p class="text-sm font-semibold uppercase tracking-[0.18em] text-accent-ink">A experiência da Ivory</p>
+<h2 class="mt-5 text-4xl text-ink sm:text-5xl lg:text-6xl tracking-tighter leading-tight font-display font-medium">Clientes que confiam<br class="hidden sm:block" /> no trabalho da Ivory</h2>
+</div>
+
+{/* Logos sempre em cinza, sem cor no hover: a §11 proíbe ícones coloridos
+    variados, a mesma regra dos logos de ferramentas do Structure. */}
+<div class="reveal mt-12">
+<ul class="grid grid-cols-2 items-center gap-x-6 gap-y-10 rounded-3xl border border-ink-2/20 bg-paper/[0.60] px-6 py-10 shadow-[0_0_0_1px_rgba(10,37,64,0.08),0_18px_55px_rgba(10,37,64,0.08),inset_0_1px_0_rgba(255,255,255,0.70)] md:grid-cols-3 xl:grid-cols-6 xl:px-10">
+{clients.map(({ name, src, h }) => (
+<li data-reveal-skip class="flex justify-center">
+<Image src={src} alt={name} height={h * 2} style={`height:${h}px`} class="w-auto opacity-60 grayscale" loading="lazy" />
+</li>
+))}
+</ul>
+<p data-reveal-skip class="mt-4 text-sm leading-6 text-ink-soft">A IA para Equipes é uma marca da Ivory IT. As marcas acima representam clientes da Ivory em diferentes projetos.</p>
+</div>
+
+{/* Mesmo divide-x da faixa de fatos da Hero, em escala maior. O divisor só
+    entra quando os cinco números cabem numa linha. O rótulo é o <dt>, e o
+    flex-col-reverse o põe abaixo do número. */}
+<dl class="reveal mt-14 grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-5 lg:gap-0 lg:divide-x lg:divide-ink/[0.09]">
+{stats.map(({ value, label }) => (
+<div data-reveal-skip class="flex flex-col-reverse lg:px-6 lg:first:pl-0 lg:last:pr-0">
+<dt class="mt-3 text-sm text-ink-soft">{label}</dt>
+<dd class="font-display text-4xl font-medium leading-none tracking-tight text-ink sm:text-5xl">{value}</dd>
+</div>
+))}
+</dl>
+
+</div>
+</section>

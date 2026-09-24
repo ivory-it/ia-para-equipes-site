@@ -1,0 +1,41 @@
+---
+import { Image } from 'astro:assets';
+import MobileNav from './react/MobileNav.tsx';
+import { NAV_ITEMS } from '../data/nav';
+import logo from '../assets/marca/logo-empilhado-navy.svg';
+---
+
+<header
+  id="site-header"
+  class="sticky border-ink/[0.09] z-50 bg-surface/80 border-b top-0 backdrop-blur-2xl transition-shadow duration-300"
+>
+  {/* 88px de altura para o logo empilhado caber com 72px. Com 64px o "BY IVORY."
+      sumia (ver AGENTS.md, "Logo — decisões tomadas"). */}
+  <nav
+    class="mx-auto flex h-[5.5rem] w-full max-w-[1280px] items-center justify-between px-5 sm:px-8 lg:px-10"
+  >
+    <a class="group flex items-center gap-3" href="#">
+      <Image src={logo} alt="IA para Equipes by Ivory" class="h-[4.5rem] w-auto" loading="eager" />
+    </a>
+
+    <div class="hidden items-center gap-8 md:flex">
+      {
+        NAV_ITEMS.map((item) => (
+          <a
+            class="relative text-sm text-ink-soft transition duration-300 ease-out hover:text-ink"
+            href={item.href}
+          >
+            {item.label}
+            <span
+              class="absolute -bottom-2 left-0 h-px w-0 bg-accent-ink/70 transition-all duration-300 ease-out hover:w-full"
+            />
+          </a>
+        ))
+      }
+    </div>
+
+    {/* O botão de menu do HTML original não fazia nada: abaixo de md não havia
+        navegação alguma. A ilha assume o gatilho e o painel. */}
+    <MobileNav client:idle />
+  </nav>
+</header>

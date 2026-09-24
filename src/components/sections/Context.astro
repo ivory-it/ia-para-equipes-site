@@ -1,0 +1,160 @@
+---
+import { Icon } from 'astro-icon/components';
+
+// O antes (uso individual) e o alvo (prática corporativa), um card por item.
+const before = [
+  { icon: 'solar:users-group-rounded-linear', title: 'Aprendizado disperso', detail: 'Cada pessoa desenvolve sua própria experiência, sem princípios básicos de como a IA generativa funciona para entender seu potencial e limitações.' },
+  { icon: 'solar:question-circle-linear', title: 'Respostas são aceitas sem validação', detail: 'Nem sempre há clareza sobre fontes, limitações e quando conferir o resultado.' },
+  { icon: 'solar:shield-warning-linear', title: 'Há insegurança sobre dados e informações', detail: 'As pessoas não sabem com clareza o que pode ou não ser enviado para a IA.' },
+  { icon: 'solar:widget-linear', title: 'As ferramentas são subutilizadas', detail: 'O uso fica restrito a perguntas, resumos e reescritas, mesmo com recursos mais avançados disponíveis.' },
+];
+const after = [
+  { icon: 'solar:book-2-linear', title: 'Referência comum', detail: 'Base comum para toda equipe, de como a IA funciona, prompts, tokens, contextos, alucinações, capacidade e limitações.' },
+  { icon: 'solar:check-circle-linear', title: 'Validação como parte do trabalho', detail: 'As pessoas aprendem quando confiar, quando conferir e como buscar evidências.' },
+  { icon: 'solar:shield-check-linear', title: 'Uso responsável', detail: 'Diretrizes claras para dados, ferramentas homologadas e limites de uso.' },
+  { icon: 'solar:chart-2-linear', title: 'Mais valor das ferramentas disponíveis', detail: 'IA aplicada a documentos, reuniões, análises, comunicação e atividades reais do trabalho.' },
+];
+
+// Conectores do desktop (a partir de xl). A coluna do meio tem 24rem (384px) e
+// a pilha de cards tem altura fixa: quatro cards de 9rem com gap de 0,75rem =
+// 612px. Por isso o viewBox bate com o tamanho real em px e o tracejado não
+// distorce. Cada curva sai do centro vertical de um card (y = 72, 228, 384, 540)
+// e encosta no anel externo do círculo central (centro em 192,306, raio 120, nos
+// ângulos de 240°, 200°, 160° e 120°). As da direita são o espelho das da
+// esquerda, desenhadas a partir do círculo para fora, para que o tracejado corra
+// sempre da esquerda para a direita. Mudou altura de card, gap ou largura da
+// coluna, recalcule estes pontos.
+const connectors = [
+  { side: 'before', d: 'M0 72 C50 72 100 140 132 202.1' },
+  { side: 'before', d: 'M0 228 C35 228 60 250 79.2 265' },
+  { side: 'before', d: 'M0 384 C35 384 60 362 79.2 347' },
+  { side: 'before', d: 'M0 540 C50 540 100 472 132 409.9' },
+  { side: 'after', d: 'M252 202.1 C284 140 334 72 384 72' },
+  { side: 'after', d: 'M304.8 265 C324 250 349 228 384 228' },
+  { side: 'after', d: 'M304.8 347 C324 362 349 384 384 384' },
+  { side: 'after', d: 'M252 409.9 C284 472 334 540 384 540' },
+];
+const cardY = [72, 228, 384, 540];
+---
+
+<section class="overflow-hidden border-ink/[0.09] sm:px-8 lg:px-10 border-t pt-24 pr-5 pb-20 pl-5 relative" id="contexto">
+<div class="pointer-events-none absolute inset-0 -z-10" style="background: radial-gradient(circle at 50% 55%, rgba(0,168,142,0.09), transparent 34%), linear-gradient(180deg, rgba(228,228,228,0.20), rgba(228,228,228,0.62));"></div>
+<div class="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(10,37,64,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(10,37,64,0.04)_1px,transparent_1px)] bg-[size:30rem_30rem]"></div>
+<div class="w-full max-w-[1280px] mr-auto ml-auto">
+
+{/* Cabeçalho no padrão das demais seções: título à esquerda, explicação e CTA à direita. */}
+<div class="reveal grid gap-8 lg:grid-cols-[1fr_0.72fr] lg:items-end">
+<div class="max-w-4xl">
+<p class="text-sm font-semibold uppercase tracking-[0.18em] text-accent-ink">Por que esta capacitação</p>
+<h2 class="mt-5 text-4xl text-ink sm:text-5xl lg:text-6xl tracking-tighter leading-tight font-display font-medium">A IA já faz parte do trabalho.</h2>
+</div>
+<div class="lg:ml-auto lg:max-w-md">
+<p class="text-lg leading-8 text-ink-soft">A capacitação cria uma referência comum para que a equipe use IA com mais segurança, critério e aplicação.</p>
+<div class="mt-7 flex">
+<a class="group inline-flex whitespace-nowrap items-center justify-center gap-2 shadow-ink/30 transition duration-300 ease-out hover:scale-[1.03] hover:bg-accent-ink-strong hover:shadow-accent-ink/10 text-sm font-semibold text-paper bg-accent-ink rounded-full pt-3 pr-5 pb-3 pl-5 shadow-2xl" href="#contato">
+Quero capacitar minha equipe
+<Icon name="solar:arrow-right-linear" width={18} height={18} class="transition duration-300 ease-out group-hover:translate-x-0.5" />
+</a>
+</div>
+</div>
+</div>
+
+{/* Diagrama. Quem anima é o `context-flow.ts`, por isso o contêiner leva
+    `data-reveal-skip`: o reveal global não mexe no que está aqui dentro.
+    No desktop, os dois lados usam subgrid para que os títulos das colunas
+    ocupem a primeira linha e as pilhas de cards comecem na mesma altura que
+    o SVG dos conectores, na segunda. */}
+<div data-reveal-skip data-flow-root class="mt-12 grid gap-y-10 xl:grid-cols-[1fr_24rem_1fr] xl:grid-rows-[auto_auto] xl:gap-x-0 xl:gap-y-8">
+
+<div class="xl:col-start-1 xl:row-start-1 xl:row-span-2 xl:grid xl:grid-rows-subgrid">
+<div data-flow-heading="before">
+<h3 class="text-2xl text-ink tracking-tight font-display font-medium">Uso individual</h3>
+<p class="mt-2 text-sm text-ink-soft">Presente, mas disperso.</p>
+</div>
+<ul class="mt-6 grid gap-3 xl:mt-0">
+{before.map(({ icon, title, detail }) => (
+<li data-flow-before class="flex items-center rounded-2xl border border-ink/[0.08] bg-paper/[0.55] px-5 py-4 backdrop-blur-xl xl:h-36">
+<div class="flex items-start gap-4">
+<span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-ink/[0.08] bg-mist/60 text-ink-soft" aria-hidden="true">
+<Icon name={icon} width={20} height={20} />
+</span>
+<span class="flex flex-col pt-0.5">
+<strong class="text-sm font-semibold leading-snug text-ink">{title}</strong>
+<span class="mt-1 text-sm leading-[1.45] text-ink-soft">{detail}</span>
+</span>
+</div>
+</li>
+))}
+</ul>
+</div>
+
+<div class="relative flex flex-col items-center xl:row-start-2 xl:col-start-2 xl:h-[612px] xl:justify-center">
+<span class="mb-6 h-10 border-l-2 border-dashed border-accent/50 xl:hidden" aria-hidden="true"></span>
+<svg class="pointer-events-none absolute inset-0 hidden h-[612px] w-[384px] xl:block" viewBox="0 0 384 612" fill="none" aria-hidden="true">
+<defs>
+{connectors.map(({ d }, i) => (
+<mask id={`flow-mask-${i}`} maskUnits="userSpaceOnUse" x="0" y="0" width="384" height="612">
+<path data-flow-draw={connectors[i].side} d={d} pathLength="1" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="0" />
+</mask>
+))}
+</defs>
+{connectors.map(({ d }, i) => (
+<path d={d} mask={`url(#flow-mask-${i})`} stroke="#00A88E" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="4 6" class="motion-safe:animate-dash-flow" opacity={connectors[i].side === 'after' ? 0.9 : 0.55} />
+))}
+{cardY.map((y) => (
+<>
+<circle data-flow-dot="before" cx="0" cy={y} r="3" fill="#aeb6be" />
+<circle data-flow-dot="after" cx="384" cy={y} r="3" fill="#00A88E" />
+</>
+))}
+</svg>
+
+<div data-flow-hub class="relative flex h-60 w-60 items-center justify-center rounded-full">
+<span data-flow-ring class="absolute inset-0 rounded-full border border-accent/20 bg-accent/[0.06]" aria-hidden="true"></span>
+<span data-flow-ring class="absolute inset-3 rounded-full border border-accent/25 bg-accent/[0.08]" aria-hidden="true"></span>
+<div class="relative flex h-[12.5rem] w-[12.5rem] flex-col items-center justify-center rounded-full border border-accent-ink/20 bg-paper px-6 text-center shadow-2xl shadow-accent-ink/[0.18]">
+<span class="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-ink text-paper shadow-lg shadow-accent-ink/30" aria-hidden="true">
+<Icon name="solar:square-academic-cap-linear" width={22} height={22} />
+</span>
+<p class="mt-3 font-display text-lg font-medium leading-tight tracking-tight text-ink">Capacitação<br />com método</p>
+<p class="mt-1.5 text-xs leading-snug text-ink-soft">Uma base comum<br />para a equipe</p>
+</div>
+</div>
+
+<span class="mt-6 h-10 border-l-2 border-dashed border-accent/50 xl:hidden" aria-hidden="true"></span>
+</div>
+
+<div class="xl:col-start-3 xl:row-start-1 xl:row-span-2 xl:grid xl:grid-rows-subgrid">
+<div data-flow-heading="after">
+<h3 class="text-2xl text-accent-ink tracking-tight font-display font-medium">Prática corporativa</h3>
+<p class="mt-2 text-sm text-ink-soft">Com critério e aplicação.</p>
+</div>
+<ul class="mt-6 grid gap-3 xl:mt-0">
+{after.map(({ icon, title, detail }) => (
+<li data-flow-after class="flex items-center rounded-2xl border border-accent-ink/20 bg-paper px-5 py-4 shadow-xl shadow-ink/[0.08] xl:h-36">
+<div class="flex items-start gap-4">
+<span data-flow-chip class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-accent-ink/20 bg-accent/[0.1] text-accent-ink" aria-hidden="true">
+<Icon name={icon} width={20} height={20} />
+</span>
+<span class="flex flex-col pt-0.5">
+<strong class="text-sm font-semibold leading-snug text-ink">{title}</strong>
+<span class="mt-1 text-sm leading-[1.45] text-ink-soft">{detail}</span>
+</span>
+</div>
+</li>
+))}
+</ul>
+</div>
+
+</div>
+
+<div class="mt-16 border-t border-ink/[0.09] pt-10 text-center">
+<p class="font-display text-xl tracking-tight text-ink-soft sm:text-2xl">IA apoia. <strong class="font-medium text-ink">Pessoas validam e decidem.</strong></p>
+</div>
+
+</div>
+</section>
+
+<script>
+  import '../../scripts/context-flow';
+</script>

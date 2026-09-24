@@ -1,0 +1,28 @@
+---
+/**
+ * Sistema de fundo da marca (SKILL.md §3).
+ *
+ * São três camadas fixas empilhadas atrás de todo o conteúdo — base cinza com
+ * malha fina, varredura de luz diagonal e névoa turquesa, mais o grão por cima.
+ * O fundo da marca nunca é uma cor chapada: a §3 é explícita quanto a isso, e o
+ * checklist cobra a textura.
+ *
+ * Os gradientes moram em `.brand-field` / `.brand-grain` no global.css, e não
+ * em `style=` aqui, porque são longos e conceituais — pertencem ao sistema de
+ * design, não a este arquivo.
+ */
+---
+
+<div class="brand-field pointer-events-none fixed inset-0 -z-50"></div>
+<div class="brand-grain pointer-events-none fixed inset-0 -z-40 opacity-[0.06]"></div>
+
+{/* Colunas da malha construtiva, visíveis só a partir de md. */}
+<div
+  class="pointer-events-none fixed left-1/2 top-0 -z-30 hidden h-full w-full max-w-[1360px] -translate-x-1/2 grid-cols-4 md:grid"
+  aria-hidden="true"
+>
+  <div class="border-r border-ink/[0.07]"></div>
+  <div class="border-r border-ink/[0.07]"></div>
+  <div class="border-r border-ink/[0.07]"></div>
+  <div></div>
+</div>

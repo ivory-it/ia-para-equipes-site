@@ -1,0 +1,40 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/marca/logo-empilhado-navy.svg';
+import { NAV_ITEMS } from '../data/nav';
+---
+
+<footer class="overflow-hidden border-ink/[0.09] sm:px-8 sm:py-16 lg:pl-10 lg:pr-10 lg:pt-20 lg:pb-10 border-t pt-20 pr-10 pb-10 pl-10 relative">
+<div class="pointer-events-none absolute left-1/2 top-0 h-px w-[70%] -translate-x-1/2 bg-linear-to-r from-transparent via-accent-ink/20 to-transparent"></div>
+<div class="pointer-events-none absolute -right-32 top-20 h-80 w-80 rounded-full bg-accent-ink/10 blur-3xl"></div>
+<div class="pointer-events-none absolute -left-32 bottom-10 h-80 w-80 rounded-full bg-ink/10 blur-3xl"></div>
+<div class="relative mx-auto w-full max-w-[1280px]">
+<div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto] lg:gap-x-20">
+<div class="max-w-sm">
+<a class="inline-flex" href="#">
+<Image src={logo} alt="IA para Equipes by Ivory" class="h-auto w-[350px] max-w-full" />
+</a>
+</div>
+<div>
+<p class="text-sm font-medium text-ink-soft">Páginas</p>
+<nav class="mt-5 flex flex-col gap-3">
+{NAV_ITEMS.map((item) => <a class="text-sm text-ink-2 transition hover:text-accent-ink" href={item.href}>{item.label}</a>)}
+</nav>
+</div>
+<div>
+<p class="text-sm font-medium text-ink-soft">Redes sociais</p>
+<nav class="mt-5 flex flex-col gap-3">
+<a class="text-sm text-ink-2 transition hover:text-accent-ink" href="#">LinkedIn</a>
+<a class="text-sm text-ink-2 transition hover:text-accent-ink" href="#">Instagram</a>
+</nav>
+</div>
+</div>
+{/* Fora do reveal: colada no fim da página, a linha nunca passa dos 88% da tela e ficaria invisível. */}
+<div data-reveal-skip class="mt-12 flex flex-col justify-between gap-5 border-t border-ink/[0.09] pt-8 text-sm text-ink-soft sm:flex-row sm:items-center">
+<p>© 2026 Ivory. Todos os direitos reservados.</p>
+<div class="flex flex-wrap gap-x-4 gap-y-2">
+<a class="transition hover:text-ink-2" href="#">Privacidade</a>
+</div>
+</div>
+</div>
+</footer>

@@ -1,0 +1,93 @@
+---
+import { Icon } from 'astro-icon/components';
+
+// Faixas alinhadas à turma de 50 participantes da oferta padrão.
+const teamSizes = ['Até 50', '51 a 100', '101 a 250', 'Mais de 250'];
+
+// `value` casa com o `data-contact-plan` dos botões da seção de investimento.
+const formats = [
+  { value: 'padrao', label: 'Turma padrão' },
+  { value: 'personalizado', label: 'Personalizada' },
+];
+
+const field =
+  'mt-2 w-full rounded-2xl border border-ink/[0.14] bg-paper px-4 py-3 text-[15px] text-ink placeholder:text-ink-soft transition focus:border-accent-ink focus:outline-none focus:ring-2 focus:ring-accent/25';
+const label = 'text-sm font-medium text-ink';
+---
+
+<section class="relative overflow-hidden border-t border-ink/[0.09] px-5 pt-24 pb-24 sm:px-8 lg:px-10" id="contato">
+{/* Brilhos do topo do Footer.astro, a referência de composição desta seção. */}
+<div class="pointer-events-none absolute -right-32 top-20 h-80 w-80 rounded-full bg-accent-ink/10 blur-3xl"></div>
+<div class="pointer-events-none absolute -left-32 bottom-10 h-80 w-80 rounded-full bg-ink/10 blur-3xl"></div>
+
+<div class="relative mx-auto grid w-full max-w-[1280px] gap-12 xl:grid-cols-[1.1fr_0.9fr] xl:items-center xl:gap-16">
+
+<div class="reveal">
+<p class="text-sm font-semibold uppercase tracking-[0.18em] text-accent-ink">Contato</p>
+<h2 class="mt-5 max-w-3xl font-display text-5xl font-medium leading-none tracking-tighter text-ink sm:text-6xl lg:text-7xl">Quero capacitar minha equipe</h2>
+<p class="mt-8 max-w-xl font-display text-2xl font-medium leading-tight tracking-tight text-ink-soft sm:text-3xl">Dê o primeiro passo para capacitar sua equipe. Deixe seu contato para conversarmos.</p>
+<p class="mt-8 flex items-center gap-2 text-sm text-ink-soft">
+<Icon name="solar:shield-check-linear" width={18} height={18} class="shrink-0 text-accent-ink" aria-hidden="true" />
+Usamos seus dados só para responder a este contato.
+</p>
+</div>
+
+{/* Card sólido, com sombra: a mesma lógica dos cards "ao vivo" do Structure.
+    As duas colunas só começam em xl: em 1024 px o card ficava com ~390 px, o
+    placeholder do telefone era cortado e os rótulos quebravam. */}
+<div class="reveal relative w-full max-w-2xl rounded-[2rem] border border-accent-ink/20 bg-paper p-6 shadow-2xl shadow-ink/[0.09] sm:p-8">
+<form id="contact-form" class="grid gap-5 sm:grid-cols-2" novalidate>
+<div class="sm:col-span-2">
+<label class={label} for="contato-nome">Nome</label>
+<input class={field} id="contato-nome" name="nome" type="text" autocomplete="name" required />
+</div>
+<div class="sm:col-span-2">
+<label class={label} for="contato-email">E-mail corporativo</label>
+<input class={field} id="contato-email" name="email" type="email" autocomplete="email" placeholder="voce@empresa.com.br" required />
+</div>
+<div>
+<label class={label} for="contato-telefone">Telefone</label>
+<input class={field} id="contato-telefone" name="telefone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(00) 00000-0000" maxlength="15" required />
+</div>
+<div>
+<label class={label} for="contato-colaboradores">Colaboradores a capacitar</label>
+<div class="relative">
+<select class:list={[field, 'appearance-none pr-10']} id="contato-colaboradores" name="colaboradores" required>
+<option value="" disabled selected>Selecione</option>
+{teamSizes.map((size) => <option value={size}>{size}</option>)}
+</select>
+<svg class="pointer-events-none absolute top-1/2 right-4 mt-1 h-4 w-4 -translate-y-1/2 text-ink-soft" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+</div>
+</div>
+<fieldset class="sm:col-span-2">
+<legend class={label}>Formato de interesse</legend>
+<div class="mt-2 grid gap-3 sm:grid-cols-2">
+{formats.map(({ value, label: text }, i) => (
+<label class="flex cursor-pointer items-center gap-3 rounded-2xl border border-ink/[0.14] bg-paper px-4 py-3 text-[15px] text-ink-2 transition hover:border-ink/[0.28] has-checked:border-accent-ink has-checked:bg-accent/[0.08] has-checked:text-ink has-focus-visible:ring-2 has-focus-visible:ring-accent/40">
+<input class="h-4 w-4 shrink-0 accent-accent-ink" type="radio" name="formato" value={value} required={i === 0} />
+{text}
+</label>
+))}
+</div>
+</fieldset>
+<button type="submit" class="group sm:col-span-2 mt-1 inline-flex items-center justify-center gap-2 rounded-full bg-accent-ink px-6 py-3.5 text-sm font-semibold text-paper shadow-2xl shadow-ink/20 transition duration-300 ease-out hover:bg-accent-ink-strong">
+Enviar contato
+<Icon name="solar:arrow-right-linear" width={18} height={18} class="transition duration-300 ease-out group-hover:translate-x-0.5" />
+</button>
+</form>
+
+<div id="contact-success" class="hidden flex-col items-center py-10 text-center" role="status" tabindex="-1">
+<span class="flex h-14 w-14 items-center justify-center rounded-2xl border border-accent-ink/20 bg-accent/[0.1] text-accent-ink" aria-hidden="true">
+<Icon name="solar:check-circle-linear" width={28} height={28} />
+</span>
+<p class="mt-6 font-display text-2xl font-medium tracking-tight text-ink">Recebemos seu contato.</p>
+<p class="mt-2 text-[15px] leading-relaxed text-ink-soft">Retornamos em breve pelo e-mail informado.</p>
+</div>
+</div>
+
+</div>
+</section>
+
+<script>
+  import '../../scripts/contact-form';
+</script>

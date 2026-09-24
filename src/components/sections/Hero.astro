@@ -1,0 +1,75 @@
+---
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+import equipe from '../../assets/equipe-hero.png';
+
+// Fatos da oferta mostrados abaixo dos CTAs: valor em destaque e complemento.
+const facts = [
+  { icon: 'solar:users-group-rounded-linear', value: 'Até 50', detail: 'participantes' },
+  { icon: 'solar:monitor-camera-linear', value: '2 encontros', detail: 'online, de 2 horas' },
+  { icon: 'solar:wallet-money-linear', value: 'R$ 12 mil', detail: 'por turma' },
+];
+---
+
+<section class="overflow-hidden sm:px-8 sm:pb-28 sm:pt-28 lg:px-10 lg:pt-24 lg:pb-24 pt-20 pr-5 pb-24 pl-5 relative" id="blueprint">
+{/* Fundo em CSS puro: varredura de luz diagonal + névoa turquesa (§3). A cena
+    animada em WebGL que ficava por cima saiu: disputava atenção com o título. */}
+<div class="pointer-events-none absolute inset-0 z-0" aria-hidden="true"
+  style="background: linear-gradient(225deg, rgb(255 255 255 / 0.55) 0%, rgb(255 255 255 / 0) 48%), radial-gradient(ellipse 60% 50% at 78% 12%, rgb(0 168 142 / 0.07), transparent 70%);"></div>
+
+<div class="grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12 w-full max-w-[1280px] mr-auto ml-auto gap-x-14 gap-y-14 items-center">
+<div class="reveal z-10 relative">
+<div class="mb-6 inline-flex items-center gap-2 rounded-full border border-ink/[0.11] bg-paper/[0.65] px-3 py-1.5 text-xs text-ink-2 shadow-2xl shadow-ink/[0.06] backdrop-blur-xl">
+<span class="h-1.5 w-1.5 rounded-full bg-accent-ink shadow-lg shadow-accent-ink/40"></span>
+Capacitação corporativa de IA
+</div>
+<h1 class="sm:text-5xl lg:text-[2.75rem] xl:text-[3.5rem] lg:leading-[1.08] text-4xl font-medium text-ink tracking-tighter font-display max-w-4xl">Seu time já usa IA.<br /> Falta transformar uso individual em prática corporativa.</h1>
+<p class="mt-7 max-w-2xl text-base leading-7 text-ink-soft sm:text-lg">Diagnóstico de maturidade e dois encontros ao vivo para usar IA com método, segurança e aplicação real, na ferramenta homologada pela empresa.</p>
+<div class="mt-9 flex flex-col gap-3 sm:flex-row">
+<a class="group inline-flex whitespace-nowrap items-center justify-center gap-2 shadow-ink/30 transition duration-300 ease-out hover:scale-[1.03] hover:bg-accent-ink-strong hover:shadow-accent-ink/10 text-sm font-semibold text-paper bg-accent-ink rounded-full pt-3 pr-5 pb-3 pl-5 shadow-2xl" href="#contato">
+Quero capacitar minha equipe
+<Icon name="solar:arrow-right-linear" width={18} height={18} class="transition duration-300 ease-out group-hover:translate-x-0.5" />
+</a>
+<a class="inline-flex whitespace-nowrap items-center justify-center gap-2 rounded-full border border-ink/[0.13] bg-paper/[0.65] px-5 py-3 text-sm font-medium text-ink shadow-2xl shadow-ink/[0.06] backdrop-blur-xl transition duration-300 ease-out hover:scale-[1.02] hover:border-ink/[0.28] hover:bg-paper/[0.88]" href="#como-funciona">
+Como funciona
+<Icon name="solar:checklist-minimalistic-linear" width={18} height={18} />
+</a>
+</div>
+<ul data-reveal-skip class="mt-10 grid gap-5 border-t border-ink/[0.09] pt-8 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-ink/[0.09]">
+{facts.map(({ icon, value, detail }) => (
+<li class="flex items-center gap-3 sm:px-5 sm:first:pl-0 sm:last:pr-0">
+<span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-accent-ink/20 bg-accent/[0.1] text-accent-ink" aria-hidden="true">
+<Icon name={icon} width={18} height={18} />
+</span>
+<span class="flex flex-col">
+<strong class="font-display text-lg font-medium leading-tight tracking-tight text-ink tabular-nums whitespace-nowrap">{value}</strong>
+<span class="mt-0.5 text-xs leading-snug text-ink-soft">{detail}</span>
+</span>
+</li>
+))}
+</ul>
+</div>
+{/* A foto já vem recortada, com fundo transparente. No desktop ela avança sobre
+    o padding direito da seção (2.5rem) até a moldura de 1360px do Base.astro:
+    o recorte da foto à direita coincide com a borda da moldura. Medir pela
+    janela (100vw) passava da moldura em telas largas e cortava a quarta pessoa.
+    A base da mesa se dissolve no fundo por máscara, em vez de terminar numa linha
+    reta. A altura de 43rem no desktop é a do mockup que ficava aqui: sem ela a
+    Hero encolhe e o topo da seção seguinte aparece na primeira tela.
+    Abaixo de md (celular) a foto some: empilhada, ela empurrava a próxima seção
+    para longe. O `1px` no sizes faz o celular baixar só a menor variante, porque
+    com loading="eager" o navegador baixa a imagem mesmo escondida. */}
+<div class="reveal relative hidden md:block -mr-5 sm:-mr-8 lg:mr-0 lg:flex lg:h-[43rem] lg:items-center">
+<div aria-hidden="true" class="pointer-events-none absolute left-[55%] top-[42%] h-[80%] w-[85%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/[0.14] blur-[90px]"></div>
+<Image
+  src={equipe}
+  alt="Quatro colegas reunidos em volta de um notebook, analisando juntos o que aparece na tela"
+  widths={[640, 960, 1448]}
+  sizes="(min-width: 1024px) 60vw, (min-width: 768px) 100vw, 1px"
+  loading="eager"
+  fetchpriority="high"
+  class="relative h-auto w-full max-w-none lg:w-[calc(100%+2.5rem)] [mask-image:linear-gradient(to_bottom,black_82%,transparent)]"
+/>
+</div>
+</div>
+</section>

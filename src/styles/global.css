@@ -1,0 +1,137 @@
+@import 'tailwindcss';
+
+/* ============================================================================
+   Tokens da marca — IA para Equipes by Ivory
+
+   Os nomes são semânticos de propósito. A versão anterior deste site aplicava a
+   marca remapeando as paletas do Tailwind (slate invertida, cyan virando verde),
+   o que funcionava mas escondia a intenção: `text-slate-400` não conta a ninguém
+   que aquilo é o cinza de apoio da marca. Aqui `text-ink-soft` conta.
+
+   Leitura correta da identidade (SKILL.md §2):
+   fundo cinza claro domina · Navy é a tinta · turquesa é o acento único.
+
+   Contraste medido sobre o fundo #F2F2F2 — é o que define onde cada cor pode
+   aparecer:
+     ink         13,9:1  qualquer texto
+     ink-soft     5,2:1  corpo, legendas, metadados
+     accent-ink   5,2:1  texto de acento, botão sólido, chip
+     accent       2,7:1  NUNCA em texto — só preenchimento, ponto, barra, brilho
+   ============================================================================ */
+
+@theme {
+  /* tinta */
+  --color-ink: #0a2540; /* Navy Profundo: títulos, texto forte, blocos sólidos */
+  --color-ink-2: #33404e; /* tinta secundária, derivada de Navy */
+  --color-ink-soft: #5a6672; /* Cinza Texto: apoio, legendas, metadados */
+  --color-ivory-blue: #003d5b; /* Azul Ivory: herança da marca-mãe */
+
+  /* acento */
+  --color-accent: #00a88e; /* Turquesa: acento primário único */
+  --color-accent-ink: #00735f; /* Verde Profundo: botão sólido, chip, data-viz */
+  --color-accent-ink-strong: #005e4d; /* hover do botão sólido */
+
+  /* superfícies */
+  --color-surface: #f2f2f2; /* fundo primário */
+  --color-mist: #e4e4e4; /* Cinza Névoa: faixas, campos rebaixados */
+  --color-paper: #ffffff; /* cards e superfícies frosted */
+
+  /* neutros de UI que a marca não nomeia, derivados dos cinzas dela */
+  --color-marker: #aeb6be; /* marcadores e bordas de baixa ênfase */
+  --color-placeholder: #cbd1d7; /* blocos de esqueleto no mockup */
+
+  /* tipografia — Sora só em título e número grande, Poppins em todo o resto (§4) */
+  --font-sans: 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Sora Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* brilho deslizante das barras de progresso no mockup do produto */
+  --animate-shimmer: shimmer 2s infinite linear;
+  @keyframes shimmer {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  /* tracejado dos conectores da seção "Por que esta capacitação" correndo da esquerda
+     para a direita; o passo de 10 é o ciclo do stroke-dasharray "4 6" */
+  --animate-dash-flow: dash-flow 1.4s infinite linear;
+  @keyframes dash-flow {
+    to {
+      stroke-dashoffset: -10;
+    }
+  }
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    scroll-behavior: smooth;
+  }
+
+  /* Quem pede menos movimento não deveria receber scroll animado. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-accent) 25%, transparent);
+    color: var(--color-ink);
+  }
+
+  /* Foco visível e na cor da marca, para o drawer mobile e o toggle de preços. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent-ink);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* --------------------------------------------------------------------------
+     Sistema de fundo (SKILL.md §3). O fundo nunca é uma cor chapada: são três
+     tratamentos empilhados — malha fina, varredura de luz diagonal e névoa
+     turquesa — sobre a base cinza.
+     -------------------------------------------------------------------------- */
+
+  .brand-field {
+    background:
+      repeating-linear-gradient(to right, rgb(10 37 64 / 0.028) 0 1px, transparent 1px 88px),
+      repeating-linear-gradient(to bottom, rgb(10 37 64 / 0.022) 0 1px, transparent 1px 88px),
+      linear-gradient(
+        225deg,
+        rgb(255 255 255 / 0.9) 0%,
+        rgb(255 255 255 / 0.35) 26%,
+        rgb(255 255 255 / 0) 52%
+      ),
+      radial-gradient(circle at 88% 4%, rgb(0 168 142 / 0.1), transparent 38%),
+      linear-gradient(180deg, #f4f4f4 0%, var(--color-surface) 42%, #ecedee 100%);
+  }
+
+  /* Grão: tira o aspecto digital chapado do fundo claro. Em escala de cinza e
+     multiplicado, para ler como grão de papel e não como ruído colorido. */
+  .brand-grain {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    filter: grayscale(1);
+    mix-blend-mode: multiply;
+  }
+
+  /* Névoa turquesa sobre uma seção, usada onde o fundo precisa de profundidade
+     sem ganhar cor forte. */
+  .brand-haze {
+    background:
+      radial-gradient(circle at 50% 12%, rgb(0 168 142 / 0.09), transparent 34%),
+      linear-gradient(180deg, rgb(228 228 228 / 0.2), rgb(228 228 228 / 0.62));
+  }
+
+  /* Malha larga de seção — a referência visual a dados e estrutura da §3. */
+  .brand-mesh {
+    background-image:
+      linear-gradient(to right, rgb(10 37 64 / 0.85) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(10 37 64 / 0.65) 1px, transparent 1px);
+    background-size: 28rem 28rem;
+  }
+}

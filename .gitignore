@@ -1,0 +1,21 @@
+# build
+inspiracao/
+dist/
+.astro/
+.vercel/
+
+# dependências
+node_modules/
+
+# ambiente
+.env
+.env.production
+.env.local
+
+# sistema
+.DS_Store
+Thumbs.db
+
+# logs
+*.log
+npm-debug.log*

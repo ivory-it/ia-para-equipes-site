@@ -1,0 +1,67 @@
+---
+// Fontes self-hosted. Sai a requisição ao Google Fonts: o texto pinta sem
+// depender de terceiro (melhor LCP) e nenhum dado do visitante vaza para fora.
+//
+// Só os pesos que a página usa (400/500/600/700, sem itálico) e só o subconjunto
+// `latin` — o pacote completo do Poppins traz também devanágari, que num site em
+// português é peso morto no deploy. Todos os acentos do português vivem no latin.
+import '@fontsource-variable/sora';
+import '@fontsource/poppins/latin-400.css';
+import '@fontsource/poppins/latin-500.css';
+import '@fontsource/poppins/latin-600.css';
+import '@fontsource/poppins/latin-700.css';
+
+import '../styles/global.css';
+
+import BackgroundLayers from '../components/BackgroundLayers.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="pt_BR" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#F2F2F2" />
+    <slot name="head" />
+  </head>
+
+  <body class="min-h-screen overflow-x-hidden antialiased text-ink">
+    <BackgroundLayers />
+
+    <div class="mx-auto min-h-screen w-full max-w-[1360px] border-x border-ink/[0.09]">
+      <Header />
+      <main>
+        <slot />
+      </main>
+      <Footer />
+    </div>
+
+    <script>
+      import '../scripts/reveal';
+    </script>
+  </body>
+</html>
