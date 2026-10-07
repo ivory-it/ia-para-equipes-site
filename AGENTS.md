@@ -22,7 +22,7 @@ enquanto trabalha numa. Situação em 24/09/2026:
 | `Experience.astro` ("A experiência da Ivory") | **fechada**, seção nova logo após o Structure (ver "A experiência da Ivory — decisões tomadas") |
 | `Investment.astro` ("Investimento") | **fechada**, seção nova logo após o Experience (ver "Investimento — decisões tomadas") |
 | `Contact.astro` ("Contato") | **fechada**, última seção nova, logo após o Investment (ver "Contato — decisões tomadas") |
-| `Header.astro` e `Footer.astro` | logo da IA para Equipes desde 23/09/2026 (ver "Logo — decisões tomadas"). Menu com Corporativa, Desenvolvedores, Jornada IA e Blog, todos com `href="#"` até as URLs chegarem. O `NAV_ITEMS` do `nav.ts` alimenta o header, o drawer mobile e a coluna Páginas do rodapé, e o `CTA` do header ("Iniciar teste grátis") saiu. No rodapé saíram a descrição, a coluna Recursos, o Twitter e o Dribbble, e os links "Feito para times focados" e "Comece grátis". Ficaram LinkedIn, Instagram e Privacidade, todos com `#`. A grade do rodapé em `lg` é `1fr auto auto` com `gap-x-20`, para Páginas e Redes sociais ficarem juntas na direita. Com frações, sobrava um vão de uns 350 px entre elas. O copyright é "© 2026 Ivory." e leva `data-reveal-skip`: colado no fim da página, nunca passava dos 88% do reveal e ficava invisível. Ainda Pulsedesk: o `title`/`description` do `index.astro` |
+| `Header.astro` e `Footer.astro` | logo da IA para Equipes desde 23/09/2026 (ver "Logo — decisões tomadas"). Desde 06/10/2026, o menu leva às seções desta página: Por que capacitar (`#contexto`), Como funciona, Experiência e Investimento. Contato ficou de fora, porque os CTAs já levam até lá. Corporativa, Desenvolvedores, Jornada IA e Blog voltam quando essas páginas existirem. O `html` tem `scroll-padding-top: 5.5rem` (no `global.css`): o header é sticky com 88 px, e sem isso a âncora parava com o topo da seção escondido atrás dele. O `NAV_ITEMS` do `nav.ts` alimenta o header, o drawer mobile e a coluna Páginas do rodapé, e o `CTA` do header ("Iniciar teste grátis") saiu. No rodapé saíram a descrição, a coluna Recursos, o Twitter e o Dribbble, e os links "Feito para times focados" e "Comece grátis". Ficaram LinkedIn e Instagram, com os perfis da IA para Equipes desde 06/10/2026 (abrem em nova aba), e Privacidade, ainda com `#`. A grade do rodapé em `lg` é `1fr auto auto` com `gap-x-20`, para Páginas e Redes sociais ficarem juntas na direita. Com frações, sobrava um vão de uns 350 px entre elas. O copyright é "© 2026 Ivory." e leva `data-reveal-skip`: colado no fim da página, nunca passava dos 88% do reveal e ficava invisível. Ainda Pulsedesk: o `title`/`description` do `index.astro` |
 | As oito seções de template (01 a 07 e `Cta.astro`) | **fora da página** desde 23/09/2026. Os arquivos continuam em `sections/` |
 
 Trocar o copy é uma mudança de produto, não só de texto. Seções inteiras deixam de fazer
@@ -64,7 +64,7 @@ Mapa de seções (`src/components/sections/`, compostas por `src/pages/index.ast
 |---|---|---|
 | `Hero.astro` | rótulo, título, promessa, CTAs, fatos da oferta, foto da equipe | ~10 trechos (concluída) |
 | `Context.astro` | "Por que esta capacitação": diagrama do uso individual para a prática corporativa. Copy nos arrays `before`/`after` do frontmatter | ~25 trechos (concluída) |
-| `Structure.astro` | "Como funciona": quatro cards de formato e a jornada em três etapas. Copy nos arrays `facts`/`tools`/`steps` do frontmatter | ~25 trechos (concluída) |
+| `Structure.astro` | "Como funciona": quatro cards de formato e a jornada em três etapas, trocada pelo vídeo em `lg` quando o navegador permite (`src/scripts/journey-video.ts`). Copy nos arrays `facts`/`tools`/`steps` do frontmatter | ~25 trechos (concluída) |
 | `Experience.astro` | "A experiência da Ivory": faixa de logos de clientes, nota de marca e cinco números. Copy nos arrays `clients`/`stats` do frontmatter | ~15 trechos |
 | `Investment.astro` | "Investimento": dois cards (turma padrão e personalizada) e nota de rodapé. Copy no array `plans` do frontmatter | ~20 trechos |
 | `Contact.astro` | "Contato": título, apoio e formulário. Comportamento em `src/scripts/contact-form.ts` | ~15 trechos |
@@ -101,10 +101,20 @@ Cada item traz o racional, para que ninguém desfaça a decisão sem querer.
   Hero com 880 px e a próxima seção abaixo da dobra. Sem essa altura, a Hero encolhe.
 - **Tamanho do título.** `lg:text-[2.75rem] xl:text-[3.5rem]`. Entre 1024 e 1280 px o tamanho
   cheio deixava o "IA." sozinho na linha.
-- **Faixa de fatos abaixo dos CTAs.** Até 50 participantes · 2 encontros online de 2 horas ·
+- **Faixa de fatos abaixo dos CTAs.** Até 50 participantes por turma · 2 encontros online de 2 horas ·
   R$ 12 mil por turma. Os dados ficam no array `facts`, no frontmatter do `Hero.astro`.
+  "participantes por turma" não cabe numa linha nas três colunas (de 640 px para cima), então o
+  detalhe tem `text-balance` (quebra em "participantes / por turma", e não "participantes por /
+  turma"). De `sm` para cima, os itens alinham pelo topo (`sm:items-start`). Centralizados, o
+  "Até 50" ficava mais alto que os vizinhos.
 - **Os CTAs apontam para `#contato` e `#como-funciona`.** Até existir a seção de contato,
   eles usavam as âncoras do template (`#pricing` e `#how`).
+- **O CTA primário diz "Quero avaliar para minha equipe"** desde 06/10/2026 (antes, "Quero
+  capacitar minha equipe"). O mesmo texto vale para o Context, o Structure e o card da turma padrão.
+- **"prática corporativa" nasce destacada,** num `<mark>` com o mesmo visual do `::selection` do
+  `global.css` (`bg-accent/25`, texto `text-ink`). O Thiago gostou da cor da seleção e quis o trecho
+  já marcado. O texto continua navy, então o contraste não muda. O `box-decoration-break: clone`
+  mantém o arredondamento quando a expressão quebra de linha.
 
 ## Por que esta capacitação — decisões tomadas
 
@@ -117,7 +127,7 @@ corporativa à direita e, no meio, a capacitação.
 - **Rótulo sem número** ("Por que esta capacitação"), como todas as seções novas. Os números
   ("01 ·"…) eram dos templates, que saíram da página.
 - **Cabeçalho no padrão das demais seções:** título à esquerda, parágrafo e um CTA à direita.
-  O CTA é o mesmo botão primário da Hero ("Quero capacitar minha equipe", `#contato`).
+  O CTA é o mesmo botão primário da Hero ("Quero avaliar para minha equipe", `#contato`).
   Se o destino mudar, os dois mudam juntos.
 - **Espaço de 48 px (`mt-12`) entre o cabeçalho e o diagrama,** o mesmo das seções 02 a 07.
   Com 64–80 px, o diagrama parecia solto do cabeçalho.
@@ -163,9 +173,34 @@ intacto como template (ver a regra dos templates).
   da Modalidade, que tem uma linha só, ficava mais alto que o dos vizinhos.
 - **O traço laranja da referência virou turquesa** (`bg-accent`). O turquesa é o único
   acento da marca, e o traço é decoração, não texto.
-- **O CTA é o mesmo da Hero e do Context** ("Quero capacitar minha equipe", `#contato`). Os
+- **O CTA é o mesmo da Hero e do Context** ("Quero avaliar para minha equipe", `#contato`). Os
   três mudam juntos.
 - **O CTA secundário da Hero ("Como funciona") aponta para `#como-funciona`,** esta seção.
+- **A jornada vira vídeo quando dá (desde 06/10/2026).** A animação
+  `src/assets/video/como-funciona.mp4` (H.264, 1920×820, 44 s, 8 MB) substitui os três cards, sem
+  player e sem controles. Quem decide é o `src/scripts/journey-video.ts`. O markup nasce com os
+  cards, e o vídeo só entra se valerem todas as condições abaixo. Sem qualquer uma delas, ficam os
+  cards de hoje.
+  - **Largura de 1024 px (`lg`) para cima.** Em 390 px, o texto do vídeo ficaria com uns 4 px.
+  - **Sem `prefers-reduced-motion`.**
+  - **O autoplay é aceito.** O `play()` é testado ainda fora da tela.
+- **MP4, e não o WebM com alfa.** A primeira versão usava um WebM transparente, mas a qualidade
+  ficou ruim e o Thiago trocou pelo MP4. O MP4 tem fundo branco opaco, então o vídeo fica numa
+  caixa (`[data-journey-frame]`) com a casca dos cards de formato: borda, sombra, filete de luz no
+  topo e um degradê do branco para o turquesa a 12%. O `mix-blend-multiply` no `<video>` faz o
+  branco do vídeo assumir o degradê. Sem a caixa, era um retângulo branco recortado no fundo cinza.
+  Com o MP4, o Safari também mostra o vídeo.
+- **Toca uma vez e para em 43 s (`HOLD_AT`).** O arquivo tem 44 s, mas a partir de cerca de 43,2 s
+  tudo some num fade até o quadro vazio. O vídeo para em "A capacitação termina. O conhecimento
+  fica.". Sem loop, por escolha do Thiago. **Trocou o vídeo, ajuste o `HOLD_AT`.** Com o anterior,
+  de 34 s, a animação parava no meio. Meça o fade com o `ffmpeg` (brilho médio de um recorte do
+  texto final por instante).
+- **O vídeo só é baixado quando a seção está a uma tela de distância** e as duas primeiras
+  condições valem. Celular e quem pede menos movimento não baixam os 8 MB. Ele toca quando 40% está
+  à vista, pausa se o visitante sai e retoma na volta.
+- **Com o vídeo ativo, o `<ol>` fica `sr-only`.** Ele continua sendo o conteúdo para leitores de
+  tela, e o vídeo é `aria-hidden`. O `reveal` foi para o contêiner `[data-journey]`, sempre visível,
+  para o `ScrollTrigger` nunca medir um elemento `hidden`.
 
 ## A experiência da Ivory — decisões tomadas
 
@@ -214,6 +249,9 @@ Experience. Saiu da casca do `Pricing.astro` ("06 · Preços"), que continua int
   entrar ou sair um bloco no card, ajuste o `lg:row-span-5`.
 - **Preço em `text-4xl sm:text-5xl` e card com `p-6 sm:p-8`.** Em 390 px, o "Sob consulta"
   quebrava em duas linhas e o botão "Quero capacitar minha equipe" também.
+- **Abaixo de `sm`, os botões dos cards têm `text-[13px]`, `px-4` e nenhuma seta.** Em 390 px, o
+  card tem 302 px úteis, e "Quero avaliar para minha equipe" com a seta precisa de uns 330. Com
+  14 px, o botão quebrava em duas linhas.
 - **Os botões dos cards apontam para `#contato` e já levam o formato.** Cada botão tem
   `data-contact-plan` (`padrao` ou `personalizado`), vindo do campo `plan` do array `plans`.
   O `contact-form.ts` marca o rádio correspondente no formulário. Os valores precisam casar
@@ -224,9 +262,12 @@ Experience. Saiu da casca do `Pricing.astro` ("06 · Preços"), que continua int
 ## Contato — decisões tomadas
 
 Seção nova (`src/components/sections/Contact.astro`, `id="contato"`), logo após o Investment.
-É o destino de todos os CTAs "Quero capacitar minha equipe". A composição vem do topo do
+É o destino de todos os CTAs "Quero avaliar para minha equipe". A composição vem do topo do
 `Footer.astro` ("Vamos colocar o trabalho sob controle."), com título grande à esquerda e
 apoio à direita. O Footer continua intacto como template.
+
+O título da seção ainda é "Quero capacitar minha equipe", diferente do texto novo dos CTAs. Foi
+de propósito: o Thiago vai reformular a seção e pediu para não mexer nele agora.
 
 - **O envio ainda é simulado.** O Thiago escolheu fazer só a interface agora. O destino fica
   em `CONTACT_ENDPOINT`, no topo de `src/scripts/contact-form.ts`. Com `null`, o formulário
@@ -292,6 +333,10 @@ apoio à direita. O Footer continua intacto como template.
   role até `#contexto` (no mobile, em etapas, porque cada bloco tem seu gatilho), espere
   uns 3,5 s e só então capture. Seção vazia na captura não é bug. Para conferir o estado
   estático, use `reducedMotion: 'reduce'` no `newPage`.
+- **Captura do vídeo do "Como funciona".** Role até `[data-journey]` e espere uns 4 s, porque o
+  vídeo só começa a baixar perto da seção. Para ver o quadro final, espere o vídeo inteiro
+  (uns 45 s) e confira que o `currentTime` parou no `HOLD_AT`. O header sticky pode aparecer por
+  cima da seção na captura do elemento: é efeito da captura, não da página.
 
 ## Identidade visual — o que restringe o texto
 

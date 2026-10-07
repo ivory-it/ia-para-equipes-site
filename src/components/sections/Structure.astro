@@ -1,5 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
+import journeyVideo from '../../assets/video/como-funciona.mp4?url';
 
 // Os quatro cards de formato. `lead` aceita <strong> para os destaques.
 const facts = [
@@ -39,7 +40,7 @@ const steps = [
 <p class="text-lg leading-8 text-ink-soft">Um formato corporativo, enxuto e aplicável, desenhado para criar base comum e orientar o uso das ferramentas oficiais da empresa.</p>
 <div class="mt-7 flex">
 <a class="group inline-flex whitespace-nowrap items-center justify-center gap-2 shadow-ink/30 transition duration-300 ease-out hover:scale-[1.03] hover:bg-accent-ink-strong hover:shadow-accent-ink/10 text-sm font-semibold text-paper bg-accent-ink rounded-full pt-3 pr-5 pb-3 pl-5 shadow-2xl" href="#contato">
-Quero capacitar minha equipe
+Quero avaliar para minha equipe
 <Icon name="solar:arrow-right-linear" width={18} height={18} class="transition duration-300 ease-out group-hover:translate-x-0.5" />
 </a>
 </div>
@@ -79,8 +80,15 @@ Quero capacitar minha equipe
     ícone nem numeral competindo com ela. O diagnóstico é translúcido e
     tracejado (preparação); as sessões são sólidas, com sombra (encontro ao
     vivo). O tracejado entre os cards é decorativo e estático. As três colunas
-    só começam em xl: em 1024 px o texto das sessões quebrava em 4 a 5 linhas. */}
-<ol class="reveal mt-6 grid gap-4 xl:grid-cols-3 xl:gap-6">
+    só começam em xl: em 1024 px o texto das sessões quebrava em 4 a 5 linhas.
+
+    A partir de lg, o journey-video.ts troca os cards pela animação em vídeo
+    (MP4, sem player), se o navegador aceitar o autoplay. Sem isso (celular,
+    menos movimento, sem JS), ficam os cards. Com o vídeo ativo, o <ol> vira sr-only e continua sendo o
+    conteúdo para leitores de tela. O `reveal` fica no contêiner, sempre
+    visível, para o ScrollTrigger nunca medir um elemento `hidden`. */}
+<div class="reveal mt-6" data-journey>
+<ol class="grid gap-4 xl:grid-cols-3 xl:gap-6" data-journey-steps>
 {steps.map(({ label, when, title, detail, prep }, i) => (
 <li data-reveal-skip class:list={[
   'relative rounded-3xl p-5 sm:p-6',
@@ -103,6 +111,19 @@ Quero capacitar minha equipe
 </li>
 ))}
 </ol>
+{/* Moldura do vídeo, com a casca dos cards de formato (borda, sombra e o
+    filete de luz no topo) e um degradê turquesa leve. O MP4 tem fundo branco
+    opaco: o `mix-blend-multiply` faz esse branco assumir o degradê, em vez de
+    um retângulo branco recortado na página. */}
+<div data-journey-frame hidden class="relative isolate overflow-hidden rounded-3xl border border-ink-2/20 bg-linear-to-br from-paper via-paper/[0.92] to-accent/[0.12] shadow-[0_0_0_1px_rgba(10,37,64,0.08),0_18px_55px_rgba(10,37,64,0.08),inset_0_1px_0_rgba(255,255,255,0.70)]">
+<div class="pointer-events-none absolute inset-x-5 top-0 z-10 h-px bg-linear-to-r from-transparent via-ink-2/60 to-transparent" aria-hidden="true"></div>
+<video data-journey-video data-src={journeyVideo} muted playsinline preload="none" disablepictureinpicture disableremoteplayback aria-hidden="true" tabindex="-1" width="1920" height="820" class="pointer-events-none block h-auto w-full select-none mix-blend-multiply"></video>
+</div>
+</div>
 
 </div>
 </section>
+
+<script>
+  import '../../scripts/journey-video';
+</script>

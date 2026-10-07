@@ -69,6 +69,8 @@
   html {
     font-family: var(--font-sans);
     scroll-behavior: smooth;
+    /* O header é sticky com 5.5rem: sem isso, a âncora para com o topo da seção atrás dele. */
+    scroll-padding-top: 5.5rem;
   }
 
   /* Quem pede menos movimento não deveria receber scroll animado. */
