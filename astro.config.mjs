@@ -42,6 +42,8 @@ export default defineConfig({
           'calendar-linear',
           'laptop-linear',
           'settings-minimalistic-linear',
+          // Erro de envio do formulário de contato
+          'danger-circle-linear',
         ],
       },
     }),

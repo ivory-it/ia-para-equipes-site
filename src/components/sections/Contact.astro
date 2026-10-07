@@ -10,9 +10,14 @@ const formats = [
   { value: 'personalizado', label: 'Personalizada' },
 ];
 
+// Enviadas num texto só, separado por vírgula (ver contact-form.ts).
+const tools = ['Claude', 'ChatGPT', 'Gemini', 'Microsoft 365 Copilot', 'Outra'];
+
 const field =
   'mt-2 w-full rounded-2xl border border-ink/[0.14] bg-paper px-4 py-3 text-[15px] text-ink placeholder:text-ink-soft transition focus:border-accent-ink focus:outline-none focus:ring-2 focus:ring-accent/25';
 const label = 'text-sm font-medium text-ink';
+const pill =
+  'flex cursor-pointer items-center gap-3 rounded-2xl border border-ink/[0.14] bg-paper px-4 py-3 text-[15px] text-ink-2 transition hover:border-ink/[0.28] has-checked:border-accent-ink has-checked:bg-accent/[0.08] has-checked:text-ink has-focus-visible:ring-2 has-focus-visible:ring-accent/40';
 ---
 
 <section class="relative overflow-hidden border-t border-ink/[0.09] px-5 pt-24 pb-24 sm:px-8 lg:px-10" id="contato">
@@ -24,7 +29,7 @@ const label = 'text-sm font-medium text-ink';
 
 <div class="reveal">
 <p class="text-sm font-semibold uppercase tracking-[0.18em] text-accent-ink">Contato</p>
-<h2 class="mt-5 max-w-3xl font-display text-5xl font-medium leading-none tracking-tighter text-ink sm:text-6xl lg:text-7xl">Quero capacitar minha equipe</h2>
+<h2 class="mt-5 max-w-3xl font-display text-5xl font-medium leading-none tracking-tighter text-ink sm:text-6xl lg:text-7xl">Quero avaliar para minha equipe</h2>
 <p class="mt-8 max-w-xl font-display text-2xl font-medium leading-tight tracking-tight text-ink-soft sm:text-3xl">Dê o primeiro passo para capacitar sua equipe. Deixe seu contato para conversarmos.</p>
 <p class="mt-8 flex items-center gap-2 text-sm text-ink-soft">
 <Icon name="solar:shield-check-linear" width={18} height={18} class="shrink-0 text-accent-ink" aria-hidden="true" />
@@ -46,10 +51,14 @@ Usamos seus dados só para responder a este contato.
 <input class={field} id="contato-email" name="email" type="email" autocomplete="email" placeholder="voce@empresa.com.br" required />
 </div>
 <div>
-<label class={label} for="contato-telefone">Telefone</label>
-<input class={field} id="contato-telefone" name="telefone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(00) 00000-0000" maxlength="15" required />
+<label class={label} for="contato-cargo">Cargo</label>
+<input class={field} id="contato-cargo" name="cargo" type="text" autocomplete="organization-title" required />
 </div>
 <div>
+<label class={label} for="contato-whatsapp">WhatsApp</label>
+<input class={field} id="contato-whatsapp" name="whatsapp" type="tel" autocomplete="tel" inputmode="tel" placeholder="(00) 00000-0000" maxlength="15" required />
+</div>
+<div class="sm:col-span-2">
 <label class={label} for="contato-colaboradores">Colaboradores a capacitar</label>
 <div class="relative">
 <select class:list={[field, 'appearance-none pr-10']} id="contato-colaboradores" name="colaboradores" required>
@@ -60,20 +69,42 @@ Usamos seus dados só para responder a este contato.
 </div>
 </div>
 <fieldset class="sm:col-span-2">
+<legend class={label}>Ferramentas de IA que a equipe usa</legend>
+{/* Pílulas em fluxo, com a largura do texto: na grade de duas colunas,
+    "Microsoft 365 Copilot" quebrava em três linhas em 390 px. */}
+<div class="mt-2 flex flex-wrap gap-3">
+{tools.map((tool) => (
+<label class:list={[pill, 'whitespace-nowrap']}>
+<input class="h-4 w-4 shrink-0 accent-accent-ink" type="checkbox" name="ferramentas" value={tool} />
+{tool}
+</label>
+))}
+</div>
+<div id="contato-outra-wrap" class="mt-3" hidden>
+<label class="sr-only" for="contato-outra">Qual outra ferramenta?</label>
+<input class={field} id="contato-outra" name="ferramenta_outra" type="text" placeholder="Qual outra ferramenta?" />
+</div>
+</fieldset>
+<fieldset class="sm:col-span-2">
 <legend class={label}>Formato de interesse</legend>
 <div class="mt-2 grid gap-3 sm:grid-cols-2">
 {formats.map(({ value, label: text }, i) => (
-<label class="flex cursor-pointer items-center gap-3 rounded-2xl border border-ink/[0.14] bg-paper px-4 py-3 text-[15px] text-ink-2 transition hover:border-ink/[0.28] has-checked:border-accent-ink has-checked:bg-accent/[0.08] has-checked:text-ink has-focus-visible:ring-2 has-focus-visible:ring-accent/40">
-<input class="h-4 w-4 shrink-0 accent-accent-ink" type="radio" name="formato" value={value} required={i === 0} />
+<label class={pill}>
+<input class="h-4 w-4 shrink-0 accent-accent-ink" type="radio" name="formato" value={value} data-label={text} required={i === 0} />
 {text}
 </label>
 ))}
 </div>
 </fieldset>
-<button type="submit" class="group sm:col-span-2 mt-1 inline-flex items-center justify-center gap-2 rounded-full bg-accent-ink px-6 py-3.5 text-sm font-semibold text-paper shadow-2xl shadow-ink/20 transition duration-300 ease-out hover:bg-accent-ink-strong">
-Enviar contato
-<Icon name="solar:arrow-right-linear" width={18} height={18} class="transition duration-300 ease-out group-hover:translate-x-0.5" />
+<p id="contact-error" class="sm:col-span-2 flex items-start gap-2 rounded-2xl border border-ink/[0.14] bg-ink/[0.04] px-4 py-3 text-sm text-ink" role="alert" hidden>
+<Icon name="solar:danger-circle-linear" width={18} height={18} class="mt-px shrink-0" aria-hidden="true" />
+<span data-message></span>
+</p>
+<button type="submit" class="group sm:col-span-2 mt-1 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-accent-ink px-4 py-3.5 text-[13px] sm:px-6 sm:text-sm font-semibold text-paper shadow-2xl shadow-ink/20 transition duration-300 ease-out hover:bg-accent-ink-strong disabled:cursor-wait disabled:opacity-70">
+<span data-label>Quero avaliar para minha equipe</span>
+<Icon name="solar:arrow-right-linear" width={18} height={18} class="hidden sm:block transition duration-300 ease-out group-hover:translate-x-0.5" />
 </button>
+<p class="sm:col-span-2 -mt-1 text-center text-sm leading-6 text-ink-soft">Respondemos em até 1 dia útil, pelo WhatsApp ou e-mail. Sem compromisso.</p>
 </form>
 
 <div id="contact-success" class="hidden flex-col items-center py-10 text-center" role="status" tabindex="-1">

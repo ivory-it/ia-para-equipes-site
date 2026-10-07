@@ -22,7 +22,7 @@ enquanto trabalha numa. Situação em 24/09/2026:
 | `Experience.astro` ("A experiência da Ivory") | **fechada**, seção nova logo após o Structure (ver "A experiência da Ivory — decisões tomadas") |
 | `Investment.astro` ("Investimento") | **fechada**, seção nova logo após o Experience (ver "Investimento — decisões tomadas") |
 | `Contact.astro` ("Contato") | **fechada**, última seção nova, logo após o Investment (ver "Contato — decisões tomadas") |
-| `Header.astro` e `Footer.astro` | logo da IA para Equipes desde 23/09/2026 (ver "Logo — decisões tomadas"). Desde 06/10/2026, o menu leva às seções desta página: Por que capacitar (`#contexto`), Como funciona, Experiência e Investimento. Contato ficou de fora, porque os CTAs já levam até lá. Corporativa, Desenvolvedores, Jornada IA e Blog voltam quando essas páginas existirem. O `html` tem `scroll-padding-top: 5.5rem` (no `global.css`): o header é sticky com 88 px, e sem isso a âncora parava com o topo da seção escondido atrás dele. O `NAV_ITEMS` do `nav.ts` alimenta o header, o drawer mobile e a coluna Páginas do rodapé, e o `CTA` do header ("Iniciar teste grátis") saiu. No rodapé saíram a descrição, a coluna Recursos, o Twitter e o Dribbble, e os links "Feito para times focados" e "Comece grátis". Ficaram LinkedIn e Instagram, com os perfis da IA para Equipes desde 06/10/2026 (abrem em nova aba), e Privacidade, ainda com `#`. A grade do rodapé em `lg` é `1fr auto auto` com `gap-x-20`, para Páginas e Redes sociais ficarem juntas na direita. Com frações, sobrava um vão de uns 350 px entre elas. O copyright é "© 2026 Ivory." e leva `data-reveal-skip`: colado no fim da página, nunca passava dos 88% do reveal e ficava invisível. Ainda Pulsedesk: o `title`/`description` do `index.astro` |
+| `Header.astro` e `Footer.astro` | logo da IA para Equipes desde 23/09/2026 (ver "Logo — decisões tomadas"). Desde 06/10/2026, o menu leva às seções desta página: Por que capacitar (`#contexto`), Como funciona, Experiência e Investimento. Contato ficou de fora, porque os CTAs já levam até lá. Corporativa, Desenvolvedores, Jornada IA e Blog voltam quando essas páginas existirem. O `html` tem `scroll-padding-top: 5.5rem` (no `global.css`): o header é sticky com 88 px, e sem isso a âncora parava com o topo da seção escondido atrás dele. O `NAV_ITEMS` do `nav.ts` alimenta o header, o drawer mobile e a coluna Páginas do rodapé, e o `CTA` do header ("Iniciar teste grátis") saiu. No rodapé saíram a descrição, a coluna Recursos, o Twitter e o Dribbble, e os links "Feito para times focados" e "Comece grátis". Ficaram LinkedIn e Instagram, com os perfis da IA para Equipes desde 06/10/2026 (abrem em nova aba), e Privacidade, ainda com `#`. A grade do rodapé em `lg` é `1fr auto auto` com `gap-x-20`, para Páginas e Redes sociais ficarem juntas na direita. Com frações, sobrava um vão de uns 350 px entre elas. O copyright é "© 2026 Ivory." e leva `data-reveal-skip`: colado no fim da página, nunca passava dos 88% do reveal e ficava invisível. O `title` ("IA para Equipes by Ivory | Capacitação corporativa em IA") e a `description` do `index.astro` saíram do Pulsedesk em 07/10/2026, e o favicon também (ver "Favicon — decisões tomadas") |
 | As oito seções de template (01 a 07 e `Cta.astro`) | **fora da página** desde 23/09/2026. Os arquivos continuam em `sections/` |
 
 Trocar o copy é uma mudança de produto, não só de texto. Seções inteiras deixam de fazer
@@ -65,9 +65,9 @@ Mapa de seções (`src/components/sections/`, compostas por `src/pages/index.ast
 | `Hero.astro` | rótulo, título, promessa, CTAs, fatos da oferta, foto da equipe | ~10 trechos (concluída) |
 | `Context.astro` | "Por que esta capacitação": diagrama do uso individual para a prática corporativa. Copy nos arrays `before`/`after` do frontmatter | ~25 trechos (concluída) |
 | `Structure.astro` | "Como funciona": quatro cards de formato e a jornada em três etapas, trocada pelo vídeo em `lg` quando o navegador permite (`src/scripts/journey-video.ts`). Copy nos arrays `facts`/`tools`/`steps` do frontmatter | ~25 trechos (concluída) |
-| `Experience.astro` | "A experiência da Ivory": faixa de logos de clientes, nota de marca e cinco números. Copy nos arrays `clients`/`stats` do frontmatter | ~15 trechos |
+| `Experience.astro` | "A experiência da Ivory": faixa de logos de clientes, nota de marca, cinco números e o bloco de parcerias e certificações. Copy nos arrays `clients`/`stats`/`partners`/`certifications` do frontmatter | ~25 trechos |
 | `Investment.astro` | "Investimento": dois cards (turma padrão e personalizada) e nota de rodapé. Copy no array `plans` do frontmatter | ~20 trechos |
-| `Contact.astro` | "Contato": título, apoio e formulário. Comportamento em `src/scripts/contact-form.ts` | ~15 trechos |
+| `Contact.astro` | "Contato": título, apoio e formulário com envio ao receptor de leads da Ivory. Comportamento em `src/scripts/contact-form.ts` | ~25 trechos |
 | `ProductPreview.astro` (fora da página) | "01 · Prévia do produto" — mockup grande da aplicação | ~54 trechos |
 | `Problem.astro` (fora da página) | "02 · O problema" — três cards de dor | ~26 |
 | `HowItWorks.astro` (fora da página) | "03 · Como funciona" — quatro passos | ~37 |
@@ -222,6 +222,24 @@ Structure. A referência é `inspiracao/capacidade_ivory.png`. O template mais p
 - **Os números usam `<dl>`.** O rótulo é o `<dt>` e o número é o `<dd>`, e o
   `flex-col-reverse` põe o número em cima. O `divide-x` só entra em `lg`, quando os cinco
   cabem numa linha. Abaixo disso, a grade tem duas colunas.
+- **Bloco "Parcerias e certificações" no fim da seção (desde 06/10/2026).** Fica depois dos
+  números, num card com a casca da faixa de clientes: "Parceiros" à esquerda e "Time
+  certificado Microsoft" à direita, com divisor vertical em `lg`. Copy nos arrays `partners` e
+  `certifications` do frontmatter.
+- **Escudos e selos em cor, ao contrário dos logos de clientes.** São selos oficiais, não marcas
+  de cliente, e o azul único da Microsoft não vira arco-íris. Escolha do Thiago.
+- **Os escudos atuais são provisórios.** Foram recortados da imagem que o Thiago mandou (cerca de
+  135 px cada) e ficam em `src/assets/certificacoes/`. Quando chegarem os arquivos originais,
+  substitua mantendo os nomes. O nome da certificação vai em texto embaixo do escudo, porque com
+  72 px o texto do próprio escudo é ilegível. Por isso o `<Image>` tem `alt=""`.
+- **Seis escudos numa linha só em `xl`.** Em 1024 px, com seis colunas, os nomes quebravam em 3
+  a 4 linhas. Abaixo de `xl` são três colunas (duas abaixo de `sm`).
+- **Selos de parceiro: Microsoft Solutions Partner e Claude Partner Network.** Os arquivos foram
+  enviados pelo Thiago e ficam em `src/assets/parceiros/`. Só a margem transparente foi cortada,
+  porque as regras dos dois programas proíbem editar o selo. Não recolora, não redesenhe e não
+  troque por uma versão achada na internet. O campo `h` do array `partners` deixa os dois com
+  cerca de 140 px de largura: 32 px de altura no Microsoft, que é mais largo, e 44 px no Claude,
+  que tem duas linhas. O arquivo do Claude tem 195×62 px, então não passe de uns 60 px de altura.
 
 ## Investimento — decisões tomadas
 
@@ -256,6 +274,9 @@ Experience. Saiu da casca do `Pricing.astro` ("06 · Preços"), que continua int
   `data-contact-plan` (`padrao` ou `personalizado`), vindo do campo `plan` do array `plans`.
   O `contact-form.ts` marca o rádio correspondente no formulário. Os valores precisam casar
   com o array `formats` do `Contact.astro`.
+- **O botão do card personalizado diz "Quero avaliar para minha equipe"** desde 07/10/2026 (antes,
+  "Fale conosco"). O texto é igual, mas o visual continua contornado, para a turma padrão seguir
+  como a oferta em destaque.
 - **Itens do card personalizado aprovados pelo Thiago:** tudo da turma padrão, práticas em
   jornadas reais, exemplos das áreas e carga horária e turmas ajustadas.
 
@@ -266,19 +287,38 @@ Seção nova (`src/components/sections/Contact.astro`, `id="contato"`), logo ap�
 `Footer.astro` ("Vamos colocar o trabalho sob controle."), com título grande à esquerda e
 apoio à direita. O Footer continua intacto como template.
 
-O título da seção ainda é "Quero capacitar minha equipe", diferente do texto novo dos CTAs. Foi
-de propósito: o Thiago vai reformular a seção e pediu para não mexer nele agora.
+O título é o mesmo texto dos CTAs, "Quero avaliar para minha equipe", desde 07/10/2026.
 
-- **O envio ainda é simulado.** O Thiago escolheu fazer só a interface agora. O destino fica
-  em `CONTACT_ENDPOINT`, no topo de `src/scripts/contact-form.ts`. Com `null`, o formulário
-  valida e mostra a confirmação sem enviar nada. Para integrar (Web3Forms, Formspree, Vercel
-  Function), troque a constante, e o corpo sai como `FormData`. **Enquanto for `null`, um
-  contato real se perde.** Não publique assim.
-- **Campos:** nome, e-mail corporativo, telefone, colaboradores a capacitar e formato de
-  interesse. Todos são obrigatórios.
-- **E-mail corporativo de verdade.** Domínios gratuitos (gmail, hotmail, outlook, yahoo,
-  icloud, bol, uol, terra) são recusados com `setCustomValidity`. A lista é `FREE_DOMAINS`.
-- **Telefone com máscara leve,** `(00) 0000-0000` ou `(00) 00000-0000`, e exige DDD.
+- **O envio vai para o receptor de leads da Ivory (desde 07/10/2026).** É o mesmo backend da
+  página de capacitação que está sendo descontinuada (`BACKEND_URL` + `/api/lead`, no topo de
+  `src/scripts/contact-form.ts`), com o mesmo `campaign_id: 'capacitacao_ia'`. O corpo é JSON, e
+  o sucesso é o status **202**. Com 400, aparece "Revise os campos…". Com outro status ou falha de
+  rede, aparece "Não conseguimos enviar agora…", no `#contact-error`, e o botão volta.
+  - **O payload mantém os nomes do contrato antigo:** `nome`, `email`, `cargo`, `whatsapp`,
+    `funcionarios` (a faixa de colaboradores), `curso` (o rótulo do formato, "Turma padrão" ou
+    "Personalizada"), `ferramentas` e as UTMs. Campo vazio não vai.
+  - **UTMs:** `utm_source`, `utm_medium`, `utm_campaign` e `utm_content`, lidos da URL, como
+    na página antiga.
+  - **O backend é dinâmico.** Só exige nome e e-mail e aceita os demais campos sem mudança.
+  - **CORS:** o domínio onde o site for publicado precisa estar liberado no backend. Sem isso,
+    todo envio cai no erro de rede.
+  - **Não envie lead de teste para produção.** Para testar, substitua o `window.fetch` no
+    navegador por um stub que devolve 202.
+  - **O pixel da Meta ficou de fora.** A página antiga disparava `fbq('track', 'Lead')`, mas
+    este site não tem o pixel. O ponto do disparo está marcado no script.
+- **Campos:** nome, e-mail corporativo, cargo, WhatsApp, colaboradores a capacitar,
+  ferramentas de IA e formato. **Todos são obrigatórios** no formulário, por decisão do Thiago,
+  embora o backend só exija nome e e-mail. Nas ferramentas, é preciso marcar pelo menos uma:
+  checkbox não tem `required` de grupo, então o script põe a validade no primeiro checkbox, onde
+  o navegador mostra o balão. Com "Outra" marcada, o texto de qual ferramenta também é obrigatório.
+- **Ferramentas em múltipla escolha, enviadas num texto só, separado por vírgula.** As opções são
+  Claude, ChatGPT, Gemini, Microsoft 365 Copilot e Outra. Marcar "Outra" abre um campo de texto,
+  e o texto digitado entra na lista no lugar de "Outra". As pílulas ficam em fluxo
+  (`flex-wrap`), com a largura do texto. Na grade de duas colunas, "Microsoft 365 Copilot"
+  quebrava em três linhas em 390 px.
+- **E-mail corporativo de verdade.** Domínios pessoais são recusados com `setCustomValidity`.
+  A lista `PERSONAL_DOMAINS` junta a deste site com a da página antiga.
+- **WhatsApp com máscara leve,** `(00) 0000-0000` ou `(00) 00000-0000`, e exige DDD.
 - **Colaboradores em faixas** (até 50, 51 a 100, 101 a 250, mais de 250). As faixas partem
   da turma padrão de 50.
 - **O formato chega preenchido.** Os botões dos cards de investimento levam
@@ -287,10 +327,18 @@ de propósito: o Thiago vai reformular a seção e pediu para não mexer nele ag
 - **Rádios "Turma padrão" / "Personalizada",** os mesmos nomes dos rótulos dos cards. Com
   "Capacitação personalizada", a pílula quebrava em duas linhas em 1440 px.
 - **Validação nativa do navegador,** sem token de cor de erro novo. O `reportValidity()`
-  mostra o balão do próprio navegador.
+  mostra o balão do próprio navegador. O erro de envio usa o `ink` com o ícone
+  `danger-circle-linear`, e não vermelho.
 - **As duas colunas só começam em `xl`.** Em 1024 px o card do formulário ficava com cerca de
   390 px, o placeholder do telefone era cortado e os rótulos quebravam. Abaixo de `xl`, o
   formulário vem embaixo do texto, com `max-w-2xl`.
+- **O botão de envio diz "Quero avaliar para minha equipe"** desde 07/10/2026 (antes, "Enviar
+  contato"). Fecha o ciclo com os CTAs da página. Abaixo de `sm`, tem `text-[13px]`, `px-4` e nenhuma
+  seta, como os botões dos cards de investimento: com 14 px, quebrava em duas linhas em 390 px. O
+  `contact-form.ts` guarda esse texto e volta para ele depois do "Enviando…".
+- **Frase de próximo passo embaixo do botão:** "Respondemos em até 1 dia útil, pelo WhatsApp ou
+  e-mail. Sem compromisso." Ela reduz a fricção dizendo o que acontece depois. **O prazo de 1 dia
+  útil precisa valer na prática.** Se o comercial mudar o prazo, mude a frase.
 - **Nota de privacidade curta** ao lado do título ("Usamos seus dados só para responder a
   este contato."). É LGPD no tom da §8, sem alarme.
 
@@ -308,6 +356,19 @@ de propósito: o Thiago vai reformular a seção e pediu para não mexer nele ag
   `max-w-full` limita o logo a cerca de 310 px, para não estourar o padding.
 - **`<Image>` do `astro:assets`, e não SVG inline.** O SVG tem 185 KB. Inline, ele entraria duas
   vezes no HTML. Como arquivo, o navegador baixa uma vez e guarda em cache.
+
+## Favicon — decisões tomadas
+
+- **Onda turquesa num squircle navy,** como a §5 manda para favicon e ícone de app. A fonte é o
+  `simbolo_onda.png` da skill da marca (`ia-para-equipes-brand/assets/`). Os arquivos estão em
+  `public/`: `favicon.ico` (16, 32 e 48), `favicon-16.png`, `favicon-32.png` e
+  `apple-touch-icon.png` (180). Os links ficam no `Base.astro`.
+- **Traço engrossado só nos tamanhos de aba.** Em 16 e 32 px, as linhas finas da onda se misturavam
+  ao navy e o ícone ficava apagado. Nesses tamanhos, o alfa da onda passa por um `MaxFilter(9)` na
+  resolução original antes de reduzir. O desenho e o turquesa `#00A88E` não mudam. O ícone de
+  180 px usa a onda sem alteração.
+- **Sem SVG.** O `simbolo_onda.svg` tem 171 KB de linhas finas, pesado para favicon e ilegível em
+  16 px.
 
 ## Armadilhas técnicas que já custaram tempo
 

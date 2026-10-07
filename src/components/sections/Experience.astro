@@ -6,6 +6,14 @@ import unilever from '../../assets/clientes/unilever.png';
 import angloAmerican from '../../assets/clientes/anglo-american.png';
 import cemig from '../../assets/clientes/cemig.png';
 import icatu from '../../assets/clientes/icatu.png';
+import azSolutionsArchitect from '../../assets/certificacoes/azure-solutions-architect-expert.png';
+import azAiEngineer from '../../assets/certificacoes/azure-ai-engineer.png';
+import azDataEngineer from '../../assets/certificacoes/azure-data-engineer.png';
+import azDatabaseAdmin from '../../assets/certificacoes/azure-database-administrator.png';
+import azAdministrator from '../../assets/certificacoes/azure-administrator.png';
+import azDeveloper from '../../assets/certificacoes/azure-developer.png';
+import microsoftPartner from '../../assets/parceiros/microsoft-solutions-partner.png';
+import claudePartner from '../../assets/parceiros/claude-partner-network.png';
 
 // Os logos têm proporções muito diferentes (Unilever 1,2:1, Lundin 6,5:1). A
 // altura de cada um equilibra o peso visual; `h` é a altura exibida, em px.
@@ -24,6 +32,24 @@ const stats = [
   { value: '+60', label: 'clientes' },
   { value: '17', label: 'anos de mercado' },
   { value: 'Brasil', label: 'atuação nacional' },
+];
+
+// Selos oficiais, em cor e sem edição. `h` é a altura exibida em px: com ela,
+// os dois ficam com cerca de 140 px de largura.
+const partners = [
+  { name: 'Microsoft Solutions Partner', src: microsoftPartner, h: 32 },
+  { name: 'Claude Partner Network', src: claudePartner, h: 44 },
+];
+
+// Expert primeiro. O `name` vai embaixo do escudo: na imagem pequena o texto
+// do próprio escudo fica ilegível.
+const certifications = [
+  { name: 'Azure Solutions Architect Expert', src: azSolutionsArchitect },
+  { name: 'Azure AI Engineer Associate', src: azAiEngineer },
+  { name: 'Azure Data Engineer Associate', src: azDataEngineer },
+  { name: 'Azure Database Administrator Associate', src: azDatabaseAdmin },
+  { name: 'Azure Administrator Associate', src: azAdministrator },
+  { name: 'Azure Developer Associate', src: azDeveloper },
 ];
 ---
 
@@ -60,6 +86,35 @@ const stats = [
 </div>
 ))}
 </dl>
+
+{/* Mesma casca da faixa de clientes. Escudos e selos ficam em cor: são selos
+    oficiais, não logos de cliente, e o azul único não vira arco-íris. */}
+<div class="reveal mt-16">
+<p data-reveal-skip class="text-sm font-semibold uppercase tracking-[0.18em] text-accent-ink">Parcerias e certificações</p>
+<div class="mt-5 grid rounded-3xl border border-ink-2/20 bg-paper/[0.60] shadow-[0_0_0_1px_rgba(10,37,64,0.08),0_18px_55px_rgba(10,37,64,0.08),inset_0_1px_0_rgba(255,255,255,0.70)] divide-y divide-ink/[0.09] lg:grid-cols-[auto_1fr] lg:divide-x lg:divide-y-0">
+<div class="px-6 py-8 xl:px-10">
+<p data-reveal-skip class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-soft">Parceiros</p>
+<ul class="mt-6 flex flex-wrap items-center gap-x-10 gap-y-6 lg:flex-col lg:items-start">
+{partners.map(({ name, src, h }) => (
+<li data-reveal-skip class="flex">
+<Image src={src} alt={name} style={`height:${h}px`} class="w-auto" loading="lazy" />
+</li>
+))}
+</ul>
+</div>
+<div class="px-6 py-8 xl:px-10">
+<p data-reveal-skip class="text-xs font-semibold uppercase tracking-[0.18em] text-ink-soft">Time certificado Microsoft</p>
+<ul class="mt-5 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 xl:grid-cols-6">
+{certifications.map(({ name, src }) => (
+<li data-reveal-skip class="flex flex-col items-center text-center">
+<Image src={src} alt="" style="height:72px" class="w-auto" loading="lazy" />
+<span class="mt-3 text-xs leading-5 text-ink-soft text-balance">{name}</span>
+</li>
+))}
+</ul>
+</div>
+</div>
+</div>
 
 </div>
 </section>
