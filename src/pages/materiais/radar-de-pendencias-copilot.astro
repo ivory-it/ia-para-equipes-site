@@ -1,0 +1,332 @@
+---
+/**
+ * Material gratuito do reels "Radar de Pendências" (@ia_paraequipes).
+ * Quem comenta RADAR recebe este link por Direct, quase sempre no celular.
+ *
+ * Os prints 8 (e-mail de aviso) e 9 (resultado) ficaram fora: mostravam nome,
+ * razão social, cliente e foto. A seção "O que você recebe" sai só com texto
+ * até chegarem prints anonimizados (ver AGENTS.md, "Materiais").
+ */
+import Base from '../../layouts/Base.astro';
+import Shot from '../../components/materiais/Shot.astro';
+import { Icon } from 'astro-icon/components';
+import { RADAR_PROMPT } from '../../data/materiais/radar-prompt';
+
+import chat from '../../assets/materiais/radar/radar-passo-1-chat.png';
+import menu from '../../assets/materiais/radar/radar-passo-1-menu.png';
+import gerenciar from '../../assets/materiais/radar/radar-passo-2-gerenciar.png';
+import vazio from '../../assets/materiais/radar/radar-passo-3-vazio.png';
+import colado from '../../assets/materiais/radar/radar-passo-3-prompt.png';
+import diasUteis from '../../assets/materiais/radar/radar-passo-4-dias-uteis.png';
+import semTermino from '../../assets/materiais/radar/radar-passo-5-sem-termino.png';
+
+const title = 'Radar de Pendências no Microsoft Copilot: prompt e passo a passo | IA para Equipes';
+const description =
+  'Prompt pronto para copiar e tutorial em 6 passos para o Copilot listar suas pendências do Teams e do Outlook todo dia, por prioridade.';
+
+const requirements = [
+  'Licença <strong>Microsoft 365 Copilot Premium</strong> na sua conta de trabalho. A versão gratuita do Copilot não tem prompts agendados.',
+  'Acesso ao Copilot pelo app ou pelo navegador, logado com a conta da empresa com IQ de Trabalho (WorkIQ) disponível.',
+  'Uns 5 minutos para configurar.',
+];
+
+// `text` aceita <strong> para os nomes de botões e campos da tela.
+const steps = [
+  {
+    title: 'Abra os Prompts agendados',
+    text: 'No Copilot, abra o menu de configurações (⋯) no canto superior direito e escolha <strong>Prompts agendados</strong>.',
+    shots: [
+      { src: chat, alt: 'Tela inicial do chat do Microsoft 365 Copilot, com a caixa de mensagem no centro e o menu ⋯ no canto superior direito' },
+      { src: menu, alt: 'Menu de configurações do Copilot aberto no canto superior direito, com a opção Prompts agendados destacada' },
+    ],
+  },
+  {
+    title: 'Crie um novo agendamento',
+    text: 'Na janela <strong>Gerenciar agendamentos</strong>, clique em <strong>Novo</strong>.',
+    shots: [
+      { src: gerenciar, alt: 'Janela Gerenciar agendamentos do Copilot, ainda sem prompts agendados, com o botão Novo no canto superior direito' },
+    ],
+  },
+  {
+    title: 'Cole o prompt',
+    text: 'Na janela <strong>Criar um agendamento</strong>, cole o prompt do Radar de Pendências no campo <strong>Prompt</strong>.',
+    shots: [
+      { src: vazio, alt: 'Janela Criar um agendamento do Copilot com o campo Prompt vazio e o botão Salvar desativado' },
+      { src: colado, alt: 'Janela Criar um agendamento com o prompt do Radar de Pendências colado no campo Prompt' },
+    ],
+  },
+  {
+    title: 'Escolha os dias e o horário',
+    text: 'Em <strong>Cada</strong>, troque <strong>Dia</strong> por <strong>Semana</strong> e desmarque domingo e sábado, deixando só os dias úteis. Em <strong>Iniciar</strong>, escolha o horário em que quer receber, por exemplo 7h30, antes de começar o dia.',
+    shots: [
+      { src: diasUteis, alt: 'Agendamento com Cada configurado como Semana e só os dias úteis, de segunda a sexta, marcados' },
+    ],
+  },
+  {
+    title: 'Tire a data de término',
+    text: 'Clique na lixeira ao lado do campo <strong>Até</strong>. Assim o agendamento roda sem prazo para acabar.',
+    shots: [
+      { src: semTermino, alt: 'Agendamento sem data de término, com o botão Escolher uma data de término no lugar do campo Até e o botão Salvar ativo' },
+    ],
+  },
+  {
+    title: 'Deixe o aviso por e-mail e salve',
+    text: 'Confira se a opção <strong>Receber um email quando as respostas estiverem prontas</strong> está marcada e clique em <strong>Salvar</strong>.',
+    shots: [
+      { src: semTermino, alt: 'Opção Receber um email quando as respostas estiverem prontas marcada e botão Salvar no canto inferior direito' },
+    ],
+  },
+];
+
+const receives = [
+  {
+    icon: 'solar:letter-linear',
+    title: 'O e-mail de aviso',
+    text: 'Quando o agendamento roda, chega no Outlook um e-mail do Copilot dizendo que a solicitação foi concluída, com o link para o resultado.',
+  },
+  {
+    icon: 'solar:checklist-linear',
+    title: 'O seu radar',
+    text: 'O link abre a conversa no Copilot com o resumo e a tabela de pendências por prioridade, com a próxima ação e a mensagem de origem.',
+  },
+];
+
+const tips = [
+  'Na primeira vez, rode o prompt manualmente no chat para ver se o formato está do seu jeito antes de agendar.',
+  'Toda semana muito cheia? Troque "últimos 7 dias" por "últimos 3 dias".',
+  'Para editar ou pausar depois, volte em <strong>⋯ &gt; Prompts agendados</strong> e escolha o agendamento na lista.',
+  'O Copilot só enxerga o que a sua conta pode acessar. Ele não lê caixas nem chats de outras pessoas.',
+];
+
+const faq = [
+  { q: 'Funciona com o Copilot gratuito?', a: 'Não. Prompts agendados fazem parte do Microsoft 365 Copilot, que é a licença paga para empresas.' },
+  { q: 'Meus dados saem da empresa?', a: 'O prompt roda dentro do Microsoft 365 da sua organização, com as mesmas permissões e regras de segurança que a sua conta já tem.' },
+  { q: 'Não apareceu "Prompts agendados" no meu menu.', a: 'A função pode depender da licença e da liberação feita pela TI da sua empresa. Vale perguntar para o time de TI.' },
+  { q: 'Posso mudar o horário depois?', a: 'Pode. Abra o agendamento em Prompts agendados e altere.' },
+];
+
+const btnPrimary =
+  'group inline-flex whitespace-nowrap items-center justify-center gap-2 rounded-full bg-accent-ink px-5 py-3 text-sm font-semibold text-paper shadow-2xl shadow-ink/30 transition duration-300 ease-out hover:scale-[1.03] hover:bg-accent-ink-strong hover:shadow-accent-ink/10';
+const btnSecondary =
+  'inline-flex whitespace-nowrap items-center justify-center gap-2 rounded-full border border-ink/[0.13] bg-paper/[0.65] px-5 py-3 text-sm font-medium text-ink shadow-2xl shadow-ink/[0.06] backdrop-blur-xl transition duration-300 ease-out hover:scale-[1.02] hover:border-ink/[0.28] hover:bg-paper/[0.88]';
+const eyebrow = 'text-sm font-semibold uppercase tracking-[0.18em] text-accent-ink';
+const h2 = 'mt-4 font-display text-3xl font-medium leading-tight tracking-tighter text-ink sm:text-4xl lg:text-5xl';
+const section = 'relative border-t border-ink/[0.09] px-5 py-16 sm:px-8 sm:py-20 lg:px-10';
+const card =
+  'relative overflow-hidden rounded-3xl border border-ink-2/20 bg-paper/[0.60] shadow-[0_0_0_1px_rgba(10,37,64,0.08),0_18px_55px_rgba(10,37,64,0.08),inset_0_1px_0_rgba(255,255,255,0.70)]';
+---
+
+<Base
+  {title}
+  {description}
+  ogType="article"
+  image={{ src: '/og/radar-de-pendencias-copilot.png', alt: 'Radar de Pendências com Microsoft Copilot, material gratuito da IA para Equipes' }}
+>
+  {/* 1. Topo */}
+  <section class="relative overflow-hidden px-5 pt-14 pb-16 sm:px-8 sm:pt-20 sm:pb-20 lg:px-10 lg:pt-24">
+    <div class="pointer-events-none absolute inset-0 z-0" aria-hidden="true"
+      style="background: linear-gradient(225deg, rgb(255 255 255 / 0.55) 0%, rgb(255 255 255 / 0) 48%), radial-gradient(ellipse 60% 50% at 78% 12%, rgb(0 168 142 / 0.07), transparent 70%);"></div>
+    <div class="reveal relative z-10 mx-auto w-full max-w-[1280px]">
+      <a href="/materiais" class="mb-5 inline-flex items-center gap-1.5 text-sm text-ink-soft transition hover:text-ink">
+        <Icon name="solar:arrow-left-linear" width={16} height={16} aria-hidden="true" />
+        Todos os materiais
+      </a>
+      <br />
+      <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-ink/[0.11] bg-paper/[0.65] px-3 py-1.5 text-xs text-ink-2 shadow-2xl shadow-ink/[0.06] backdrop-blur-xl">
+        <span class="h-1.5 w-1.5 rounded-full bg-accent-ink shadow-lg shadow-accent-ink/40"></span>
+        Material gratuito
+      </div>
+      <h1 data-reveal-skip class="max-w-4xl font-display text-4xl font-medium tracking-tighter text-ink sm:text-5xl lg:text-6xl lg:leading-[1.05]">Radar de Pendências com Microsoft Copilot</h1>
+      <p data-reveal-skip class="mt-6 max-w-2xl text-base leading-7 text-ink-soft sm:text-lg">Configure uma vez e receba todo dia útil a lista do que precisa da sua atenção no Teams e no Outlook.</p>
+      <div data-reveal-skip class="mt-9 flex flex-col gap-3 sm:flex-row">
+        <a class={btnPrimary} href="#prompt" data-copy-prompt>
+          Copiar o prompt
+          <Icon name="solar:copy-linear" width={18} height={18} />
+        </a>
+        <a class={btnSecondary} href="#passo-a-passo">
+          Ver o passo a passo
+          <Icon name="solar:arrow-down-linear" width={18} height={18} />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* 2. O que é e o que você precisa */}
+  <section class={section} id="o-que-e">
+    <div class="mx-auto grid w-full max-w-[1280px] gap-8 lg:grid-cols-[1fr_0.9fr] lg:gap-16">
+      <div class="reveal">
+        <p class={eyebrow}>O que é</p>
+        <h2 class={h2}>Um prompt agendado que trabalha antes de você</h2>
+        <p class="mt-6 max-w-2xl text-base leading-7 text-ink-soft sm:text-lg sm:leading-8">O Radar de Pendências é um prompt agendado. Todo dia útil, no horário que você escolher, o Copilot lê seus e-mails do Outlook e suas conversas e reuniões do Teams da última semana, separa o que depende de você e manda um e-mail avisando que o resumo está pronto.</p>
+      </div>
+      <div class="reveal rounded-3xl border border-accent-ink/20 bg-accent/[0.06] p-6 sm:p-8">
+        <h3 class="font-display text-xl font-medium tracking-tight text-ink">O que você precisa</h3>
+        <ul class="mt-5 grid gap-4">
+          {requirements.map((item) => (
+            <li class="flex gap-3 text-[15px] leading-6 text-ink-2">
+              <Icon name="solar:check-circle-linear" width={20} height={20} class="mt-0.5 shrink-0 text-accent-ink" aria-hidden="true" />
+              <span class="[&_strong]:font-semibold [&_strong]:text-ink" set:html={item} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  {/* 3. O prompt. O botão fica fora da área que rola, então não sai do canto.
+      O texto quebra linha (pre-wrap): rola só na vertical, nunca na horizontal. */}
+  <section class={section} id="prompt">
+    <div class="mx-auto w-full max-w-[1280px]">
+      <div class="reveal max-w-3xl">
+        <p class={eyebrow}>O prompt</p>
+        <h2 class={h2}>Copie e cole no Copilot</h2>
+      </div>
+      <div class="reveal mt-8 max-w-4xl">
+        <div class:list={[card, 'bg-paper']}>
+          <div class="flex items-center justify-between gap-3 border-b border-ink/[0.09] px-4 py-3 sm:px-6">
+            <p data-reveal-skip class="truncate text-sm font-medium text-ink-2">Radar de Pendências — Meu briefing diário</p>
+            <button
+              type="button"
+              data-copy-target="radar-prompt"
+              class="inline-flex shrink-0 items-center gap-2 rounded-full bg-accent-ink px-4 py-2 text-sm font-semibold text-paper transition hover:bg-accent-ink-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 data-[copied=true]:bg-ink"
+            >
+              <Icon name="solar:copy-linear" width={16} height={16} aria-hidden="true" />
+              <span data-copy-label aria-live="polite">Copiar</span>
+            </button>
+          </div>
+          <pre class="max-h-[28rem] overflow-y-auto overscroll-contain px-4 py-5 font-mono text-[13px] leading-6 whitespace-pre-wrap break-words text-ink-2 sm:px-6" tabindex="0" aria-label="Prompt do Radar de Pendências"><code id="radar-prompt">{RADAR_PROMPT}</code></pre>
+        </div>
+        <p class="mt-4 text-[15px] leading-6 text-ink-soft">Pode ajustar à vontade: o período, as prioridades e o que ignorar. O Copilot segue o que estiver escrito.</p>
+      </div>
+    </div>
+  </section>
+
+  {/* 4. Passo a passo */}
+  <section class={section} id="passo-a-passo">
+    <div class="mx-auto w-full max-w-[1280px]">
+      <div class="reveal max-w-3xl">
+        <p class={eyebrow}>Passo a passo</p>
+        <h2 class={h2}>Configure em 6 passos</h2>
+      </div>
+      <ol class="mt-10 grid gap-6">
+        {steps.map(({ title, text, shots }, i) => (
+          <li class:list={[card, 'grid gap-6 p-5 sm:p-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start lg:gap-10']} data-reveal-skip>
+            <div class="pointer-events-none absolute inset-x-5 top-0 h-px bg-linear-to-r from-transparent via-ink-2/60 to-transparent" aria-hidden="true"></div>
+            <div>
+              <span class="block font-display text-5xl font-medium leading-none tracking-tighter text-accent-ink sm:text-6xl" aria-hidden="true">{i + 1}</span>
+              <h3 class="mt-4 font-display text-xl font-medium tracking-tight text-ink sm:text-2xl"><span class="sr-only">Passo {i + 1}. </span>{title}</h3>
+              <p class="mt-3 text-[15px] leading-7 text-ink-2 [&_strong]:font-semibold [&_strong]:text-ink" set:html={text} />
+            </div>
+            <div class="grid gap-4">
+              {shots.map((shot) => <Shot src={shot.src} alt={shot.alt} />)}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  {/* 5. O que você recebe. Sem prints por enquanto: os originais mostravam
+      dados pessoais e de cliente. */}
+  <section class={section} id="o-que-voce-recebe">
+    <div class="mx-auto w-full max-w-[1280px]">
+      <div class="reveal max-w-3xl">
+        <p class={eyebrow}>O que você recebe</p>
+        <h2 class={h2}>Todo dia útil, no horário que você escolheu</h2>
+      </div>
+      <ul class="reveal mt-10 grid gap-4 md:grid-cols-2">
+        {receives.map(({ icon, title, text }) => (
+          <li data-reveal-skip class:list={[card, 'p-6 sm:p-8']}>
+            <span class="flex h-12 w-12 items-center justify-center rounded-2xl border border-accent-ink/20 bg-accent/[0.1] text-accent-ink" aria-hidden="true">
+              <Icon name={icon} width={24} height={24} />
+            </span>
+            <h3 class="mt-5 font-display text-xl font-medium tracking-tight text-ink">{title}</h3>
+            <p class="mt-3 text-[15px] leading-7 text-ink-soft">{text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  {/* 6. Dicas e 7. Perguntas frequentes */}
+  <section class={section} id="dicas">
+    <div class="mx-auto grid w-full max-w-[1280px] gap-12 lg:grid-cols-2 lg:gap-16">
+      <div class="reveal">
+        <p class={eyebrow}>Dicas</p>
+        <h2 class={h2}>Para tirar mais do radar</h2>
+        <ul class="mt-8 grid gap-4">
+          {tips.map((tip) => (
+            <li class="flex gap-3 text-[15px] leading-7 text-ink-2">
+              <Icon name="solar:lightbulb-linear" width={20} height={20} class="mt-1 shrink-0 text-accent-ink" aria-hidden="true" />
+              <span class="[&_strong]:font-semibold [&_strong]:text-ink" set:html={tip} />
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="reveal" id="perguntas">
+        <p class={eyebrow}>Perguntas frequentes</p>
+        <h2 class={h2}>Antes de configurar</h2>
+        <div class="mt-8 grid gap-3">
+          {faq.map(({ q, a }) => (
+            <details class="group rounded-2xl border border-ink/[0.12] bg-paper/[0.70] transition open:border-accent-ink/25 open:bg-paper">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-[15px] font-semibold text-ink [&::-webkit-details-marker]:hidden">
+                {q}
+                <Icon name="solar:alt-arrow-down-linear" width={20} height={20} class="shrink-0 text-ink-soft transition-transform duration-300 group-open:rotate-180" aria-hidden="true" />
+              </summary>
+              <p data-reveal-skip class="px-5 pb-5 text-[15px] leading-7 text-ink-soft">{a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* 8. Chamada final, com os brilhos do bloco de Contato. */}
+  <section class:list={[section, 'overflow-hidden']} id="chamada">
+    <div class="pointer-events-none absolute -right-32 top-10 h-80 w-80 rounded-full bg-accent-ink/10 blur-3xl" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute -left-32 bottom-0 h-80 w-80 rounded-full bg-ink/10 blur-3xl" aria-hidden="true"></div>
+    <div class="reveal relative mx-auto w-full max-w-[1280px]">
+      <h2 class="max-w-3xl font-display text-4xl font-medium leading-tight tracking-tighter text-ink sm:text-5xl lg:text-6xl">Quer levar isso para o time inteiro?</h2>
+      <p class="mt-6 max-w-2xl text-base leading-7 text-ink-soft sm:text-lg">A IA para Equipes capacita times a usar IA no trabalho do dia a dia, com segurança e governança.</p>
+      <div data-reveal-skip class="mt-9 flex flex-col gap-3 sm:flex-row">
+        <a class={btnPrimary} href="/">
+          Conhecer a capacitação
+          <Icon name="solar:arrow-right-linear" width={18} height={18} class="transition duration-300 ease-out group-hover:translate-x-0.5" />
+        </a>
+        <a class={btnSecondary} href="https://www.instagram.com/ia_paraequipes/" target="_blank" rel="noopener noreferrer">
+          Seguir @ia_paraequipes
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* Lightbox único da página (src/scripts/lightbox.ts). */}
+  <dialog
+    data-lightbox-dialog
+    aria-label="Print ampliado"
+    class="group/lb m-0 h-dvh max-h-none w-screen max-w-none bg-transparent p-0 backdrop:bg-ink/85 backdrop:backdrop-blur-sm"
+  >
+    <div data-lightbox-stage class="flex h-full w-full overflow-auto overscroll-contain p-4 sm:p-10 group-data-[zoomed=true]/lb:p-0">
+      <img
+        data-lightbox-img
+        alt=""
+        decoding="async"
+        class="m-auto h-auto max-h-full w-auto max-w-full cursor-zoom-in rounded-xl border border-paper/20 bg-paper shadow-2xl group-data-[zoomed=true]/lb:max-h-none group-data-[zoomed=true]/lb:max-w-none group-data-[zoomed=true]/lb:cursor-zoom-out group-data-[zoomed=true]/lb:rounded-none"
+      />
+    </div>
+    <button
+      type="button"
+      data-lightbox-close
+      aria-label="Fechar"
+      class="fixed top-3 right-3 flex h-11 w-11 items-center justify-center rounded-full bg-paper text-ink shadow-xl transition hover:bg-mist focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
+    >
+      <Icon name="solar:close-circle-linear" width={24} height={24} />
+    </button>
+    <p data-lightbox-hint aria-hidden="true" class="pointer-events-none fixed bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-paper/95 px-3 py-1.5 text-xs font-medium text-ink-2 shadow-lg">Toque para ampliar</p>
+  </dialog>
+
+  <script>
+    import '../../scripts/copy-prompt';
+    import '../../scripts/lightbox';
+  </script>
+</Base>

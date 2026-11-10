@@ -14,15 +14,17 @@ import logo from '../assets/marca/logo-empilhado-navy.svg';
   <nav
     class="mx-auto flex h-[5.5rem] w-full max-w-[1280px] items-center justify-between px-5 sm:px-8 lg:px-10"
   >
-    <a class="group flex items-center gap-3" href="#">
+    <a class="group flex items-center gap-3" href="/">
       <Image src={logo} alt="IA para Equipes by Ivory" class="h-[4.5rem] w-auto" loading="eager" />
     </a>
 
-    <div class="hidden items-center gap-8 md:flex">
+    {/* gap-5 no tablet: com cinco itens (desde Materiais) e gap-8, o "Por que
+        capacitar" quebrava em duas linhas em 768 px. */}
+    <div class="hidden items-center gap-5 md:flex lg:gap-8">
       {
         NAV_ITEMS.map((item) => (
           <a
-            class="relative text-sm text-ink-soft transition duration-300 ease-out hover:text-ink"
+            class="relative whitespace-nowrap text-sm text-ink-soft transition duration-300 ease-out hover:text-ink"
             href={item.href}
           >
             {item.label}

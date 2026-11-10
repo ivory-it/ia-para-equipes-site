@@ -23,6 +23,7 @@ enquanto trabalha numa. Situação em 24/09/2026:
 | `Investment.astro` ("Investimento") | **fechada**, seção nova logo após o Experience (ver "Investimento — decisões tomadas") |
 | `Contact.astro` ("Contato") | **fechada**, última seção nova, logo após o Investment (ver "Contato — decisões tomadas") |
 | `Header.astro` e `Footer.astro` | logo da IA para Equipes desde 23/09/2026 (ver "Logo — decisões tomadas"). Desde 06/10/2026, o menu leva às seções desta página: Por que capacitar (`#contexto`), Como funciona, Experiência e Investimento. Contato ficou de fora, porque os CTAs já levam até lá. Corporativa, Desenvolvedores, Jornada IA e Blog voltam quando essas páginas existirem. O `html` tem `scroll-padding-top: 5.5rem` (no `global.css`): o header é sticky com 88 px, e sem isso a âncora parava com o topo da seção escondido atrás dele. O `NAV_ITEMS` do `nav.ts` alimenta o header, o drawer mobile e a coluna Páginas do rodapé, e o `CTA` do header ("Iniciar teste grátis") saiu. No rodapé saíram a descrição, a coluna Recursos, o Twitter e o Dribbble, e os links "Feito para times focados" e "Comece grátis". Ficaram LinkedIn e Instagram, com os perfis da IA para Equipes desde 06/10/2026 (abrem em nova aba), e Privacidade, ainda com `#`. A grade do rodapé em `lg` é `1fr auto auto` com `gap-x-20`, para Páginas e Redes sociais ficarem juntas na direita. Com frações, sobrava um vão de uns 350 px entre elas. O copyright é "© 2026 Ivory." e leva `data-reveal-skip`: colado no fim da página, nunca passava dos 88% do reveal e ficava invisível. O `title` ("IA para Equipes by Ivory | Capacitação corporativa em IA") e a `description` do `index.astro` saíram do Pulsedesk em 07/10/2026, e o favicon também (ver "Favicon — decisões tomadas") |
+| `materiais/index.astro` e `materiais/radar-de-pendencias-copilot.astro` | **páginas novas desde 09/11/2026**: o índice dos materiais gratuitos, com um card por material, e o material do reels do Radar de Pendências. "Materiais" é o quinto item do menu e do rodapé (ver "Materiais — decisões tomadas") |
 | As oito seções de template (01 a 07 e `Cta.astro`) | **fora da página** desde 23/09/2026. Os arquivos continuam em `sections/` |
 
 Trocar o copy é uma mudança de produto, não só de texto. Seções inteiras deixam de fazer
@@ -369,6 +370,46 @@ O título é o mesmo texto dos CTAs, "Quero avaliar para minha equipe", desde 07
   180 px usa a onda sem alteração.
 - **Sem SVG.** O `simbolo_onda.svg` tem 171 KB de linhas finas, pesado para favicon e ilegível em
   16 px.
+
+## Materiais — decisões tomadas
+
+Os materiais gratuitos ficam em `src/pages/materiais/`. O primeiro é o
+`radar-de-pendencias-copilot.astro`, a entrega do reels do Radar de Pendências: quem comenta
+RADAR recebe o link por Direct. Por isso o desenho é pensado primeiro para o celular.
+
+- **Índice em `/materiais`, com um card por material.** Os cards saem de
+  `src/data/materiais/index.ts`, em ordem do mais recente para o mais antigo, e a imagem de cada
+  card é a capa og do material. Material novo precisa de três coisas: a página, a capa 1200×630 em
+  `public/og/<slug>.png` e a entrada nessa lista. O material leva um link "Todos os materiais" de
+  volta ao índice.
+- **"Materiais" é o quinto item do `NAV_ITEMS`,** e por isso aparece no header, no drawer e na coluna
+  Páginas do rodapé. Com cinco itens, o header usa `gap-5` no tablet e `gap-8` a partir de `lg`,
+  com `whitespace-nowrap`. Com `gap-8`, o "Por que capacitar" quebrava em duas linhas em 768 px.
+- **O menu e o logo usam caminhos absolutos** (`/#contexto`, `/`), porque o header aparece fora da
+  home. Na home, mesmo caminho com hash continua sendo rolagem na página.
+- **O prompt mora em `src/data/materiais/radar-prompt.ts`,** sem reformatar. O botão copia o
+  `textContent` do `<code>`, idêntico ao arquivo, e foi testado contra o clipboard real. O Windows
+  troca `\n` por `\r\n` ao colar, o que é normal. Os emojis 🔴🟡🔵 ficam, porque são conteúdo do
+  prompt e não decoração (§11). O botão do topo rola até `#prompt` e copia no mesmo clique, porque o
+  clipboard só aceita escrita dentro de um gesto do usuário.
+- **O bloco do prompt usa `whitespace-pre-wrap`,** que rola só na vertical e nunca de lado em
+  375 px. O botão Copiar fica fora da área que rola.
+- **Prints em `src/assets/materiais/radar/`, sem filtro,** com o componente
+  `src/components/materiais/Shot.astro`. A miniatura sai em WebP de 480, 960 e 1600 px. A versão de
+  1920 px só baixa no lightbox (`src/scripts/lightbox.ts`, com `<dialog>` nativo). No celular, um
+  toque alterna entre "caber na tela" e "tamanho real", porque o print inteiro em 375 px fica
+  ilegível.
+- **Nenhum print com dado pessoal ou de cliente.** O print do prompt colado foi recortado na janela
+  "Criar um agendamento", porque o canto mostrava a foto e o nome do Thiago. O print do e-mail de
+  aviso (nome, razão social, reunião) e o do resultado (cliente Lundin, nome de colega, foto) **não
+  foram publicados**. A seção "O que você recebe" fica só com texto até chegarem versões
+  anonimizadas.
+- **O og:image é uma capa da marca** (`public/og/radar-de-pendencias-copilot.png`, 1200×630), no
+  lugar do print do resultado. O `Base.astro` aceita `image` e `ogType` por página. A URL absoluta
+  sai do `SITE_URL`. Sem ele, aponta para `pulsedesk.vercel.app`.
+- **Os prints dos passos 4 a 6 (`radar-passo-4-dias-uteis.png` e `radar-passo-5-sem-termino.png`) mostram o título antigo do prompt** ("Assistente de Produtividade") e o horário
+  16:30. O texto da página sugere 7h30 "por exemplo". Quando forem refeitos, mantenha os nomes dos
+  arquivos.
 
 ## Armadilhas técnicas que já custaram tempo
 

@@ -44,6 +44,15 @@ export default defineConfig({
           'settings-minimalistic-linear',
           // Erro de envio do formulário de contato
           'danger-circle-linear',
+          // Material gratuito: Radar de Pendências (/materiais/...)
+          'copy-linear',
+          'alt-arrow-down-linear',
+          'arrow-down-linear',
+          'arrow-left-linear',
+          'magnifier-zoom-in-linear',
+          'lightbulb-linear',
+          'letter-linear',
+          'checklist-linear',
         ],
       },
     }),
