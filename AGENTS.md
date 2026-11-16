@@ -23,7 +23,8 @@ enquanto trabalha numa. Situação em 24/09/2026:
 | `Investment.astro` ("Investimento") | **fechada**, seção nova logo após o Experience (ver "Investimento — decisões tomadas") |
 | `Contact.astro` ("Contato") | **fechada**, última seção nova, logo após o Investment (ver "Contato — decisões tomadas") |
 | `Header.astro` e `Footer.astro` | logo da IA para Equipes desde 23/09/2026 (ver "Logo — decisões tomadas"). Desde 06/10/2026, o menu leva às seções desta página: Por que capacitar (`#contexto`), Como funciona, Experiência e Investimento. Contato ficou de fora, porque os CTAs já levam até lá. Corporativa, Desenvolvedores, Jornada IA e Blog voltam quando essas páginas existirem. O `html` tem `scroll-padding-top: 5.5rem` (no `global.css`): o header é sticky com 88 px, e sem isso a âncora parava com o topo da seção escondido atrás dele. O `NAV_ITEMS` do `nav.ts` alimenta o header, o drawer mobile e a coluna Páginas do rodapé, e o `CTA` do header ("Iniciar teste grátis") saiu. No rodapé saíram a descrição, a coluna Recursos, o Twitter e o Dribbble, e os links "Feito para times focados" e "Comece grátis". Ficaram LinkedIn e Instagram, com os perfis da IA para Equipes desde 06/10/2026 (abrem em nova aba), e Privacidade, ainda com `#`. A grade do rodapé em `lg` é `1fr auto auto` com `gap-x-20`, para Páginas e Redes sociais ficarem juntas na direita. Com frações, sobrava um vão de uns 350 px entre elas. O copyright é "© 2026 Ivory." e leva `data-reveal-skip`: colado no fim da página, nunca passava dos 88% do reveal e ficava invisível. O `title` ("IA para Equipes by Ivory | Capacitação corporativa em IA") e a `description` do `index.astro` saíram do Pulsedesk em 07/10/2026, e o favicon também (ver "Favicon — decisões tomadas") |
-| `materiais/index.astro` e `materiais/radar-de-pendencias-copilot.astro` | **páginas novas desde 09/11/2026**: o índice dos materiais gratuitos, com um card por material, e o material do reels do Radar de Pendências. "Materiais" é o quinto item do menu e do rodapé (ver "Materiais — decisões tomadas") |
+| `diagnostico-ia/index.astro`, `diagnostico-ia/video.astro` e `RadarCta.astro` | **Radar IA, desde 11/11/2026**: jornada interativa em cinco etapas (as sete telas do documento, sem a descoberta e o fechamento) com PDF executivo, em `/diagnostico-ia` (antes `/radar`, que redireciona), feita a partir do documento "Radar IA v1.6" (conversa guiada progressiva). Destaque na home entre o Experience e o Investment, e "Radar IA" é o quinto item do menu. O vídeo único ainda não existe: fica a moldura vazia (ver "Radar IA — decisões tomadas") |
+| `materiais/index.astro` e `materiais/radar-de-pendencias-copilot.astro` | **páginas novas desde 09/11/2026**: o índice dos materiais gratuitos, com um card por material, e o material do reels do Radar de Pendências. "Materiais" é o sexto item do menu e do rodapé, depois do Radar IA (ver "Materiais — decisões tomadas") |
 | As oito seções de template (01 a 07 e `Cta.astro`) | **fora da página** desde 23/09/2026. Os arquivos continuam em `sections/` |
 
 Trocar o copy é uma mudança de produto, não só de texto. Seções inteiras deixam de fazer
@@ -382,7 +383,7 @@ RADAR recebe o link por Direct. Por isso o desenho é pensado primeiro para o ce
   card é a capa og do material. Material novo precisa de três coisas: a página, a capa 1200×630 em
   `public/og/<slug>.png` e a entrada nessa lista. O material leva um link "Todos os materiais" de
   volta ao índice.
-- **"Materiais" é o quinto item do `NAV_ITEMS`,** e por isso aparece no header, no drawer e na coluna
+- **"Materiais" é o sexto item do `NAV_ITEMS`** (o quinto passou a ser o Radar IA em 11/11/2026), e por isso aparece no header, no drawer e na coluna
   Páginas do rodapé. Com cinco itens, o header usa `gap-5` no tablet e `gap-8` a partir de `lg`,
   com `whitespace-nowrap`. Com `gap-8`, o "Por que capacitar" quebrava em duas linhas em 768 px.
 - **O menu e o logo usam caminhos absolutos** (`/#contexto`, `/`), porque o header aparece fora da
@@ -406,10 +407,487 @@ RADAR recebe o link por Direct. Por isso o desenho é pensado primeiro para o ce
   anonimizadas.
 - **O og:image é uma capa da marca** (`public/og/radar-de-pendencias-copilot.png`, 1200×630), no
   lugar do print do resultado. O `Base.astro` aceita `image` e `ogType` por página. A URL absoluta
-  sai do `SITE_URL`. Sem ele, aponta para `pulsedesk.vercel.app`.
+  sai do `site` do `astro.config.mjs` (`https://iaparaequipes.com.br`, ou o `SITE_URL`, se definido).
 - **Os prints dos passos 4 a 6 (`radar-passo-4-dias-uteis.png` e `radar-passo-5-sem-termino.png`) mostram o título antigo do prompt** ("Assistente de Produtividade") e o horário
   16:30. O texto da página sugere 7h30 "por exemplo". Quando forem refeitos, mantenha os nomes dos
   arquivos.
+
+## Radar IA — decisões tomadas
+
+Jornada em `/diagnostico-ia`. O documento de referência é o "Radar IA — Jornada Interativa Completa", **v1.6**
+(11/11/2026, "Chat progressivo"), que mantém o conteúdo e as regras e simplifica a experiência
+(seções 3.6, 9.2, 10.6 e 12). A ilha React é `src/components/radar/RadarApp.tsx`; o copy está em
+`src/data/radar/`; as regras, em `src/scripts/radar/engine.ts`; o roteiro, em
+`src/components/radar/chat/script.ts`.
+
+- **Endereço `/diagnostico-ia` (desde 11/11/2026, pedido do Thiago; antes `/radar`).**
+  - **`/radar` é uma página mínima** (`src/pages/radar/index.astro`) que faz
+    `location.replace('/diagnostico-ia' + search + hash)`. O redirect do Astro, que também gera o
+    da Vercel, descartava a query. Com ele, os links já divulgados com `?access=` e UTMs perdiam o
+    token. A página fica fora do sitemap (`filter` no `astro.config.mjs`) e tem `noindex`.
+  - **`/radar/video`** usa o redirect do Astro, porque não leva query.
+  - **O `Referrer-Policy: no-referrer`** do `vercel.json` vale para os dois caminhos.
+  - **A API continua em `/api/radar/verify-access`**, que é interna.
+  - **Os assets em `public/radar/`** (logos, onda) mantêm o caminho.
+- **Nome dentro da ferramenta: "Descubra seu próximo passo com IA".** Por decisão do Thiago, vale
+  só ali: cabeçalho do chat, `<title>` e `h1` da página. Fora dela, nada muda:
+  - o menu, o destaque da home e a página do vídeo continuam "Radar IA";
+  - a origem do lead continua `origem: 'Radar IA'`, para o CRM não mudar.
+
+  O indicador de digitação diz só "Digitando…". O título do cabeçalho é grande (`text-lg`/`sm:text-xl`,
+  com `text-balance`, para o "IA" não ficar sozinho em 390 px) e não tem avatar: a onda fica só
+  nas mensagens.
+- **O painel se chama "Sua jornada"** (antes "Radar Vivo"), sem frase de status. O componente
+  continua `RadarVivo.tsx`.
+- **Tela 01:**
+  - o rótulo da etapa é "Meus desafios";
+  - a fala de abertura é a pergunta direta, "Quais situações são realidade da sua organização?"
+    (`CHALLENGES_INTRO.title`, no título grande). O apoio "Pode marcar mais de uma opção."
+    (`CHALLENGES_INTRO.hint`) vem embaixo, em texto de fala comum: no título, a frase inteira
+    pesava demais. O Thiago escreveu "é", e a concordância foi ajustada para "são".
+  - a caixa de resposta das perguntas com cartões (Tela 01 e Tela 04) fica sem texto de apoio: a
+    caixa de seleção de cada cartão já diz o que fazer;
+  - a transição depois da dica (`TIP_TRANSITION`) e três perguntas do retrato (Pessoas,
+    Segurança e Disseminação, em `mirror.ts`) foram reescritas pelo Thiago como perguntas
+    completas. Em 12–13/11/2026, as perguntas passaram a dizer "a empresa"/"a equipe", e não
+    "sua empresa"/"sua organização": a abertura virou "Quais situações são realidade na
+    empresa?", a de Pessoas, "Como a equipe utiliza IA atualmente?", e o retrato, "Este é o
+    retrato da empresa". As do documento eram frases abertas ("Quando alguém…"). As alternativas A–D não
+    mudaram.
+- **Opções com descrição viram cartões no compositor** (desafios e possibilidades), conforme a
+  referência do Thiago:
+  - ícone num círculo turquesa claro, título em Sora, descrição e caixa de seleção no canto;
+  - lado a lado em `lg`, duas colunas em `sm` e uma por linha no celular;
+  - a área das opções sobe para 50vh quando há cartões.
+
+  As outras respostas seguem como pílulas.
+- **A coluna do chat tem `min-w-0`.** Sem ele, o título longo do cabeçalho estourava 8 px na
+  horizontal em 390 px, porque um item de grid tem `min-width: auto`.
+
+Histórico, para ninguém voltar atrás sem querer:
+1. Uma tela por etapa. O Thiago achou informação demais e botões mudando de lugar.
+2. Chat com barra de resposta fixa no rodapé e cards de pílula que viravam.
+3. v1.5: chat com pílulas como mini editoriais, 4 motores visuais e "Adicionar ao meu plano". Ao
+   testar, virou excesso de cliques: confirmar, abrir pílulas, salvar, expandir.
+4. v1.6: poucos cliques, uma dica curta e o plano montado sozinho. Ao testar, o Thiago achou seco:
+   tudo chegava de uma vez, a pessoa tinha de ler a tela inteira para se situar, e não parecia um
+   chat de IA.
+5. **Atual:** a v1.6 com ritmo e cara de chat de IA (ver os dois itens a seguir).
+
+- **Ritmo de chat de IA (decisão do Thiago, diverge da v1.6).** Uma mensagem por vez:
+  1. pontos de digitação (`TypingDots`, ~450 ms + 6 ms por caractere, até 1,1 s);
+  2. o texto palavra a palavra (`Typewriter`, ~30 ms por palavra);
+  3. a mensagem seguinte. Cartões (dica, retrato…) entram com fade depois dos pontos.
+
+  As opções só aparecem quando a última fala termina. Tocar na conversa durante a digitação
+  mostra tudo de uma vez, sem frase de apoio junto aos pontos (a "Toque na conversa para ver tudo" saiu em 16/11/2026). A v1.6 proíbe "pensando"/streaming simulado (§10.6); o Thiago decidiu
+  ter o ritmo porque a conversa estava seca. O conteúdo continua o roteiro fixo, e nenhum texto diz
+  que a IA está "analisando".
+
+  Implementação (`RadarApp.tsx`): a conversa vira uma lista plana de itens (falas, resposta,
+  `after`), e `played` diz quantos já foram entregues. No servidor e no 1º render, tudo sai
+  completo (HTML útil, hidratação igual) e escondido com `motion-safe:invisible`. Se a hidratação
+  falhar (rede caiu, servidor local reiniciado com a aba aberta), a animação `radar-unhide`
+  mostra a conversa depois de 2,5 s, em vez de deixar a tela em branco (bug visto em 12/11/2026). Depois da
+  hidratação, o ritmo começa do zero. Com movimento reduzido, tudo aparece completo. O cabeçalho
+  ("Etapa X de 5", ver "Jornada curta") acompanha a mensagem que está chegando.
+- **Compositor fixo no rodapé** (`chat/Composer.tsx`), com a cara do campo de mensagem dos chats de
+  IA e sem texto livre:
+  - as respostas da vez aparecem como sugestões;
+  - na múltipla escolha e no "Continuar", um botão redondo de enviar **ao lado das opções**,
+    alinhado ao pé delas. Não há faixa embaixo nem texto de apoio ("Escolha uma resposta" saiu,
+    12/11/2026). A linha de status aparece só com aviso do PDF ou erro de campo, e "Digitando…"
+    ocupa o lugar das opções enquanto o Radar escreve;
+  - os cartões ficam em 4 colunas só em `xl`; abaixo, 2 colunas. Em 1024 px, com 4 colunas, a
+    área das opções estourava 17 px na horizontal;
+  - o chat (cabeçalho, conversa e compositor) tem até 860 px de largura (antes 760);
+  - nas perguntas de contato, um campo de texto; na entrega, "Baixar de novo" (ou "Tentar de novo").
+
+  Mensagens da IA sem balão, com o avatar da onda; as do visitante, em balão navy à direita.
+  `FollowLatest` rola até o fim quando as opções surgem: o compositor cresce e, no celular, a
+  pergunta ficava escondida.
+- **Sem "Alterar" nem "Minha jornada" (decisão do Thiago, diverge da v1.6, critério 7).** As
+  respostas não são editáveis; para refazer, recarrega-se a página. No celular, o botão do
+  cabeçalho abre só o Radar Vivo.
+- **Conversa guiada, sem LLM.** Pergunta curta → opções → o Radar Vivo reage na hora → dica ou
+  confirmação breve → próxima pergunta. Sem "digitando…", streaming simulado ou "analisando".
+  Resposta única envia no toque; a múltipla (desafios e possibilidades) tem um único botão de
+  enviar, desabilitado sem seleção.
+- **Nada é salvo à mão.** Não existem "Salvar", "Adicionar ao meu plano", "Remover", "Ver método",
+  "Próxima descoberta" nem contador. O plano é derivado (`derivedActions` em `engine.ts`): as 3
+  pílulas de cada desafio marcado (origem `declarado`), depois o próximo passo e as duas ações
+  complementares do retrato e a do objetivo (`sugerido`), sem duplicar por ID. O PDF separa "Você indicou" de "O Radar sugere".
+- **As 12 pílulas são biblioteca do PDF,** não do chat. Cada desafio marcado leva as três, com
+  texto integral, para o apêndice "Recomendações para os desafios indicados" (4 desafios = 12).
+  Não volte a mostrá-las como cards: a v1.6 proíbe.
+- **Uma dica curta na Tela 01** (`TIPS` em `src/data/radar/reactions.ts`, uma por pílula). É sorteada
+  uma vez, ao confirmar os desafios, entre as pílulas deles (`pickTip`, ação `pickTip` com o
+  número sorteado no despacho, para o reducer ficar puro). Fica estável na sessão e só muda se a
+  pílula deixar de pertencer aos desafios marcados. Só a dica "Comece pelas atividades, não pelas
+  ferramentas." vem do documento; as outras 11 foram escritas para o site e **estão em revisão com
+  o Thiago**. O Radar destaca o ponto do desafio da dica (`highlight`).
+- **Um estilo de cartão de opção e um de dica** (`Note` em `chat/blocks.tsx`). Composições fora do
+  balão só onde a v1.6 manda: retrato, vídeo, síntese do caminho e fechamento.
+- **Avatar: a onda oficial** (`public/radar/onda.png`, recortada do `simbolo_onda.png` da skill da
+  marca, sem redesenhar) num círculo navy. Nada de ícone genérico ou robô.
+- **shadcn/ui AI Elements, por decisão do Thiago.** Foram trazidos só o `Conversation` (com
+  `use-stick-to-bottom`, que acompanha a pergunta atual sem pular o texto em leitura) e o `Message`,
+  em `src/components/ai-elements/`, mais o `Button` em `src/components/ui/`. O `components.json` e o
+  `cn` (`src/lib/utils.ts`) foram criados à mão, sem `shadcn init`, para o init não reescrever o
+  `global.css`. Ajustes nos arquivos gerados, registrados no topo de cada um:
+  - o `Message` perdeu o SDK `ai`, o `streamdown`, anexos e ramificações (não há LLM);
+  - o `Conversation` usa ícone Solar;
+  - o `Button` usa `muted` no hover, porque aqui `accent` é o turquesa.
+
+  As variáveis do shadcn (`--color-background`, `--color-primary`…) apontam para os tokens da marca
+  num `@theme inline` do `global.css`, sem nenhuma cor nova, e a home ficou idêntica (captura antes
+  e depois). Componente novo: `npx shadcn@latest add <url do registry>`. Confira o `global.css` e
+  troque imports de `lucide-react`.
+- **Motion for React** (`motion/react`) nas entradas das falas e dos cartões e no `whileTap`. As
+  animações só começam depois da hidratação (`hydrated`), porque o `useReducedMotion` dá valores
+  diferentes no servidor e no navegador e quebrava a hidratação. Com movimento reduzido, nada anima.
+- **Ícones Solar, não Lucide.** A v1.6 cita Lucide; o Thiago decidiu manter o Solar, que é o do
+  resto do site. `scripts/radar-icons.mjs` copia só os usados para `src/components/radar/icons.ts`.
+- **O chat tem altura fixa** (tela menos header): o `Conversation` rola por dentro e o compositor
+  fica no pé. O Radar Vivo
+  (variantes `full`, `mini` e `portrait`) fica ao lado no desktop.
+- **Dependências novas no `optimizeDeps.include`** do `astro.config.mjs` (`motion/react`,
+  `use-stick-to-bottom`, `radix-ui`, `class-variance-authority`, `clsx`, `tailwind-merge`). Sem isso,
+  o Vite as descobre no meio da sessão e as ilhas somem (504 "Outdated Optimize Dep"). Acrescentou
+  dependência ao Radar, acrescente aqui também.
+- **Copy em dados, não no markup.** São cerca de 250 trechos (pílulas, perguntas, cenários,
+  textos do PDF). Cada arquivo de `src/data/radar/` corresponde a uma tela do documento. Ação
+  sugerida aponta para um id de `actions.ts`, nunca repete o texto: é o id que impede ação
+  duplicada no plano (§9.2).
+- **Retrato consultivo da Tela 02 (matriz revisada pelo Thiago, 11/11/2026).** Os 10 cenários
+  do documento deram lugar a 22 regras consultivas (G1–G4 segurança aplicada, V1–V4 mapeamento e
+  priorização, C capacitação, N visibilidade, I primeiro piloto, D/E disseminação e expansão, B
+  fundamentos). Elas dividem as 256 combinações sem sobra. Na versão antiga, duas frases cobriam
+  metade dos casos e a combinação ABBB caía numa frase genérica.
+  - **Fonte da verdade:** a planilha `docs/radar/matriz-retrato-tela02.xlsx` (abas "Regras
+    consultivas" e "Matriz revisada").
+    - **Revisão de linguagem (16/11/2026, pedido do Thiago: "genérico, pouco consultivo, parece
+      IA").** As regras não mudaram; mudaram os 122 textos (22 regras, 12 blocos de valor, 9 atenções
+      e 13 ações complementares). Critérios:
+      - o "Por que essa leitura?" diz o que acontece na empresa e o risco, sem repetir as respostas
+        ("Você informou…");
+      - a descoberta é um diagnóstico em linguagem de gestor;
+      - o passo diz quem envolver e o que decidir, sem jargão ("multiplicadores", "inventário",
+        "protocolo");
+      - a atenção é um risco de verdade, e não um elogio.
+
+      A aba "Revisão 16-11" traz antes e depois. A versão anterior está em
+      `matriz-retrato-tela02-v1.xlsx`, ao lado.
+    - O script `scripts/radar-import-retrato.py` (openpyxl) gera `src/data/radar/portrait.ts`.
+      Não edite esse arquivo à mão.
+    - Antes de gravar, o script confere três coisas: que há 256 códigos, que cada código casa só
+      com o critério da sua regra e que os textos de cada regra são iguais em todas as linhas.
+    - Mudou a planilha: rode `python scripts/radar-import-retrato.py docs/radar/matriz-retrato-tela02.xlsx`
+      e depois `npm run check:radar`.
+  - **O que cada combinação devolve:**
+    - da regra: descoberta, "Por que essa leitura?", próximo passo e entrega;
+    - da combinação: o bloco de valor ("O que já existe a favor" ou, em AAAA e DAAA, "O que
+      ainda precisamos descobrir"), a nota de atenção e duas ações complementares.
+  - **No chat (cartão do retrato):**
+    - o anel com rótulos é o único resumo por dimensão: a lista de estágios saiu, e a
+      "Leitura atual" do painel também (regra da planilha: não repetir o gráfico em texto);
+    - ao lado do anel, a descoberta e o porquê; embaixo, o bloco de valor e o próximo passo com
+      a entrega. A nota de atenção saiu do cartão em 13/11/2026 (pedido do Thiago) e ficou só no
+      PDF.
+  - **No PDF:**
+    - as ações complementares saem só no PDF, por decisão do Thiago;
+    - no plano de ação, o próximo passo e as duas ações complementares entram como "O Radar
+      sugere" (ids `retrato-passo`, `retrato-extra-1` e `retrato-extra-2`);
+    - a página 02 traz a descoberta e o porquê; a página 03, a tabela de dimensões, o bloco de
+      valor, o próximo passo e a atenção.
+  - **"Não sei" em Pessoas:** nas regras N é a própria descoberta. Nas demais combinações com
+    Pessoas D, a atenção avisa que falta visibilidade, não competência. A checagem garante as 64.
+  - **Pessoas nunca chega a "Mais estruturado".** A D de Pessoas é "Não sei", e o arco de Pessoas
+    nunca fica cheio. Ficou assim por enquanto.
+- **Checagem.** `node scripts/radar-engine-check.ts` (ou `npm run check:radar`) cobre:
+  - as 256 combinações contra a contagem da planilha;
+  - os exemplos validados (ABBB → B2, AAAA → B1, CCCC → E1, DDDD → N2);
+  - o "Não sei" em Pessoas;
+  - o plano derivado sem id repetido;
+  - a dica, o nome do PDF e o token.
+
+  Os imports desses arquivos têm `.ts` para o `node` rodar sem build.
+- **Sem persistência.** Estado só em memória (`state.ts`), sem banco e sem localStorage. A página
+  avisa antes de sair quando há respostas. O PDF é gerado no navegador (`@react-pdf/renderer` e
+  `qrcode`, carregados só no clique: o react-pdf tem 1,2 MB).
+- **Contato pedido no chat, sem modal (desde 11/11/2026, decisão do Thiago).** Na conversa a pessoa
+  já está no ritmo de responder, e cada pergunta é pequena, o que costuma converter melhor que um
+  formulário num modal.
+  - **As perguntas:** depois do cenário, o Radar emenda "Seu plano está quase pronto. Como posso te
+    chamar?", com a nota de privacidade ("As respostas do diagnóstico vão junto"). Em seguida vêm:
+    1. o cargo, em opções (Diretoria ou C-level, Gestão de área, RH ou T&D, TI; "Outro" abre o
+       texto);
+    2. o e-mail corporativo;
+    3. o WhatsApp.
+
+    Os textos estão em `src/data/radar/contact.ts`.
+  - **No compositor,** as perguntas de texto viram um campo de uma linha, com o botão de enviar
+    (resposta `kind: 'text'` em `script.ts`).
+    - A validação usa `emailError`, que recusa domínio pessoal e formato incompleto, e
+      `phoneError`/`maskPhone`.
+    - O erro aparece na linha de status (`aria-live`). Sem erro, a linha não tem altura: antes sobrava uma faixa vazia
+      embaixo do campo.
+  - **Na entrega,** o lead vai ao receptor pelo `src/scripts/lead-api.ts` (`sendLead`) com o
+    contato, `origem: 'Radar IA'` e as respostas da jornada (`leadFields`). Com 202, o PDF é
+    gerado sozinho, e o compositor fica com "Baixar de novo". Com falha, aparece "Tentar de
+    novo".
+    - **Exceção para testes locais:** em `localhost`, `127.0.0.1` ou `[::1]` (`isLocalHost`), uma
+      falha no envio libera o PDF com o aviso "Ambiente local: o envio do lead falhou (CORS)…".
+      O backend não libera `localhost` no CORS, e sem isso não dava para testar o PDF. Em
+      produção não há exceção.
+    - Para testar sem bater no backend, intercepte `**/api/lead` (`route.abort()` simula o CORS). O contato fica só em memória, em `RadarState.contact`.
+  - **Com o token de acesso** (`RadarState.directPdf`), as perguntas são puladas: depois do
+    cenário vem só "Baixar meu plano em PDF", e nenhum lead é enviado.
+  - **Saíram** o modal `#radar-lead`, o "Quero conversar com a Ivory" e a nota "Você escolheu onde
+    começar" depois do objetivo.
+  - **O `LeadForm.astro` e o `lead-form.ts` voltaram a ser só da home.** O envio e as validações
+    passaram para o `lead-api.ts`, compartilhado. O payload da home não mudou (testado com stub).
+    `utm_term` está na lista de UTMs.
+- **As respostas vão ao CRM (desde 11/11/2026, decisão do Thiago; antes o diagnóstico não era
+  enviado).** Campos:
+  - `funcionarios` (grupo inicial) e `ferramentas` (rótulos separados por vírgula), com os nomes
+    do formulário da home;
+  - `radar_desafios`, `radar_pessoas`, `radar_processos`, `radar_seguranca` e
+    `radar_disseminacao` ("Estado: alternativa");
+  - `radar_codigo` (ex.: ABBB), `radar_regra` (ex.: B2) e `radar_descoberta`;
+  - `radar_possibilidades`, `radar_objetivo` e `radar_indicador`.
+
+  Só vai o que foi respondido. O backend aceita campos novos sem mudança.
+- **Jornada curta (desde 11/11/2026, pedido do Thiago).**
+  - "Descobrir oportunidades para minha equipe" leva direto ao vídeo: saiu a descoberta em
+    diálogo (Tela 03).
+  - Depois de "Este é o seu cenário inicial." vêm as perguntas de contato e o PDF: saiu a Tela 07,
+    com a linha do tempo, a prévia e o nome da empresa. O PDF sai sem a empresa na capa e no
+    nome do arquivo.
+  - O cabeçalho mostra "Etapa X de 5" (`DISPLAY_STEP` em `script.ts`; as perguntas de contato são "Etapa 5 de 5 · Seu plano"): as telas internas seguem
+    a numeração do documento, que o painel e o motor usam.
+  - Com o caminho completo, o centro do anel vira "Síntese".
+  - O cartão "Este é o seu cenário inicial." mostra só objetivo, grupo, ambiente e indicador. O
+    roteiro (Preparar → Expandir) e o "Como o IA para Equipes se encaixa" saíram do chat em
+    13/11/2026 (pedido do Thiago) e seguem no PDF.
+  - A pergunta das possibilidades segue o padrão da Tela 01: título grande e "Pode marcar mais
+    de uma opção." embaixo.
+- **Ferramentas em múltipla escolha:** Microsoft 365 Copilot, Claude, Gemini, ChatGPT, Outros
+  (antes "Ambos") e "Ainda estamos avaliando". Com uma marcada, aparece a nota dela; com várias,
+  a `TOOLS_MULTI_NOTE`. O `RadarState.tools` é uma lista.
+  Desde 13/11/2026, as opções mostram os **logos reais das ferramentas, em cinza**
+  (`src/data/radar/tool-logos.ts`, campo `logo` da opção, em `currentColor`): Microsoft Copilot do
+  selfh.st/icons (CC BY 4.0, o mesmo do `Structure.astro`), e Claude, ChatGPT e Gemini
+  (`googlegemini`) do simple-icons (CC0). Selecionado, o logo fica verde-escuro, como os ícones.
+  "Outros" e "Ainda estamos avaliando" seguem com ícone Solar.
+- **Token de acesso (`?access=`).** Dispensa o formulário antes do PDF para leads já conhecidos.
+  Formato `payload.hmac` (HMAC-SHA256, escopo `radar:pdf:direct`, validade), em
+  `src/lib/radar-token.ts`. Quem valida é `src/pages/api/radar/verify-access.ts`, a única rota sob
+  demanda do site (por isso o adapter `@astrojs/vercel`; o resto continua pré-renderizado). Fail
+  closed: sem segredo, token inválido, expirado ou falha de rede, o formulário continua exigido. O
+  token sai da URL na leitura, e `/diagnostico-ia` tem `Referrer-Policy: no-referrer`. Gere links com
+  `node scripts/radar-token.ts --dias 30 --label relacionamento` (precisa do
+  `RADAR_ACCESS_SECRET`, o mesmo da Vercel). É credencial de portador: quem tem o link usa até
+  expirar. Como o PDF nasce no navegador, o cadastro é controle comercial, não proteção
+  criptográfica do arquivo.
+- **Vídeo "A IA pode fazer muito mais do que você imagina" (desde 16/11/2026).** Tela 04 do chat e
+  página pública `/diagnostico-ia/video`, com o mesmo `VideoSlot.tsx`.
+  - **Duas versões em `public/radar/video/`**, servidas como estão. São recompressões dos renders
+    de `ivory-videos/projects/2026-11-ia-possibilidades/renders/`; os originais (~36 MB cada)
+    ficam lá.
+    - `ia-possibilidades-desktop.mp4`: 1920×1080, 10,3 MB;
+    - `ia-possibilidades-reels.mp4`: 720×1280, 6,2 MB.
+
+    Mesmo comando para as duas (no reels, com `-vf scale=720:1280`):
+    `ffmpeg -i <render> -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -c:a aac -b:a 96k -movflags +faststart <saída>`.
+    Para uma v2, recomprima e mantenha os nomes.
+  - **Capas:** `ia-possibilidades-desktop.jpg` e `ia-possibilidades-reels.jpg`, o quadro de 0:12.
+  - **Escolha da versão:** `VIDEO_MOBILE_QUERY` (celular em pé até 767 px) fica com o reels; o
+    resto fica com o desktop. A escolha é feita depois da hidratação (o servidor sempre desenha a
+    versão desktop) e acompanha a orientação até o primeiro play. Depois disso não troca, para
+    não reiniciar o vídeo.
+  - **Começa com um toque** (decisão do Thiago): capa e `preload="none"`, porque tem narração e
+    nada deve baixar antes do play. Testado: nenhuma requisição ao `.mp4` antes do play.
+  - **A legenda está gravada na imagem.** A faixa `ia-possibilidades.vtt` vai no player desligada,
+    para não duplicar o texto.
+  - **Moldura:** 16:9 no desktop; no reels, 9:16 centralizado com `max-h-[60vh]`.
+  - **Só o player, sem atalhos de capítulo** (pedido do Thiago, 16/11/2026). Os tempos continuam
+    em `chapterStart` (`capabilities.ts`, do `capitulos.txt` do render: Sistemas 0:17, Tarefas
+    programadas 1:28, Arquivos 1:48, Entregas 2:08), para quando voltarem a ser usados.
+  - **Config:** `VIDEO_READY`, `VIDEO_SOURCES`, `VIDEO_MOBILE_QUERY` e `VIDEO_CAPTIONS`, em
+    `src/data/radar/config.ts`. O PDF aponta para `/diagnostico-ia/video`.
+- **O link e o QR do vídeo no PDF usam o domínio do site**, `https://iaparaequipes.com.br` (padrão
+  do `astro.config.mjs` desde 11/11/2026; `SITE_URL` sobrescreve). O QR e o link do site, na
+  contracapa, vêm de `PDF.social`.
+- **Radar Vivo híbrido (desde 11/11/2026, referência do Thiago).** A versão anterior juntava
+  anéis tracejados, pontos de desafio, losangos de possibilidade e a trilha num SVG só, e ficou
+  poluída. Agora (`RadarVivo.tsx`):
+  - **em cima, um anel com quatro arcos nomeados** (Pessoas, Processos, Segurança, Disseminação)
+    e um disco navy no centro ("Sua organização" → "Retrato atual" → "Síntese" com o caminho completo).
+    O arco fica cinza até a pergunta da dimensão ser respondida e então ganha cor e estágio.
+    O nome e o estágio ficam em cima e embaixo do anel, em linhas: sobrepostos ao anel, quebravam
+    em 280 px;
+  - **embaixo, um bloco de texto que cresce por etapa:**
+    1. Desafios identificados (chips; o da dica ganha anel turquesa);
+    2. Leitura atual e Principal descoberta (`scenario.insight`);
+    3. Interesses no mapa (Telas 3–4);
+    4. Objetivo;
+    5. Caminho inicial (grupo, ambiente, sinal de sucesso).
+
+    Fecha com o Próximo foco (`NEXT_FOCUS`, uma frase por etapa, em `reactions.ts`, em revisão
+    com o Thiago).
+  - **Preenchimento em quatro degraus fixos, diverge do §10.1** ("sem área proporcional"):
+    Primeiros passos ¼ do arco, Em desenvolvimento ½, Em estruturação ¾, Mais estruturado cheio,
+    com o turquesa mais forte a cada degrau. "Não identificado" é a trilha tracejada. A referência
+    do Thiago pede isso. Para não virar nota, o estágio está sempre escrito, não há número nem
+    porcentagem, e o rodapé diz que não é medição.
+  - **Variantes:** `full` (painel e folha do celular, com `heading={false}` na folha, que já tem
+    título), `mini` (só o anel, no botão do cabeçalho) e `portrait` (anel com rótulos, no cartão
+    do retrato). A trilha saiu do Radar: continua no cartão de cenário e no PDF.
+  - As coordenadas são arredondadas: sem isso, servidor e navegador divergiam no último dígito e
+    o React acusava erro de hidratação.
+  - **Painel lateral:** `top-[6rem]` e `max-h-[calc(100dvh-6.5rem)]`, o máximo abaixo do header,
+    com `p-4`, espaçamentos justos e o anel em 54% da largura (66% no cartão do retrato). Assim, o
+    fim da jornada cabe sem rolagem em 1440×900 (medido: `scrollHeight` igual a `clientHeight`).
+    A rolagem interna fica como reserva para telas mais baixas.
+  - **Ao responder, a página volta ao topo** (`window.scrollTo` em `respond`). A página e o chat
+    têm rolagem, e a da página às vezes rolava sem querer.
+  - **Sem a nota de turma grande no chat:** "Mais de 50 colaboradores" não traz mais a fala sobre
+    turmas de 50. A nota continua no PDF.
+  - Sem rodapé "Não é uma nota": o Thiago tirou essa frase do painel e do cartão do retrato.
+- **PDF executivo visual (redesenho de 11/11/2026, pedido do Thiago: "monótono, muito texto").**
+  São blocos visuais no lugar de parágrafos, seguindo a skill da marca:
+  - fundo branco com malha sutil no topo;
+  - Navy como tinta e Turquesa como acento;
+  - Navy sólido só na capa, no card da descoberta, no card do vídeo e na contracapa;
+  - a onda uma vez, na capa.
+
+  Páginas:
+  1. **Capa:** título, subtítulo "Primeiros passos", "Preparado para {nome} · {cargo}" com a data
+     (sem contato, com o token, só a data) e a onda grande cortada na borda. O chip "Kit do
+     patrocinador de IA" saiu em 13/11/2026.
+  2. **Onde vocês estão** (desde 13/11/2026 junta o antigo resumo e a página do retrato, que
+     saiu):
+     - card Navy com a descoberta e o porquê, e o anel pequeno com os 4 estágios;
+     - tiles de objetivo, "Primeiro grupo a capacitar" (antes "Grupo inicial", que ficava solto)
+       e sinal de sucesso;
+     - os 4 temas com o resumo e a ressalva de autodeclaração;
+     - o bloco de valor e a atenção;
+     - chips dos desafios.
+
+     Saíram "Seu primeiro passo" e "Recomendação de partida": o passo fica em "O Radar
+     sugere", no plano de ação.
+  3. **Oportunidades:** grade 2×2 com ícones e o card do vídeo com QR.
+  4. **Plano de ação:** roteiro em linha do tempo; "Você indicou" em checklist; "O Radar sugere"
+     em card com borda turquesa.
+  5. **Proposta:** tiles, chips de competências, condições em checklist, decisões em stepper e
+     "Como a Ivory pode apoiar".
+  6. **Apêndice de recomendações:** em fluxo contínuo, com faixa Navy por desafio
+     (`minPresenceAhead`); com quebra por desafio, sobravam páginas quase vazias.
+  7. **Contracapa institucional:** logo empilhado branco, "Vamos dar o próximo passo com a sua
+     equipe.", site, LinkedIn e Instagram com link (`PDF.social`, os endereços do rodapé do site)
+     e o QR do site.
+
+  Com 4 desafios, são 12 páginas.
+  - **Saíram** o apêndice "Argumentos para a reunião" (FAQ e riscos), as "Três mensagens para a
+    liderança" e o parágrafo-resumo (`summary` e `messages` do `planModel`).
+  - **Ícones:** o PDF desenha os ícones Solar de `icons.ts` (`SolarIcon` lê os `path`, `circle`,
+    `ellipse` e `rect`). O anel é o mesmo do site, com 4 degraus.
+  - **Arquivos novos em `public/radar/`:** `onda-capa.png` (900 px) e `logo-empilhado-branco.png`,
+    recortados da skill da marca sem outra edição.
+  - **Fontes:** em WOFF em `public/fonts/radar/` (o react-pdf não lê WOFF2).
+  - **Revisão visual:** salve o PDF pelo Playwright e renderize com PyMuPDF (`fitz`, instalado) em
+    PNG.
+- **Menu com seis itens.** No tablet, `gap-4` e 13 px; com 14 px o menu encostava no logo em 768 px.
+- **Teste sem lead real:** intercepte `**/api/lead` (Playwright `page.route`) devolvendo 202.
+
+## Skill de design Taste (instalada em 16/11/2026)
+
+A skill `design-taste-frontend` (Taste Skill 2.5.1, de `Leonxlnx/taste-skill`) fica em
+`.claude/skills/design-taste-frontend/`. A versão está travada no `skills-lock.json`, e
+`npx skills update -p` atualiza.
+
+**A Taste é uma consultora, não executora (decisão do Thiago, 16/11/2026).** Ela só entra quando o
+Thiago pede, e o que ela indica é sugestão para ele decidir, nunca mudança aplicada direto.
+
+- **Só sob pedido.** O `SKILL.md` instalado tem `disable-model-invocation: true`: o agente não
+  aciona a skill sozinho, nem quando a tarefa parece de design. O Thiago chama com
+  `/design-taste-frontend` ou pedindo em palavras ("pergunta para a Taste", "o que a Taste acha").
+  Fora disso, a skill não é lida nem usada.
+  - **Depois de `npx skills update`,** recoloque essa linha no frontmatter, porque a atualização
+    sobrescreve o arquivo.
+- **Como responder a uma consulta:**
+  1. Leia o `SKILL.md` e as referências que tocam o pedido (`copy.md`, `layout-v4.md`,
+     `sections.md`, `motion.md`…).
+  2. Olhe a página ou a seção pedida, com captura em 1440 e 390 px se for visual.
+  3. Devolva um parecer, e não um diff. Para cada recomendação, diga:
+     - o que a Taste observa;
+     - onde (arquivo ou seção);
+     - por que importa;
+     - se é compatível com a marca e com este arquivo ou se conflita (e com qual decisão).
+  4. Separe o que dá para fazer já do que pediria rever uma decisão registrada. Uma decisão
+     registrada só muda com o aval do Thiago.
+  5. **Não mexa em nada.** O que for aplicado sai de um pedido seguinte do Thiago e segue o fluxo
+     normal (branch, check, build, registro aqui).
+- **O que não rodar neste projeto:**
+  - o `gate.mjs` com `--start` (ele arma uma "build" e trava o fim das respostas até passar);
+  - o `start.mjs deal`/`css`/`brand` e o `deal.mjs` do layout;
+  - o `photos.mjs` e o `icons.mjs` (baixam fotos e ícones de fora);
+  - a cópia do kit `assets/` para `public/`.
+
+  Os checadores só de leitura (`copy-lint.mjs`, `consistency.mjs`, `shoot.mjs`, `perf.mjs`) podem
+  servir de apoio ao parecer, quando o Thiago pedir.
+- **O que vale registrar.** Quando o Thiago aprovar uma recomendação, a decisão entra na seção da
+  página correspondente, com o racional, como as demais.
+- **O que o Thiago já respondeu às consultas (16/11/2026):**
+  - **Bordões comerciais ficam.** "Toda transformação começa com um primeiro grupo." e "E se você
+    pudesse começar a transformar sua equipe amanhã?" são de propósito: o Radar é entrada de lead.
+    Não aponte de novo a §8 nem as regras de copy da Taste para eles.
+  - **Nenhum rótulo de formulário no chat.** As perguntas de contato são uma conversa de agente de
+    IA, e o campo segue só com o placeholder.
+
+### Segunda skill: `redesign-existing-projects` (auditoria de site existente)
+
+- **O que é:** um checklist de auditoria para sites prontos (tipografia, cor, layout, estados,
+  conteúdo, componentes, ícones, código e o que costuma faltar). Fica em
+  `.claude/skills/redesign-existing-projects/SKILL.md`.
+- **De onde veio:** o autor aposentou essa skill na v2.1.1 do `leonxlnx/taste-skill` e depois a
+  removeu do repositório, então o `npx skills add` não acha mais. O arquivo foi copiado da última
+  versão no histórico (commit `e04409a`, de 08/10/2026), sem edição além do frontmatter. Não está
+  no `skills-lock.json`, e o `npx skills update` não mexe nele.
+- **Segurança:** é só texto. Não tem script, hook nem acesso à rede.
+- **Uso:** o mesmo modo consultor da Taste.
+  - Tem `disable-model-invocation: true`. O Thiago chama com `/redesign-existing-projects` ou
+    pedindo a revisão "com a redesign".
+  - O método dela é Scan → Diagnose → Fix. Neste projeto vale só Scan e Diagnose: o Fix vira
+    parecer.
+- **O que conflita com a marca:**
+  - a troca de fonte (Geist, Outfit, Satoshi), que é o primeiro item da prioridade dela;
+  - o grão, os gradientes e o glassmorphism;
+  - as fotos placeholder do Picsum;
+  - o smooth scroll com inércia;
+  - a troca de ícones (Phosphor, Heroicons).
+
+  Aqui ficam Sora + Poppins, Solar, os tokens do `global.css` e a rolagem nativa.
+
+Ela foi feita para criar sites do zero e traz regras próprias. Neste projeto, **a marca e as
+decisões deste arquivo vencem**:
+
+- **Ícones.** A Taste pede ícones coloridos de verdade e Lucide. Aqui valem o Solar e a regra
+  anti-rainbow (§11): logos de terceiros em cinza, a não ser os selos já aprovados.
+- **Paleta e fontes.** A Taste sorteia paleta e par tipográfico (`start.mjs deal`). Aqui são os
+  tokens do `global.css` e Sora + Poppins. Não rode o `deal` nem o `css` neste projeto.
+- **Movimento.** A Taste proíbe fade-in no scroll. O `reveal.ts` do site é uma decisão do projeto e
+  fica.
+- **Fotos e efeitos.** A Taste busca fotos de banco (Wikimedia, Picsum) e põe shaders em páginas de
+  tecnologia. Aqui só entram fotos e efeitos aprovados pelo Thiago.
+
+Onde ela mais ajuda: um olhar de fora sobre layout, hierarquia, ritmo das seções, copy genérica
+("cara de IA"), estados de hover e foco, e como a página se comporta em 390 px.
+
+Quando o Thiago aciona a skill, ela registra um hook de `Stop` que roda o `scripts/gate.mjs`. Sem
+uma build armada pelo `--start`, o gate não bloqueia. Os checadores gravam em `.taste-skill/`, que
+está no `.gitignore`.
 
 ## Armadilhas técnicas que já custaram tempo
 

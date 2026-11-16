@@ -1,0 +1,50 @@
+---
+/**
+ * Página pública e fixa do vídeo único do Radar IA. O PDF e a Tela 07 apontam
+ * para cá (link e QR). Enquanto o vídeo está em produção (`VIDEO_READY` em
+ * `src/data/radar/config.ts`), mostra a moldura vazia com os capítulos.
+ */
+import Base from '../../layouts/Base.astro';
+import { Icon } from 'astro-icon/components';
+import VideoSlot from '../../components/radar/VideoSlot';
+import { CAPABILITIES } from '../../data/radar/capabilities';
+
+const title = 'A IA pode fazer muito mais do que você imagina | IA para Equipes';
+const description =
+  'Uma animação em duas vozes com quatro possibilidades da IA no trabalho: sistemas, tarefas programadas, arquivos e entregas profissionais.';
+---
+
+<Base {title} {description} image={{ src: '/og/radar.png', alt: 'Radar IA: descubra oportunidades de IA na sua empresa' }}>
+  <div class="relative overflow-hidden px-5 pt-14 pb-20 sm:px-8 sm:pt-20 lg:px-10 lg:pb-24" data-reveal-skip>
+    <div class="relative z-10 mx-auto w-full max-w-[1080px]">
+      <p class="text-sm font-semibold uppercase tracking-[0.18em] text-accent-ink">Radar IA · Vídeo</p>
+      <h1 class="mt-5 font-display text-4xl font-medium tracking-tighter text-ink sm:text-5xl lg:leading-[1.05]">A IA pode fazer muito mais do que você imagina.</h1>
+      <p class="mt-6 max-w-2xl text-base leading-7 text-ink-soft sm:text-lg">Uma conversa entre um profissional e a IA, em quatro capítulos: sistemas, tarefas programadas, arquivos e entregas profissionais.</p>
+
+      <div class="mt-10">
+        <VideoSlot client:visible />
+      </div>
+
+      <div class="mt-12 grid gap-4 md:grid-cols-2">
+        {CAPABILITIES.map((c) => (
+          <div class="rounded-3xl border border-ink-2/15 bg-paper/[0.6] p-6">
+            <h2 class="font-display text-lg font-medium tracking-tight text-ink">{c.label}</h2>
+            <p class="mt-2 text-[15px] leading-6 text-ink-2">{c.example}</p>
+            <p class="mt-3 text-sm leading-6 text-ink-soft">{c.caveat}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-12 flex flex-col items-start gap-4 rounded-3xl border border-accent-ink/20 bg-paper p-6 shadow-xl shadow-ink/[0.08] sm:flex-row sm:items-center sm:justify-between sm:p-8">
+        <div>
+          <p class="font-display text-xl font-medium text-ink">E se sua equipe também soubesse trabalhar assim?</p>
+          <p class="mt-1 text-[15px] text-ink-soft">Faça o Radar IA e leve um plano em PDF para a liderança.</p>
+        </div>
+        <a href="/diagnostico-ia" class="group inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-accent-ink px-6 py-3.5 text-sm font-semibold text-paper shadow-2xl shadow-ink/20 transition duration-300 ease-out hover:bg-accent-ink-strong">
+          Fazer o Radar IA
+          <Icon name="solar:arrow-right-linear" width={18} height={18} class="transition duration-300 ease-out group-hover:translate-x-0.5" />
+        </a>
+      </div>
+    </div>
+  </div>
+</Base>

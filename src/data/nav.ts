@@ -14,6 +14,8 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { label: 'Como funciona', href: '/#como-funciona' },
   { label: 'Experiência', href: '/#experiencia' },
   { label: 'Investimento', href: '/#investimento' },
+  // Página própria: a jornada interativa do Radar IA (src/pages/diagnostico-ia/).
+  { label: 'Radar IA', href: '/diagnostico-ia' },
   // Página própria: o índice dos materiais gratuitos (src/data/materiais/index.ts).
   { label: 'Materiais', href: '/materiais' },
 ] as const;

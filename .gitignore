@@ -19,3 +19,6 @@ Thumbs.db
 # logs
 *.log
 npm-debug.log*
+
+# taste-skill (pasta de trabalho dos checadores)
+.taste-skill/

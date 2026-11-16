@@ -1,0 +1,30 @@
+---
+/**
+ * Radar IA — jornada interativa (documento "Radar IA v1.6"), em /diagnostico-ia.
+ * Dentro da ferramenta, o nome exibido é "Descubra seu próximo passo com IA".
+ * A jornada é a ilha `RadarApp`. Os dados de contato são pedidos dentro do
+ * chat, antes do PDF (sem modal), e o envio usa `src/scripts/lead-api.ts`.
+ * Decisões em AGENTS.md, seção "Radar IA — decisões tomadas".
+ */
+import Base from '../../layouts/Base.astro';
+import RadarApp from '../../components/radar/RadarApp';
+
+const title = 'Descubra seu próximo passo com IA | IA para Equipes by Ivory';
+const description =
+  'Descubra oportunidades de IA na sua empresa e construa os primeiros passos para desenvolver sua equipe. Diagnóstico gratuito, com plano em PDF.';
+const siteUrl = (Astro.site ?? new URL('https://iaparaequipes.com.br')).href;
+---
+
+<Base {title} {description} image={{ src: '/og/radar.png', alt: 'Descubra seu próximo passo com IA' }}>
+  <meta slot="head" name="referrer" content="no-referrer" />
+
+  {/* O chat tem a altura da tela abaixo do header: as mensagens rolam por dentro
+      (Conversation, AI Elements) e o compositor fica fixo no pé. */}
+  <div class="relative px-3 pt-4 pb-2 sm:px-6 lg:px-10" data-reveal-skip>
+    <h1 class="sr-only">Descubra seu próximo passo com IA</h1>
+    <div class="mx-auto w-full max-w-[1280px]">
+      <RadarApp client:load {siteUrl} />
+    </div>
+  </div>
+
+</Base>
