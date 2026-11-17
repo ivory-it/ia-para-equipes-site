@@ -305,6 +305,13 @@ O título é o mesmo texto dos CTAs, "Quero avaliar para minha equipe", desde 07
       `utm_source=LP` e `utm_medium=organico` (`UTM_DEFAULT` no `lead-api.ts`). Vale para a home e
       para o diagnóstico.
     - Se a URL traz ao menos uma UTM, só vão as da URL, sem completar com o padrão.
+  - **`origem` diz por onde a pessoa entrou** (desde 17/11/2026, decisão do Thiago):
+    - `Formulário` no formulário da home (`contact-form.ts`);
+    - `Radar IA` no diagnóstico (`ORIGEM_LEAD`).
+
+    O valor é fixo no código, e não vem da URL. A UTM continua dizendo de onde a pessoa veio
+    (Instagram, anúncio, LP). Por isso o ponto de entrada não vai numa UTM: apagaria a origem
+    real.
   - **O backend é dinâmico.** Só exige nome e e-mail e aceita os demais campos sem mudança.
   - **CORS:** o domínio onde o site for publicado precisa estar liberado no backend. Sem isso,
     todo envio cai no erro de rede.

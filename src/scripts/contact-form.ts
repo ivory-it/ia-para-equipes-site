@@ -6,6 +6,8 @@
  * - Botões com `data-contact-plan` (os cards de investimento) marcam o formato
  *   no formulário antes do scroll até `#contato`. `?formato=` na URL faz o mesmo
  *   para links externos.
+ * - `origem: 'Formulário'` em todo envio (17/11/2026): separa no CRM o lead da
+ *   home do lead do diagnóstico (`Radar IA`), sem depender da URL.
  */
 import { initLeadForm } from './lead-form';
 
@@ -23,5 +25,5 @@ if (root) {
   });
   selectFormat(new URLSearchParams(location.search).get('formato'));
 
-  initLeadForm(root);
+  initLeadForm(root, { origem: 'Formulário' });
 }
