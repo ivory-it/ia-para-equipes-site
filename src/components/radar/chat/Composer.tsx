@@ -69,6 +69,16 @@ export default function Composer({ stepKey, reply, ready, animate, onPick, onTog
     box.current?.querySelector<HTMLElement>('button')?.focus({ preventScroll: true });
   }, [ready, stepKey]);
 
+  // Opções que estão saindo (a animação de saída dura 180 ms) ainda aceitariam
+  // clique e responderiam a pergunta seguinte com a opção da anterior. Cada
+  // sugestão guarda o passo em que nasceu e só age se ele ainda for o atual.
+  const liveKey = useRef(stepKey);
+  liveKey.current = stepKey;
+  const live = (fn: () => void) => {
+    const born = stepKey;
+    return () => { if (liveKey.current === born) fn(); };
+  };
+
   const multi = reply.kind === 'multi';
   const canSend = multi && (reply.selected.length > 0 || Boolean(reply.empty));
   const enter = animate && !reduce ? { opacity: 0, y: 6 } : false;
@@ -77,10 +87,10 @@ export default function Composer({ stepKey, reply, ready, animate, onPick, onTog
   const cards = (reply.kind === 'single' || reply.kind === 'multi') && reply.options.every((o) => o.desc);
   if (cards && (reply.kind === 'single' || reply.kind === 'multi')) {
     // Cartões com ícone, título, descrição e caixa de seleção (referência do
-    // Thiago para a Tela 01). Quatro lado a lado a partir de `sm`; no celular, um
-    // por linha, com o ícone à esquerda.
+    // Thiago para a Tela 01). Duas colunas a partir de `sm` e uma no celular, com
+    // o ícone ao lado do título: em 4 colunas o título quebrava em 3 linhas.
     options = (
-      <div role="group" aria-label={multi ? 'Marque uma ou mais respostas' : 'Escolha uma resposta'} className="grid gap-2 sm:grid-cols-2 sm:gap-2.5 xl:grid-cols-4">
+      <div role="group" aria-label={multi ? 'Marque uma ou mais respostas' : 'Escolha uma resposta'} className="grid gap-2 sm:grid-cols-2 sm:gap-2.5">
         {reply.options.map((o) => {
           const on = multi && reply.selected.includes(o.id);
           return (
@@ -89,18 +99,21 @@ export default function Composer({ stepKey, reply, ready, animate, onPick, onTog
               type="button"
               role={multi ? 'checkbox' : undefined}
               aria-checked={multi ? on : undefined}
-              onClick={() => (multi ? onToggle(o.id) : onPick(o.id))}
-              className={`relative flex items-start gap-3 rounded-2xl border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 sm:flex-col sm:gap-2.5 sm:p-3.5 ${on ? 'border-accent-ink bg-accent/[0.08] shadow-[0_6px_20px_rgba(0,168,142,0.12)]' : 'border-ink/[0.12] bg-paper hover:border-accent-ink/50 hover:bg-accent/[0.04]'}`}
+              onClick={live(() => (multi ? onToggle(o.id) : onPick(o.id)))}
+              className={`relative flex flex-col gap-1.5 rounded-2xl border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 sm:p-3.5 ${on ? 'border-accent-ink bg-accent/[0.08] shadow-[0_6px_20px_rgba(0,168,142,0.12)]' : 'border-ink/[0.12] bg-paper hover:border-accent-ink/50 hover:bg-accent/[0.04]'}`}
             >
-              {o.icon && (
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/[0.12] text-ink" aria-hidden="true">
-                  <Icon name={o.icon} size={20} />
-                </span>
-              )}
-              <span className="min-w-0 flex-1 pr-7 sm:pr-0">
-                <span className="block font-display text-[15px] font-semibold leading-5 text-ink">{o.label}</span>
-                <span className="mt-1 block text-[13px] leading-[1.15rem] text-ink-2">{o.desc}</span>
+              {/* Ícone ao lado do título, e não em cima (revisão de clareza,
+                  16/11/2026): os cartões ficam mais baixos e o conteúdo acima
+                  (o vídeo, a pergunta) continua à vista. */}
+              <span className="flex min-w-0 items-center gap-2.5 pr-7">
+                {o.icon && (
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent/[0.12] text-ink" aria-hidden="true">
+                    <Icon name={o.icon} size={17} />
+                  </span>
+                )}
+                <span className="min-w-0 font-display text-[15px] font-semibold leading-5 text-ink">{o.label}</span>
               </span>
+              <span className="block text-[13px] leading-[1.15rem] text-ink-2">{o.desc}</span>
               {multi && (
                 <span className={`absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-md border ${on ? 'border-accent-ink bg-accent-ink text-paper' : 'border-ink/25 bg-paper'}`} aria-hidden="true">
                   {on && <Icon name="check" size={14} />}
@@ -110,7 +123,7 @@ export default function Composer({ stepKey, reply, ready, animate, onPick, onTog
           );
         })}
         {multi && reply.empty && reply.selected.length === 0 && (
-          <button type="button" onClick={onSubmit} className={`${pill} justify-center border-dashed border-ink/[0.2] bg-transparent text-ink-2 hover:border-ink/40 sm:col-span-2 xl:col-span-4`}>{reply.empty}</button>
+          <button type="button" onClick={onSubmit} className={`${pill} justify-center border-dashed border-ink/[0.2] bg-transparent text-ink-2 hover:border-ink/40 sm:col-span-2`}>{reply.empty}</button>
         )}
       </div>
     );
@@ -127,13 +140,13 @@ export default function Composer({ stepKey, reply, ready, animate, onPick, onTog
               type="button"
               role={multi ? 'checkbox' : undefined}
               aria-checked={multi ? on : undefined}
-              onClick={() => (multi ? onToggle(o.id) : onPick(o.id))}
+              onClick={live(() => (multi ? onToggle(o.id) : onPick(o.id)))}
               className={`${pill} ${stacked ? 'w-full' : ''} ${on ? 'border-accent-ink bg-accent/[0.1] text-ink' : 'border-ink/[0.14] bg-paper text-ink hover:border-accent-ink/60 hover:bg-accent/[0.05]'}`}
             >
               {o.logo ? (
                 <svg viewBox={o.logo.viewBox} width={16} height={16} aria-hidden="true" className={`shrink-0 ${on ? 'text-accent-ink' : 'text-ink-soft'}`}><path fill="currentColor" d={o.logo.d} /></svg>
               ) : o.icon && <Icon name={o.icon} size={18} className={on ? 'text-accent-ink' : 'text-ink-soft'} />}
-              {o.letter && !o.icon && <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ink/[0.06] text-[11px] font-semibold text-ink" aria-hidden="true">{o.letter}</span>}
+              {/* Sem as letras A–D do retrato: vêm da matriz e não dizem nada a quem responde. */}
               <span>{o.label}</span>
               {multi && on && <Icon name="check" size={14} className="text-accent-ink" />}
             </button>

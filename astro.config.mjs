@@ -1,7 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
-import vercel from '@astrojs/vercel';
 import sitemap from '@astrojs/sitemap';
 import icon from 'astro-icon';
 import tailwindcss from '@tailwindcss/vite';
@@ -13,18 +12,9 @@ const SITE = process.env.SITE_URL ?? 'https://iaparaequipes.com.br';
 export default defineConfig({
   site: SITE,
 
-  // O site continua estático: toda página é pré-renderizada. O adapter existe só
-  // para a rota `/api/radar/verify-access`, que valida o token de acesso do
-  // Radar IA com um segredo do servidor (`export const prerender = false`).
+  // Site 100% estático. O adapter da Vercel saiu em 16/11/2026 com a rota que
+  // validava o token de acesso do Radar IA: hoje basta `?access` na URL.
   output: 'static',
-  adapter: vercel(),
-
-  // A ferramenta saiu de /radar para /diagnostico-ia (11/11/2026). O /radar em
-  // si é uma página (src/pages/radar/index.astro) que repassa a query: este
-  // redirect descartaria o ?access= dos links já divulgados.
-  redirects: {
-    '/radar/video': '/diagnostico-ia/video',
-  },
 
   integrations: [
     react(),
@@ -71,8 +61,7 @@ export default defineConfig({
       },
     }),
 
-    // /radar/ é só o redirecionamento para /diagnostico-ia: fica fora do sitemap.
-    sitemap({ filter: (page) => !page.endsWith('/radar/') }),
+    sitemap(),
   ],
 
   // Tailwind 4 entra como plugin do Vite. O `@astrojs/tailwind` virou legado,

@@ -23,6 +23,11 @@ const NAMES = [
   'server-square', 'alarm', 'folder-with-files', 'presentation-graph', 'bolt', 'medal-star', 'chart-2', 'share',
   'shield-check', 'layers', 'user', 'users-group-two-rounded', 'buildings-2', 'user-check', 'medal-ribbon',
   'checklist-minimalistic', 'stopwatch',
+  // apresentação em PDF (deck 16:9)
+  'check-circle', 'danger-triangle', 'flag', 'target', 'rocket-2', 'square-academic-cap', 'test-tube', 'graph-up',
+  'clipboard-check', 'play-circle', 'hand-shake', 'filter', 'document-text', 'chat-round-dots', 'question-circle',
+  'close-circle', 'refresh', 'calendar', 'pen-new-square', 'database', 'letter', 'chart-square', 'magic-stick-3',
+  'user-speak', 'archive', 'lock-keyhole', 'eye', 'monitor',
 ];
 
 const out = {};

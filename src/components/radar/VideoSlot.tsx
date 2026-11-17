@@ -40,7 +40,7 @@ export default function VideoSlot({ onPlay }: { onPlay?: () => void }) {
 
   return (
     <div>
-      <div className={`${frame} ${mobile ? 'mx-auto aspect-[9/16] max-h-[60vh]' : 'aspect-video'}`}>
+      <div className={`${frame} ${mobile ? 'mx-auto aspect-[9/16] max-h-[max(16rem,calc(100dvh-30rem))]' : 'mx-auto aspect-video max-w-[calc((100dvh-27rem)*16/9)]'}`}>
         <div className="pointer-events-none absolute inset-x-5 top-0 z-10 h-px bg-linear-to-r from-transparent via-ink-2/60 to-transparent" aria-hidden="true" />
         {VIDEO_READY ? (
           <video

@@ -35,7 +35,7 @@ import type { RadarAction } from '../state';
 export type StepId =
   | 'desafios'
   | `espelho-${DimensionId}` | 'retrato'
-  | 'video'
+  | 'video' | 'possibilidades'
   | 'objetivo'
   | 'grupo' | 'ferramentas' | 'indicador' | 'cenario'
   | 'contato-cargo' | 'contato-cargo-outro' | 'contato-email' | 'contato-whatsapp' | 'entrega';
@@ -101,7 +101,8 @@ export function getStep(id: StepId): Step {
     const q = QUESTIONS[i]!;
     return {
       id, screen: 2, label: 'Retrato',
-      ia: () => [say({ eyebrow: `${q.dimension} · ${i + 1} de 4`, title: q.prompt })],
+      // Só o tema no selo: a régua do cabeçalho já mostra o avanço (sem "1 de 4").
+      ia: () => [say({ eyebrow: q.dimension, title: q.prompt })],
       reply: () => ({ kind: 'single', options: q.options.map((o) => ({ id: o.letter, letter: o.letter, label: o.text })) }),
     };
   }
@@ -110,7 +111,8 @@ export function getStep(id: StepId): Step {
     case 'desafios':
       return {
         id, screen: 1, label: 'Meus desafios',
-        ia: () => [say({ title: CHALLENGES_INTRO.title, text: CHALLENGES_INTRO.hint })],
+        // Abre dizendo o combinado (quantas etapas e o que a pessoa recebe).
+        ia: () => [say({ text: CHALLENGES_INTRO.opening }), say({ title: CHALLENGES_INTRO.title, text: CHALLENGES_INTRO.hint })],
         reply: (s) => ({
           kind: 'multi',
           options: CHALLENGES.map((c) => ({ id: c.id, label: c.label, desc: c.text, icon: CHALLENGE_ICON[c.id] })),
@@ -127,11 +129,15 @@ export function getStep(id: StepId): Step {
     case 'video':
       return {
         id, screen: 4, label: 'Possibilidades',
-        ia: () => [
-          say({ title: VIDEO_SCREEN.title }),
-          { type: 'video' },
-          say({ title: VIDEO_SCREEN.question, text: 'Pode marcar mais de uma opção.' }),
-        ],
+        // Primeiro o vídeo, com o compositor só com "Continuar": assim o vídeo
+        // cabe inteiro na tela. A pergunta vem no passo seguinte, depois de assistir.
+        ia: () => [say({ title: VIDEO_SCREEN.title, text: VIDEO_SCREEN.intro }), { type: 'video' }],
+        reply: () => ({ kind: 'continue', label: 'Continuar' }),
+      };
+    case 'possibilidades':
+      return {
+        id, screen: 4, label: 'Possibilidades',
+        ia: () => [say({ title: VIDEO_SCREEN.question, text: 'Pode marcar mais de uma opção.' })],
         reply: (s) => ({
           kind: 'multi',
           options: CAPABILITIES.map((c) => ({ id: c.id, label: c.label, desc: c.option, icon: CAPABILITY_ICON[c.id] })),
@@ -244,6 +250,8 @@ export function answer(id: StepId, value: string, s: RadarState): Answer {
     case 'retrato':
       return { actions: [], text: '', next: 'video' };
     case 'video':
+      return { actions: [], text: '', next: 'possibilidades' };
+    case 'possibilidades':
       return {
         actions: [],
         text: s.capabilities.length ? CAPABILITIES.filter((c) => s.capabilities.includes(c.id)).map((c) => c.label).join(' · ') : 'Nenhuma em especial',
@@ -292,6 +300,23 @@ export const FIRST_STEP: StepId = 'desafios';
  */
 export const TOTAL_STEPS = 5;
 export const DISPLAY_STEP: Record<Screen, number> = { 1: 1, 2: 2, 3: 3, 4: 3, 5: 4, 6: 5, 7: 5 };
+
+/** Nomes das 5 etapas, na régua de progresso do cabeçalho. */
+export const STEP_NAMES = ['Meus desafios', 'Retrato', 'Possibilidades', 'Objetivo', 'Seu plano'] as const;
+
+/**
+ * Quanto da etapa atual já foi feito (0 a 1), para a régua: no retrato enche em
+ * quartos; em "Seu plano", pergunta a pergunta até a entrega.
+ */
+export function progressWithin(id: StepId): number {
+  if (id.startsWith('espelho-')) return MIRROR_IDS.indexOf(id.slice('espelho-'.length) as DimensionId) / 4;
+  const within: Partial<Record<StepId, number>> = {
+    retrato: 1, video: 0.4, possibilidades: 0.8,
+    ferramentas: 0.2, indicador: 0.4, cenario: 0.55,
+    'contato-cargo': 0.7, 'contato-cargo-outro': 0.75, 'contato-email': 0.8, 'contato-whatsapp': 0.9, entrega: 1,
+  };
+  return within[id] ?? 0;
+}
 
 // Campo de texto do compositor.
 function text(placeholder: string, type: TextReply['type'], autoComplete: string, validate: TextReply['validate']): TextReply {

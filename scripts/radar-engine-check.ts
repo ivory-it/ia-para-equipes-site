@@ -6,7 +6,7 @@
  * Cobre o retrato consultivo (as 256 combinações contra a matriz revisada, os
  * exemplos validados e o "Não sei" em Pessoas), o plano derivado sem ações
  * repetidas, os campos do lead, o contato pedido no chat, a dica, o nome do
- * PDF e o token de acesso.
+ * PDF.
  */
 import assert from 'node:assert/strict';
 import {
@@ -14,7 +14,6 @@ import {
   leadFields, isPathComplete,
   type RadarState,
 } from '../src/scripts/radar/engine.ts';
-import { createRadarToken, verifyRadarToken } from '../src/lib/radar-token.ts';
 import { emailError, isLocalHost, maskPhone, phoneError } from '../src/scripts/lead-api.ts';
 import { answer, getStep } from '../src/components/radar/chat/script.ts';
 
@@ -162,21 +161,6 @@ test('planModel sem respostas não quebra', () => {
 test('nome do arquivo normalizado', () => {
   assert.equal(pdfFileName('Plano_de_Evolucao_IA', ''), 'Plano_de_Evolucao_IA.pdf');
   assert.equal(pdfFileName('Plano_de_Evolucao_IA', 'Ação & Cia. Ltda'), 'Plano_de_Evolucao_IA_Acao_Cia_Ltda.pdf');
-});
-
-test('token: válido, expirado, adulterado, sem segredo', () => {
-  const secret = 'segredo-de-teste';
-  const token = createRadarToken(secret, 1, 'teste');
-  assert.equal(verifyRadarToken(token, secret), true);
-  assert.equal(verifyRadarToken(token, 'outro'), false);
-  assert.equal(verifyRadarToken(token, undefined), false);
-  assert.equal(verifyRadarToken(createRadarToken(secret, -1), secret), false);
-  const [body, mac] = token.split('.');
-  const forged = Buffer.from(JSON.stringify({ v: 1, scope: 'radar:pdf:direct', exp: 9999999999 })).toString('base64url');
-  assert.equal(verifyRadarToken(`${forged}.${mac}`, secret), false);
-  assert.equal(verifyRadarToken(`${body}.${mac}.x`, secret), false);
-  assert.equal(verifyRadarToken('capture=off', secret), false);
-  assert.equal(verifyRadarToken(null, secret), false);
 });
 
 console.log(`\n${passed} verificações passaram.`);

@@ -1,26 +1,49 @@
 ---
 /**
- * Destaque do Radar IA na home, entre a experiência da Ivory e o investimento:
+ * Destaque do diagnóstico na home, entre a experiência da Ivory e o investimento:
  * quem ainda não está pronto para pedir contato tem um passo gratuito antes.
- * O desenho à direita é o motivo do Radar Vivo, estático e decorativo.
+ *
+ * Para o visitante o nome é "Diagnóstico IA" (16/11/2026, pedido do Thiago); o
+ * título repete o nome de dentro da ferramenta, "Descubra seu próximo passo com
+ * IA". "Radar IA" ficou só no código e na origem do lead no CRM.
+ *
+ * O desenho à direita é o anel do painel "Sua jornada" (RadarVivo.tsx), estático
+ * e decorativo: 4 arcos com níveis diferentes e o disco Navy no centro.
  */
 import { Icon } from 'astro-icon/components';
 
 const points = [
-  'Práticas para os desafios que você reconhecer',
-  'Um retrato qualitativo, sem nota de maturidade',
-  'Um plano em PDF para levar à liderança',
+  'O retrato da empresa em quatro dimensões',
+  'O que a IA já pode fazer no trabalho, em vídeo',
+  'Um plano em PDF para apresentar à liderança',
+];
+
+// Anel: mesma geometria do RadarVivo (arco de 76° por dimensão), em escala maior.
+const C = 200;
+const R = 140;
+const SPAN = 38;
+const at = (deg: number) => {
+  const a = (deg * Math.PI) / 180;
+  return `${(C + R * Math.cos(a)).toFixed(1)} ${(C + R * Math.sin(a)).toFixed(1)}`;
+};
+const arc = (from: number, to: number) => `M ${at(from)} A ${R} ${R} 0 0 1 ${at(to)}`;
+// Ângulo central e preenchimento ilustrativo de cada dimensão (não é um resultado).
+const dims = [
+  { label: 'Pessoas', angle: 225, fill: 0.5, opacity: 0.65, x: 62, y: 46, anchor: 'start' },
+  { label: 'Processos', angle: 315, fill: 0.75, opacity: 0.85, x: 338, y: 46, anchor: 'end' },
+  { label: 'Segurança', angle: 45, fill: 0.25, opacity: 0.4, x: 338, y: 364, anchor: 'end' },
+  { label: 'Disseminação', angle: 135, fill: 1, opacity: 1, x: 62, y: 364, anchor: 'start' },
 ];
 ---
 
-<section class="relative overflow-hidden border-t border-ink/[0.09] px-5 pt-24 pb-24 sm:px-8 lg:px-10" id="radar">
+<section class="relative overflow-hidden border-t border-ink/[0.09] px-5 pt-24 pb-24 sm:px-8 lg:px-10" id="diagnostico">
 <div class="pointer-events-none absolute -right-32 top-10 h-80 w-80 rounded-full bg-accent-ink/10 blur-3xl"></div>
 
 <div class="reveal relative mx-auto grid w-full max-w-[1280px] items-center gap-12 overflow-hidden rounded-[2rem] border border-accent-ink/20 bg-paper p-6 shadow-2xl shadow-ink/[0.09] sm:p-10 lg:grid-cols-[1.2fr_0.8fr] lg:p-14">
 <div data-reveal-skip>
-<p class="text-sm font-semibold uppercase tracking-[0.18em] text-accent-ink">Radar IA · Diagnóstico gratuito</p>
-<h2 class="mt-5 max-w-2xl font-display text-4xl font-medium leading-tight tracking-tighter text-ink sm:text-5xl">Descubra oportunidades de IA na sua empresa.</h2>
-<p class="mt-6 max-w-xl text-base leading-7 text-ink-soft sm:text-lg">Em cerca de 10 minutos, você reconhece desafios, aprende práticas aplicáveis e monta os primeiros passos para desenvolver sua equipe.</p>
+<p class="text-sm font-semibold uppercase tracking-[0.18em] text-accent-ink">Diagnóstico IA · Gratuito</p>
+<h2 class="mt-5 max-w-2xl font-display text-4xl font-medium leading-tight tracking-tighter text-ink sm:text-5xl">Descubra seu próximo passo com IA.</h2>
+<p class="mt-6 max-w-xl text-base leading-7 text-ink-soft sm:text-lg">Uma conversa guiada em 5 etapas rápidas. No fim, você recebe um plano em PDF, pronto para apresentar à liderança.</p>
 <ul class="mt-6 space-y-2">
 {points.map((p) => (
 <li class="flex items-start gap-3 text-[15px] leading-6 text-ink-2">
@@ -30,21 +53,23 @@ const points = [
 ))}
 </ul>
 <a href="/diagnostico-ia" class="group mt-8 inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-accent-ink px-6 py-3.5 text-sm font-semibold text-paper shadow-2xl shadow-ink/20 transition duration-300 ease-out hover:bg-accent-ink-strong">
-Fazer o Radar IA
+Fazer o diagnóstico
 <Icon name="solar:arrow-right-linear" width={18} height={18} class="transition duration-300 ease-out group-hover:translate-x-0.5" />
 </a>
 </div>
 
 <svg class="mx-auto hidden w-full max-w-sm lg:block" viewBox="0 0 400 400" aria-hidden="true">
-<circle cx="200" cy="200" r="178" fill="#f2f2f2" fill-opacity=".6" stroke="#0a2540" stroke-opacity=".1" />
-{[140, 98, 60].map((r) => <circle cx="200" cy="200" r={r} fill="none" stroke="#0a2540" stroke-opacity=".12" stroke-dasharray="3 5" />)}
-{[-45, 45, 135].map((a, i) => <path d="M 81.4 66.9 A 178 178 0 0 1 318.6 66.9" fill="none" stroke="#00a88e" stroke-opacity={i === 2 ? 0.4 : 1} stroke-width="7" stroke-linecap="round" transform={`rotate(${a} 200 200)`} />)}
-<g stroke="#00735f" stroke-dasharray="2 3"><line x1="130.7" y1="130.7" x2="120" y2="70" /><line x1="269.3" y1="130.7" x2="330" y2="120" /><line x1="269.3" y1="269.3" x2="300" y2="330" /></g>
-<g fill="#00735f"><circle cx="120" cy="70" r="6" /><circle cx="330" cy="120" r="6" /><circle cx="300" cy="330" r="6" /></g>
-<g fill="#0a2540"><circle cx="130.7" cy="130.7" r="11" /><circle cx="269.3" cy="130.7" r="11" /><circle cx="269.3" cy="269.3" r="11" /></g>
-<g stroke="#00a88e" stroke-width="2.5"><line x1="200" y1="200" x2="200" y2="140" /><line x1="200" y1="200" x2="260" y2="200" /></g>
-<g fill="#00a88e"><rect x="193" y="133" width="14" height="14" rx="3" transform="rotate(45 200 140)" /><rect x="253" y="193" width="14" height="14" rx="3" transform="rotate(45 260 200)" /></g>
-<circle cx="200" cy="200" r="40" fill="#0a2540" /><circle cx="200" cy="200" r="12" fill="#00a88e" />
+<circle cx={C} cy={C} r="182" fill="#f2f2f2" fill-opacity=".6" stroke="#0a2540" stroke-opacity=".08" />
+{dims.map((d) => (
+<>
+<path d={arc(d.angle - SPAN, d.angle + SPAN)} fill="none" stroke="#00a88e" stroke-opacity=".14" stroke-width="26" stroke-linecap="round" />
+<path d={arc(d.angle - SPAN, d.angle - SPAN + 2 * SPAN * d.fill)} fill="none" stroke="#00a88e" stroke-opacity={d.opacity} stroke-width="26" stroke-linecap="round" />
+<text x={d.x} y={d.y} text-anchor={d.anchor} font-family="Sora, sans-serif" font-size="15" font-weight="600" fill="#0a2540">{d.label}</text>
+</>
+))}
+<circle cx={C} cy={C} r="86" fill="#0a2540" />
+<text x={C} y="194" text-anchor="middle" font-family="Sora, sans-serif" font-size="19" font-weight="600" fill="#ffffff">Sua</text>
+<text x={C} y="218" text-anchor="middle" font-family="Sora, sans-serif" font-size="19" font-weight="600" fill="#ffffff">empresa</text>
 </svg>
 </div>
 </section>

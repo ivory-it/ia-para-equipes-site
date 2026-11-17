@@ -8,6 +8,7 @@
  */
 import type { ReactNode } from 'react';
 import { TIPS } from '../../../data/radar/reactions.ts';
+import { PATH_LABEL } from '../../../data/radar/path.ts';
 import { scenarioCard, tipChallenge, type RadarState } from '../../../scripts/radar/engine.ts';
 import type { Dispatch } from '../state';
 import { mirrorReady, type Block } from './script';
@@ -73,12 +74,16 @@ export function renderBlock(block: Block, ctx: BlockContext): ReactNode {
       const r = mirrorReady(state);
       if (!r) return null;
       return (
+        // Em `lg` o anel sai do cartão: o painel ao lado já o mostra, e o texto
+        // ganha a largura toda. Abaixo de `lg` o painel fica escondido, e o anel
+        // continua aqui. O "Próximo passo" leva o filete turquesa: é o que a
+        // pessoa leva da conversa.
         <Card className="border-accent-ink/15">
-          <div className="grid items-center gap-5 sm:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)]">
-            <div className="mx-auto w-full max-w-[340px]"><RadarVivo state={state} variant="portrait" /></div>
+          <div className="grid items-center gap-5 sm:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:grid-cols-1">
+            <div className="mx-auto w-full max-w-[340px] lg:hidden"><RadarVivo state={state} variant="portrait" /></div>
             <div>
               <Label>Principal descoberta</Label>
-              <p className="mt-2 font-display text-xl font-medium leading-snug tracking-tight text-ink">“{r.rule.insight}”</p>
+              <p className="mt-2 font-display text-xl font-medium leading-snug tracking-tight text-ink lg:text-[1.4rem]">“{r.rule.insight}”</p>
               <p className="mt-3 text-sm font-semibold text-ink">Por que essa leitura?</p>
               <p className="mt-1 text-sm leading-6 text-ink-2">{r.rule.why}</p>
             </div>
@@ -88,7 +93,7 @@ export function renderBlock(block: Block, ctx: BlockContext): ReactNode {
               <p className={`text-sm font-semibold ${r.value.kind === 'favor' ? 'text-accent-ink' : 'text-ink'}`}>{r.value.title}</p>
               <p className="mt-1 text-sm leading-6 text-ink">{r.value.text}</p>
             </div>
-            <div className="rounded-2xl border border-ink/[0.08] bg-paper p-4">
+            <div className="rounded-2xl border border-ink/[0.08] border-l-[3px] border-l-accent bg-paper p-4 shadow-sm shadow-ink/[0.04]">
               <p className="text-sm font-semibold text-ink">Próximo passo</p>
               <p className="mt-1 text-sm leading-6 text-ink">{r.rule.step}</p>
               <p className="mt-2 text-[13px] leading-5 text-ink-2"><span className="font-semibold text-ink">Entrega:</span> {r.rule.deliverable}</p>
@@ -107,7 +112,7 @@ export function renderBlock(block: Block, ctx: BlockContext): ReactNode {
       return (
         <Card>
           <dl className="grid gap-3 text-sm sm:grid-cols-2">
-            {([['Objetivo', c.goal], ['Grupo inicial', c.group], ['Ambiente de IA', c.tools], ['Indicador', c.indicator]] as const).map(([k, v]) => (
+            {([[PATH_LABEL.goal, c.goal], [PATH_LABEL.group, c.group], [PATH_LABEL.tools, c.tools], [PATH_LABEL.indicator, c.indicator]] as const).map(([k, v]) => (
               <div key={k}><dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-soft">{k}</dt><dd className="mt-1 text-ink">{v}</dd></div>
             ))}
           </dl>

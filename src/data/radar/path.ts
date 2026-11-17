@@ -14,6 +14,18 @@ export const PATH_INTRO = {
   next: 'Ver meu plano de evolução',
 };
 
+/**
+ * Rótulos do caminho, iguais no cartão do cenário, no painel "Sua jornada" e no
+ * PDF (revisão de clareza, 16/11/2026: antes eram "Grupo inicial", "Ambiente",
+ * "Indicador" ou "Sinal de sucesso", conforme o lugar).
+ */
+export const PATH_LABEL = {
+  goal: 'Objetivo',
+  group: 'Primeiro grupo a capacitar',
+  tools: 'Ferramenta de IA',
+  indicator: 'Sinal de sucesso',
+} as const;
+
 export const GROUP_SIZES: { id: GroupSize; label: string }[] = [
   { id: 'ate-10', label: 'Até 10 colaboradores' },
   { id: '11-25', label: '11 a 25 colaboradores' },
@@ -53,12 +65,13 @@ export const LARGE_GROUP_NOTE = 'O IA para Equipes trabalha com até 50 particip
 export const TOOLS_RULE = 'As possibilidades do plano dependem do produto, da licença e da configuração do seu ambiente. Nem tudo o que aparece no vídeo está incluído em uma licença específica.';
 
 /** Trilha da Tela 06 (§7, tratamento visual). */
+/** `short`: a frase do marco na linha do tempo da apresentação em PDF. */
 export const TRACK = [
-  { id: 'preparar', label: 'Preparar', text: 'Diagnóstico prévio das necessidades e do nível de familiaridade da equipe.' },
-  { id: 'capacitar', label: 'Capacitar', text: 'Duas sessões online de 2 horas, com exemplos ligados à realidade das equipes.' },
-  { id: 'experimentar', label: 'Experimentar', text: 'Aplicar o aprendizado nas atividades candidatas, com ferramentas autorizadas.' },
-  { id: 'avaliar', label: 'Avaliar', text: 'Observar o indicador escolhido e reunir aprendizados.' },
-  { id: 'expandir', label: 'Expandir', text: 'Decidir, com base no que foi observado, como ampliar para outras equipes.' },
+  { id: 'preparar', label: 'Preparar', text: 'Diagnóstico prévio das necessidades e do nível de familiaridade da equipe.', short: 'Diagnóstico da equipe antes das sessões.' },
+  { id: 'capacitar', label: 'Capacitar', text: 'Duas sessões online de 2 horas, com exemplos ligados à realidade das equipes.', short: 'Duas sessões online de 2 horas.' },
+  { id: 'experimentar', label: 'Experimentar', text: 'Aplicar o aprendizado nas atividades candidatas, com ferramentas autorizadas.', short: 'Aplicar nas atividades escolhidas.' },
+  { id: 'avaliar', label: 'Avaliar', text: 'Observar o indicador escolhido e reunir aprendizados.', short: 'Observar o sinal de sucesso.' },
+  { id: 'expandir', label: 'Expandir', text: 'Decidir, com base no que foi observado, como ampliar para outras equipes.', short: 'Levar o que funcionou a outras equipes.' },
 ] as const;
 
 /** Como o IA para Equipes se encaixa (§7, sem virar orçamento). */

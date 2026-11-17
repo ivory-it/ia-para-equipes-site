@@ -219,7 +219,9 @@ export interface PlanModel {
   appendix: { id: ChallengeId; label: string; pills: Challenge['pills'] }[];
   mirror: MirrorResult | null;
   capabilities: { id: CapabilityId; label: string; example: string; caveat: string; chapterStart: number }[];
-  goal: { label: string; recommendation: string; initiative: string; competencies: string[] } | null;
+  goal: { id: GoalId; label: string; recommendation: string; initiative: string; competencies: string[]; action: string } | null;
+  /** Ids das respostas do caminho, para ícones e logos da apresentação. */
+  ids: { group?: GroupSize; tools: ToolEnv[]; indicator?: IndicatorId };
   scenario: ReturnType<typeof scenarioCard>;
   track: typeof TRACK;
   /** Quem pediu o PDF (capa): nome e cargo informados no chat. Vazio com o token. */
@@ -237,7 +239,7 @@ export function planModel(state: RadarState): PlanModel {
     .map(({ id, label, example, caveat, chapterStart }) => ({ id, label, example, caveat, chapterStart }));
   const rec = recommendation(state);
   const goal = rec
-    ? { label: rec.goal.label, recommendation: rec.text, initiative: rec.initiative, competencies: rec.goal.competencies }
+    ? { id: rec.goal.id, label: rec.goal.label, recommendation: rec.text, initiative: rec.initiative, competencies: rec.goal.competencies, action: ACTIONS[rec.goal.action] }
     : null;
 
   return {
@@ -248,6 +250,7 @@ export function planModel(state: RadarState): PlanModel {
     mirror,
     capabilities,
     goal,
+    ids: { group: state.group, tools: state.tools, indicator: state.indicator },
     scenario: scenarioCard(state),
     track: TRACK,
     contact: { nome: state.contact.nome, cargo: state.contact.cargo },

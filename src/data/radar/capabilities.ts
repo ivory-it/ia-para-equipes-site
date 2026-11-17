@@ -19,6 +19,8 @@ export interface Capability {
   experiment: string;
   /** Início do capítulo no vídeo, em segundos (capitulos.txt do render v1, 2min56). */
   chapterStart: number;
+  /** Mini fluxo "de onde vem → o que a IA entrega", no slide das possibilidades do PDF. */
+  flow: { from: string; to: string };
 }
 
 export const CAPABILITIES: Capability[] = [
@@ -30,6 +32,7 @@ export const CAPABILITIES: Capability[] = [
     caveat: 'Depende de conectores, permissões e compatibilidade. Consulta e escrita são operações diferentes, e alterações técnicas exigem validação profissional.',
     experiment: 'experimentar a consulta e a consolidação de informações em sistemas autorizados, sem pressupor que a integração já existe',
     chapterStart: 17,
+    flow: { from: 'Pedidos e chamados', to: 'Resumo do que pede atenção' },
   },
   {
     id: 'agendadas',
@@ -39,6 +42,7 @@ export const CAPABILITIES: Capability[] = [
     caveat: 'Agendamento e acesso às fontes dependem da plataforma, do licenciamento, das autorizações e da configuração.',
     experiment: 'experimentar uma tarefa recorrente agendada, como um resumo semanal de pendências',
     chapterStart: 88,
+    flow: { from: 'Toda segunda-feira', to: 'Resumo das pendências' },
   },
   {
     id: 'arquivos',
@@ -48,6 +52,7 @@ export const CAPABILITIES: Capability[] = [
     caveat: 'Acessar arquivos locais não significa processar tudo localmente. Requisitos de segurança e permissões precisam estar claros.',
     experiment: 'experimentar a consolidação de documentos e planilhas de uma pasta autorizada',
     chapterStart: 108,
+    flow: { from: 'Planilhas da pasta', to: 'Relatório com as variações' },
   },
   {
     id: 'entregas',
@@ -57,6 +62,7 @@ export const CAPABILITIES: Capability[] = [
     caveat: 'Gerar relatórios e arquivos não equivale a implantar um dashboard interativo persistente, que pode exigir ferramentas e infraestrutura complementares.',
     experiment: 'experimentar um modelo reutilizável para relatórios ou apresentações no padrão da empresa',
     chapterStart: 128,
+    flow: { from: 'Padrões da empresa', to: 'Apresentação executiva' },
   },
 ];
 
@@ -75,6 +81,8 @@ export const INTRO = {
 export const VIDEO_SCREEN = {
   eyebrow: 'Tela 4 de 7 · Possibilidades',
   title: 'A IA pode fazer muito mais do que você imagina.',
+  /** Prepara a pergunta que vem depois do vídeo. */
+  intro: 'Veja no vídeo quatro formas de usar IA no trabalho. Depois, me conte qual chamou mais sua atenção.',
   pending: 'Vídeo em produção',
   pendingText: 'A animação com as quatro possibilidades entra aqui em breve. Enquanto isso, conheça os quatro eixos abaixo e siga a jornada.',
   chaptersTitle: 'Capítulos',

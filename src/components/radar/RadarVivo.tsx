@@ -15,11 +15,11 @@
  *
  * Turquesa só em preenchimento e traço; texto em navy ou `accent-ink`.
  */
-import { useId } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { CHALLENGES, type ChallengeId } from '../../data/radar/challenges.ts';
 import { QUESTIONS, type DimensionId, type QualState } from '../../data/radar/mirror.ts';
 import { GOALS } from '../../data/radar/goals.ts';
-import { GROUP_SIZES, TOOL_ENVS, INDICATORS } from '../../data/radar/path.ts';
+import { GROUP_SIZES, TOOL_ENVS, INDICATORS, PATH_LABEL } from '../../data/radar/path.ts';
 import { CHALLENGE_SHORT, CAPABILITY_SHORT, NEXT_FOCUS } from '../../data/radar/reactions.ts';
 import { mirrorResult, isMirrorComplete, isPathComplete, type RadarState } from '../../scripts/radar/engine.ts';
 
@@ -54,6 +54,40 @@ const STAGE: Record<Exclude<QualState, 'Não identificado'>, { fill: number; opa
 };
 
 const stripDot = (s: string) => s.replace(/\.$/, '');
+
+/** O que cada bloco do painel mostra, resumido, para saber o que mudou. */
+const signature = (s: RadarState): Record<string, string> => ({
+  ...Object.fromEntries(QUESTIONS.map((q) => [q.id, s.mirror[q.id] ?? ''])),
+  desafios: s.challenges.join(','),
+  descoberta: isMirrorComplete(s.mirror) ? '1' : '',
+  interesses: s.capabilities.join(','),
+  objetivo: s.goal ?? '',
+  caminho: [s.group ?? '', s.tools.join(','), s.indicator ?? ''].join('|'),
+});
+
+/**
+ * Blocos que a última resposta mudou, por ~1,6 s (revisão de clareza, 16/11/2026):
+ * sem isso, o painel mudava calado ao lado e a pessoa não ligava a resposta ao
+ * retrato. Começa vazio no servidor e no 1º render, sem divergir na hidratação.
+ */
+function useChanged(state: RadarState, active: boolean): Set<string> {
+  const prev = useRef<Record<string, string> | null>(null);
+  const [keys, setKeys] = useState<Set<string>>(() => new Set());
+  const sig = signature(state);
+  const sigKey = JSON.stringify(sig);
+  useEffect(() => {
+    if (!active) return;
+    const before = prev.current;
+    prev.current = sig;
+    if (!before) return;
+    const diff = Object.keys(sig).filter((k) => sig[k] !== before[k]);
+    if (!diff.length) return;
+    setKeys(new Set(diff));
+    const id = window.setTimeout(() => setKeys(new Set()), 1600);
+    return () => window.clearTimeout(id);
+  }, [sigKey, active]); // eslint-disable-line react-hooks/exhaustive-deps
+  return keys;
+}
 const halo = 'motion-safe:animate-radar-halo [transform-box:fill-box] origin-center opacity-0';
 
 /**
@@ -72,7 +106,8 @@ export default function RadarVivo({ state, variant = 'full', highlight = null, h
   ) as Partial<Record<DimensionId, QualState>>;
   // Sem a Tela 07: o mapa vira síntese quando o caminho está completo.
   const final = state.screen === 7 || isPathComplete(state);
-  const center = final ? ['Síntese'] : state.screen >= 2 ? ['Retrato', 'atual'] : ['Sua', 'organização'];
+  const center = final ? ['Síntese'] : state.screen >= 2 ? ['Retrato', 'atual'] : ['Sua', 'empresa'];
+  const changed = useChanged(state, variant === 'full');
 
   const ring = (
     <svg viewBox={variant === 'mini' ? '50 50 300 300' : '0 0 400 400'} className="h-full w-full" role="img" aria-labelledby={titleId}>
@@ -105,9 +140,10 @@ export default function RadarVivo({ state, variant = 'full', highlight = null, h
         );
       })}
       <circle cx={C} cy={C} r={84} fill="#0a2540" />
-      <text x={C} y={center.length === 1 ? C : C - 15} textAnchor="middle" dominantBaseline="middle" fontSize={center.some((t) => t.length > 8) ? 24 : 30} fontWeight={600} fill="#ffffff" className="font-display">
+      {/* No mini (botão do celular) o texto ficaria ilegível: só o disco. */}
+      {variant !== 'mini' && <text x={C} y={center.length === 1 ? C : C - 15} textAnchor="middle" dominantBaseline="middle" fontSize={center.some((t) => t.length > 8) ? 24 : 30} fontWeight={600} fill="#ffffff" className="font-display">
         {center.map((t, i) => <tspan key={t} x={C} dy={i ? 32 : 0}>{t}</tspan>)}
-      </text>
+      </text>}
     </svg>
   );
 
@@ -118,7 +154,7 @@ export default function RadarVivo({ state, variant = 'full', highlight = null, h
       {ids.map((id) => {
         const st = states[id];
         return (
-          <p key={id} className={`max-w-[48%] text-[13px] leading-[1.15rem] ${DIM[id].align}`}>
+          <p key={id} className={`-mx-1.5 max-w-[52%] rounded-lg px-1.5 py-0.5 text-[13px] leading-[1.15rem] motion-safe:transition-colors motion-safe:duration-700 ${changed.has(id) ? 'bg-accent/[0.14]' : ''} ${DIM[id].align}`}>
             <span className={`block font-display font-semibold ${st ? 'text-ink' : 'text-ink-soft/70'}`}>{DIM[id].label}</span>
             {st && <span className="block font-medium text-accent-ink">{st}</span>}
           </p>
@@ -133,7 +169,7 @@ export default function RadarVivo({ state, variant = 'full', highlight = null, h
     <div className="mx-auto w-full max-w-[22rem]">
       {labelRow(['pessoas', 'processos'])}
       {/* No painel o anel é um pouco menor, para o texto caber sem rolagem. */}
-      <div className={`mx-auto -my-2 aspect-square ${variant === 'full' ? 'w-[54%]' : 'w-[66%]'}`}>{ring}</div>
+      <div className={`mx-auto -my-2 aspect-square ${variant === 'full' ? 'w-[48%]' : 'w-[66%]'}`}>{ring}</div>
       {labelRow(['disseminacao', 'seguranca'])}
     </div>
   );
@@ -144,23 +180,30 @@ export default function RadarVivo({ state, variant = 'full', highlight = null, h
   const challenges = CHALLENGES.filter((c) => state.challenges.includes(c.id));
   const insight = isMirrorComplete(state.mirror) ? mirrorResult(state.mirror).rule.insight : null;
   const goal = GOALS.find((g) => g.id === state.goal);
+  // Mesmos rótulos do cartão do cenário e do PDF (um nome por dado).
   const path = [
-    state.group && { k: 'Grupo inicial', v: GROUP_SIZES.find((g) => g.id === state.group)!.label },
-    state.tools.length > 0 && { k: 'Ambiente', v: TOOL_ENVS.filter((t) => state.tools.includes(t.id)).map((t) => t.label).join(', ') },
-    state.indicator && { k: 'Sinal de sucesso', v: stripDot(INDICATORS.find((i) => i.id === state.indicator)!.label) },
+    state.group && { k: PATH_LABEL.group, v: GROUP_SIZES.find((g) => g.id === state.group)!.label },
+    state.tools.length > 0 && { k: PATH_LABEL.tools, v: TOOL_ENVS.filter((t) => state.tools.includes(t.id)).map((t) => t.label).join(', ') },
+    state.indicator && { k: PATH_LABEL.indicator, v: stripDot(INDICATORS.find((i) => i.id === state.indicator)!.label) },
   ].filter(Boolean) as { k: string; v: string }[];
 
-  const section = 'border-t border-ink/[0.08] pt-2.5';
-  const title = 'font-display text-[15px] font-semibold text-ink';
+  // Cada bloco nasce visível, em cinza, com "A definir": o painel mostra desde
+  // o início o que a conversa vai montar. O que a última resposta mudou ganha
+  // um fundo turquesa por ~1,6 s, para ligar a resposta ao painel.
+  const section = (key: string) =>
+    `-mx-2 rounded-xl border-t border-ink/[0.08] px-2 pb-0.5 pt-2 motion-safe:transition-colors motion-safe:duration-700 ${changed.has(key) ? 'bg-accent/[0.1]' : ''}`;
+  const title = (filled: boolean) => `font-display text-[15px] font-semibold ${filled ? 'text-ink' : 'text-ink-soft/80'}`;
+  const pending = <p className="mt-1 text-ink-soft">A definir</p>;
+  const noCapabilities = state.screen >= 5 && state.capabilities.length === 0;
 
   return (
     <figure className="w-full">
       {heading && <p className="mb-3 font-display text-sm font-semibold uppercase tracking-[0.16em] text-accent-ink">Sua jornada</p>}
       {labelled}
 
-      <figcaption className="mt-3 space-y-2.5 text-[13px] leading-5 text-ink-2">
-        <div className={section}>
-          <p className={title}>Desafios identificados</p>
+      <figcaption className="mt-2.5 space-y-1.5 text-[13px] leading-5 text-ink-2">
+        <div className={section('desafios')}>
+          <p className={title(challenges.length > 0)}>Desafios identificados</p>
           {challenges.length ? (
             <ul className="mt-2 flex flex-wrap gap-1.5">
               {challenges.map((c) => (
@@ -169,43 +212,39 @@ export default function RadarVivo({ state, variant = 'full', highlight = null, h
                 </li>
               ))}
             </ul>
-          ) : <p className="mt-1 text-ink-soft">Nenhum marcado ainda.</p>}
+          ) : pending}
         </div>
 
         {/* Os rótulos do anel são o único resumo por dimensão (sem "Leitura atual"
             repetindo os estágios, regra da matriz revisada). */}
-        {insight && (
-          <div className={section}>
-            <p className={title}>Principal descoberta</p>
-            <p className="mt-1">{insight}</p>
-          </div>
-        )}
+        <div className={section('descoberta')}>
+          <p className={title(Boolean(insight))}>Principal descoberta</p>
+          {insight ? <p className="mt-1">{insight}</p> : <p className="mt-1 text-ink-soft">Sai das 4 perguntas do retrato</p>}
+        </div>
 
-        {state.screen >= 3 && state.capabilities.length > 0 && (
-          <div className={section}>
-            <p className={title}>Interesses no mapa</p>
-            <p className="mt-1">{state.capabilities.map((id) => CAPABILITY_SHORT[id]).join(' · ')}</p>
-          </div>
-        )}
+        <div className={section('interesses')}>
+          <p className={title(state.capabilities.length > 0)}>Interesses no mapa</p>
+          {state.capabilities.length > 0
+            ? <p className="mt-1">{state.capabilities.map((id) => CAPABILITY_SHORT[id]).join(' · ')}</p>
+            : noCapabilities ? <p className="mt-1 text-ink-soft">Nenhum em especial</p> : pending}
+        </div>
 
-        {goal && (
-          <div className={section}>
-            <p className={title}>Objetivo</p>
-            <p className="mt-1">{stripDot(goal.label)}</p>
-          </div>
-        )}
+        <div className={section('objetivo')}>
+          <p className={title(Boolean(goal))}>Objetivo</p>
+          {goal ? <p className="mt-1">{stripDot(goal.label)}</p> : pending}
+        </div>
 
-        {path.length > 0 && (
-          <div className={section}>
-            <p className={title}>Caminho inicial</p>
+        <div className={section('caminho')}>
+          <p className={title(path.length > 0)}>Caminho inicial</p>
+          {path.length > 0 ? (
             <ul className="mt-1.5 space-y-1">
               {path.map((p) => <li key={p.k}><span className="font-semibold text-ink">{p.k}:</span> {p.v}</li>)}
             </ul>
-          </div>
-        )}
+          ) : pending}
+        </div>
 
-        <div className={section}>
-          <p className={title}>Próximo foco</p>
+        <div className={section('foco')}>
+          <p className={title(true)}>Próximo foco</p>
           <p className="mt-1">{NEXT_FOCUS[final ? 7 : state.screen]}</p>
         </div>
 

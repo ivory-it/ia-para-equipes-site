@@ -23,7 +23,7 @@ enquanto trabalha numa. Situação em 24/09/2026:
 | `Investment.astro` ("Investimento") | **fechada**, seção nova logo após o Experience (ver "Investimento — decisões tomadas") |
 | `Contact.astro` ("Contato") | **fechada**, última seção nova, logo após o Investment (ver "Contato — decisões tomadas") |
 | `Header.astro` e `Footer.astro` | logo da IA para Equipes desde 23/09/2026 (ver "Logo — decisões tomadas"). Desde 06/10/2026, o menu leva às seções desta página: Por que capacitar (`#contexto`), Como funciona, Experiência e Investimento. Contato ficou de fora, porque os CTAs já levam até lá. Corporativa, Desenvolvedores, Jornada IA e Blog voltam quando essas páginas existirem. O `html` tem `scroll-padding-top: 5.5rem` (no `global.css`): o header é sticky com 88 px, e sem isso a âncora parava com o topo da seção escondido atrás dele. O `NAV_ITEMS` do `nav.ts` alimenta o header, o drawer mobile e a coluna Páginas do rodapé, e o `CTA` do header ("Iniciar teste grátis") saiu. No rodapé saíram a descrição, a coluna Recursos, o Twitter e o Dribbble, e os links "Feito para times focados" e "Comece grátis". Ficaram LinkedIn e Instagram, com os perfis da IA para Equipes desde 06/10/2026 (abrem em nova aba), e Privacidade, ainda com `#`. A grade do rodapé em `lg` é `1fr auto auto` com `gap-x-20`, para Páginas e Redes sociais ficarem juntas na direita. Com frações, sobrava um vão de uns 350 px entre elas. O copyright é "© 2026 Ivory." e leva `data-reveal-skip`: colado no fim da página, nunca passava dos 88% do reveal e ficava invisível. O `title` ("IA para Equipes by Ivory | Capacitação corporativa em IA") e a `description` do `index.astro` saíram do Pulsedesk em 07/10/2026, e o favicon também (ver "Favicon — decisões tomadas") |
-| `diagnostico-ia/index.astro`, `diagnostico-ia/video.astro` e `RadarCta.astro` | **Radar IA, desde 11/11/2026**: jornada interativa em cinco etapas (as sete telas do documento, sem a descoberta e o fechamento) com PDF executivo, em `/diagnostico-ia` (antes `/radar`, que redireciona), feita a partir do documento "Radar IA v1.6" (conversa guiada progressiva). Destaque na home entre o Experience e o Investment, e "Radar IA" é o quinto item do menu. O vídeo único ainda não existe: fica a moldura vazia (ver "Radar IA — decisões tomadas") |
+| `diagnostico-ia/index.astro`, `diagnostico-ia/video.astro` e `RadarCta.astro` | **Diagnóstico IA (no código, "Radar IA"), desde 11/11/2026**: jornada interativa em cinco etapas (as sete telas do documento, sem a descoberta e o fechamento) com PDF executivo, em `/diagnostico-ia`, feita a partir do documento "Radar IA v1.6" (conversa guiada progressiva). Destaque na home entre o Experience e o Investment, e "Diagnóstico IA" é o quinto item do menu (ver "Radar IA — decisões tomadas") |
 | `materiais/index.astro` e `materiais/radar-de-pendencias-copilot.astro` | **páginas novas desde 09/11/2026**: o índice dos materiais gratuitos, com um card por material, e o material do reels do Radar de Pendências. "Materiais" é o sexto item do menu e do rodapé, depois do Radar IA (ver "Materiais — decisões tomadas") |
 | As oito seções de template (01 a 07 e `Cta.astro`) | **fora da página** desde 23/09/2026. Os arquivos continuam em `sections/` |
 
@@ -383,9 +383,10 @@ RADAR recebe o link por Direct. Por isso o desenho é pensado primeiro para o ce
   card é a capa og do material. Material novo precisa de três coisas: a página, a capa 1200×630 em
   `public/og/<slug>.png` e a entrada nessa lista. O material leva um link "Todos os materiais" de
   volta ao índice.
-- **"Materiais" é o sexto item do `NAV_ITEMS`** (o quinto passou a ser o Radar IA em 11/11/2026), e por isso aparece no header, no drawer e na coluna
-  Páginas do rodapé. Com cinco itens, o header usa `gap-5` no tablet e `gap-8` a partir de `lg`,
-  com `whitespace-nowrap`. Com `gap-8`, o "Por que capacitar" quebrava em duas linhas em 768 px.
+- **"Materiais" é o sexto item do `NAV_ITEMS`** (o quinto é o "Diagnóstico IA"), e por isso aparece
+  no header, no drawer e na coluna Páginas do rodapé. O header usa `whitespace-nowrap`, `gap-3` e
+  12 px no tablet e `gap-8` e 14 px a partir de `lg`. Com "Diagnóstico IA", o `gap-4` e 13 px
+  encostavam o menu no logo em 768 px; com `gap-8`, o "Por que capacitar" quebrava.
 - **O menu e o logo usam caminhos absolutos** (`/#contexto`, `/`), porque o header aparece fora da
   home. Na home, mesmo caminho com hash continua sendo rolagem na página.
 - **O prompt mora em `src/data/materiais/radar-prompt.ts`,** sem reformatar. O botão copia o
@@ -420,19 +421,24 @@ Jornada em `/diagnostico-ia`. O documento de referência é o "Radar IA — Jorn
 `src/data/radar/`; as regras, em `src/scripts/radar/engine.ts`; o roteiro, em
 `src/components/radar/chat/script.ts`.
 
-- **Endereço `/diagnostico-ia` (desde 11/11/2026, pedido do Thiago; antes `/radar`).**
-  - **`/radar` é uma página mínima** (`src/pages/radar/index.astro`) que faz
-    `location.replace('/diagnostico-ia' + search + hash)`. O redirect do Astro, que também gera o
-    da Vercel, descartava a query. Com ele, os links já divulgados com `?access=` e UTMs perdiam o
-    token. A página fica fora do sitemap (`filter` no `astro.config.mjs`) e tem `noindex`.
-  - **`/radar/video`** usa o redirect do Astro, porque não leva query.
-  - **O `Referrer-Policy: no-referrer`** do `vercel.json` vale para os dois caminhos.
-  - **A API continua em `/api/radar/verify-access`**, que é interna.
-  - **Os assets em `public/radar/`** (logos, onda) mantêm o caminho.
-- **Nome dentro da ferramenta: "Descubra seu próximo passo com IA".** Por decisão do Thiago, vale
-  só ali: cabeçalho do chat, `<title>` e `h1` da página. Fora dela, nada muda:
-  - o menu, o destaque da home e a página do vídeo continuam "Radar IA";
-  - a origem do lead continua `origem: 'Radar IA'`, para o CRM não mudar.
+- **Endereço `/diagnostico-ia` (desde 11/11/2026, pedido do Thiago).** O `/radar` antigo e o
+  redirect `/radar/video` saíram em 16/11/2026: o site nunca foi publicado, então não havia links a
+  preservar. Os assets em `public/radar/` (logos, onda, vídeo) mantêm o caminho. O
+  `/diagnostico-ia` tem `Referrer-Policy: no-referrer` no `vercel.json`.
+- **Nomes (revistos em 16/11/2026, pedido do Thiago):**
+  - **Dentro da ferramenta:** "Descubra seu próximo passo com IA" (cabeçalho do chat, `<title>` e
+    `h1` da página).
+  - **Para o visitante, fora dela:** "Diagnóstico IA", no menu, no destaque da home e na página do
+    vídeo. O destaque da home (`RadarCta.astro`, `id="diagnostico"`) tem:
+    - o título igual ao da ferramenta e o botão "Fazer o diagnóstico";
+    - os três pontos do que a pessoa leva hoje (retrato, vídeo, plano em PDF), sem tempo
+      estimado;
+    - o anel do painel "Sua jornada" como desenho, no lugar dos pontos e losangos antigos.
+  - **"Radar IA" ficou só no código** (`src/components/radar`, `RadarApp`…) e na origem do lead,
+    `origem: 'Radar IA'`, para o CRM não mudar.
+  - **A imagem de compartilhamento** é `public/og/diagnostico-ia.png` (1200×630), gerada de um
+    HTML com as fontes e o logo do site e capturada pelo Playwright. A `radar.png` antiga, que
+    dizia "Radar IA", saiu.
 
   O indicador de digitação diz só "Digitando…". O título do cabeçalho é grande (`text-lg`/`sm:text-xl`,
   com `text-balance`, para o "IA" não ficar sozinho em 390 px) e não tem avatar: a onda fica só
@@ -456,8 +462,9 @@ Jornada em `/diagnostico-ia`. O documento de referência é o "Radar IA — Jorn
     mudaram.
 - **Opções com descrição viram cartões no compositor** (desafios e possibilidades), conforme a
   referência do Thiago:
-  - ícone num círculo turquesa claro, título em Sora, descrição e caixa de seleção no canto;
-  - lado a lado em `lg`, duas colunas em `sm` e uma por linha no celular;
+  - ícone num círculo turquesa claro **ao lado do título** (desde 16/11/2026; antes, em cima),
+    título em Sora, descrição embaixo e caixa de seleção no canto;
+  - duas colunas a partir de `sm` e uma por linha no celular;
   - a área das opções sobe para 50vh quando há cartões.
 
   As outras respostas seguem como pílulas.
@@ -498,14 +505,52 @@ Histórico, para ninguém voltar atrás sem querer:
     alinhado ao pé delas. Não há faixa embaixo nem texto de apoio ("Escolha uma resposta" saiu,
     12/11/2026). A linha de status aparece só com aviso do PDF ou erro de campo, e "Digitando…"
     ocupa o lugar das opções enquanto o Radar escreve;
-  - os cartões ficam em 4 colunas só em `xl`; abaixo, 2 colunas. Em 1024 px, com 4 colunas, a
-    área das opções estourava 17 px na horizontal;
+  - os cartões ficam em 2 colunas em todas as larguras a partir de `sm` (16/11/2026). Em 4
+    colunas, com o ícone ao lado, o título quebrava em 3 linhas. O "Continuar sem escolher" ocupa
+    `sm:col-span-2`: um `col-span-4` recriaria as 4 colunas;
   - o chat (cabeçalho, conversa e compositor) tem até 860 px de largura (antes 760);
   - nas perguntas de contato, um campo de texto; na entrega, "Baixar de novo" (ou "Tentar de novo").
 
   Mensagens da IA sem balão, com o avatar da onda; as do visitante, em balão navy à direita.
   `FollowLatest` rola até o fim quando as opções surgem: o compositor cresce e, no celular, a
   pergunta ficava escondida.
+- **Revisão de clareza da conversa (16/11/2026, pedido do Thiago, sem as skills de design).**
+  O objetivo era deixar a conversa mais fácil de acompanhar, sem mudar a estrutura nem a cara do
+  site. O marco antes da revisão é o commit `677a787`.
+  - **A conversa cresce de baixo para cima** (`min-h-full justify-end` no `ConversationContent`).
+    Antes, a pergunta ficava no topo e as opções no pé, com até ~500 px de vão. Agora a pergunta
+    da vez fica colada às opções que a respondem, como em qualquer app de chat.
+  - **Um só indicador de progresso:** a régua de 5 segmentos com o nome das etapas (`Progress`
+    no `RadarApp.tsx`; nomes em `STEP_NAMES`: Meus desafios, Retrato, Possibilidades, Objetivo,
+    Seu plano).
+    - As etapas feitas ficam em turquesa e a atual enche em `accent-ink`. No retrato, enche em
+      quartos; em "Seu plano", pergunta a pergunta (`progressWithin`).
+    - No celular aparecem só os segmentos e "Etapa X de 5 · Nome".
+    - Saíram o "Etapa 2 de 5 · Retrato" em texto e o "· 1 de 4" do selo das perguntas do retrato,
+      porque eram dois contadores diferentes.
+  - **Abertura com o combinado:** "São 5 etapas rápidas. No fim, você recebe um plano em PDF
+    para levar à liderança." (`CHALLENGES_INTRO.opening`). Não cita tempo, porque o número não foi
+    confirmado.
+  - **O painel mostra o que vai ser montado.** Cada bloco (desafios, descoberta, interesses,
+    objetivo, caminho) nasce em cinza com "A definir". Interesses vira "Nenhum em especial" se a
+    pessoa pula as possibilidades.
+  - **O painel mostra o que acabou de mudar.** O bloco ou o rótulo do arco que a última resposta
+    alterou ganha um fundo turquesa por ~1,6 s (`useChanged` em `RadarVivo.tsx`, que compara uma
+    assinatura do estado). Antes, o painel mudava calado ao lado.
+  - **O cartão do retrato não repete o anel em `lg`,** porque o painel ao lado já o mostra. O texto
+    ganha a largura toda. Abaixo de `lg` o painel fica escondido, e o anel volta ao cartão. O
+    "Próximo passo" tem um filete turquesa à esquerda: é o que a pessoa leva.
+  - **Um nome por dado** (`PATH_LABEL` em `src/data/radar/path.ts`): Objetivo, Primeiro grupo a
+    capacitar, Ferramenta de IA e Sinal de sucesso, iguais no cartão do cenário, no painel e no
+    PDF. Antes eram "Grupo inicial", "Ambiente", "Indicador" ou "Indicador de acompanhamento",
+    conforme o lugar.
+  - **Sem as letras A–D nas opções do retrato.** Vêm da matriz e não dizem nada a quem responde.
+    Continuam nos dados, para a lógica.
+  - **Opção que está saindo não responde a pergunta seguinte.** Cada sugestão guarda o passo em
+    que nasceu (`live` no `Composer.tsx`). Durante os 180 ms da saída, um clique numa opção antiga
+    chegou a responder Processos com uma opção de Pessoas.
+  - **Celular:** o botão do painel virou a pílula "Sua jornada", com o mini-anel. Antes era um
+    anel de 40 px com texto ilegível.
 - **Sem "Alterar" nem "Minha jornada" (decisão do Thiago, diverge da v1.6, critério 7).** As
   respostas não são editáveis; para refazer, recarrega-se a página. No celular, o botão do
   cabeçalho abre só o Radar Vivo.
@@ -578,6 +623,15 @@ Histórico, para ninguém voltar atrás sem querer:
 
       A aba "Revisão 16-11" traz antes e depois. A versão anterior está em
       `matriz-retrato-tela02-v1.xlsx`, ao lado.
+    - **Passada da skill `humanizer-br` (16/11/2026, pedido do Thiago).** A skill veio de um
+      `.skill` enviado por ele e não foi instalada: serviu só de referência. Ela trocou 22 textos.
+      - Saíram "na prática" (palavra proibida da skill), o jargão da matriz "resultado
+        acompanhado" (8 vezes), dois "não é X, é Y", os bordões "Agora é hora de" e "A base está
+        pronta", o "caso a caso" repetido e "referências internas".
+      - Nenhum histórico inventado: a regra de "experiência real" da skill pede frases como "temos
+        visto em projetos", e nada disso entrou.
+      - A aba "Revisão humanizer-br" traz antes e depois. A versão anterior está em
+        `matriz-retrato-tela02-v2.xlsx`.
     - O script `scripts/radar-import-retrato.py` (openpyxl) gera `src/data/radar/portrait.ts`.
       Não edite esse arquivo à mão.
     - Antes de gravar, o script confere três coisas: que há 256 códigos, que cada código casa só
@@ -609,7 +663,7 @@ Histórico, para ninguém voltar atrás sem querer:
   - os exemplos validados (ABBB → B2, AAAA → B1, CCCC → E1, DDDD → N2);
   - o "Não sei" em Pessoas;
   - o plano derivado sem id repetido;
-  - a dica, o nome do PDF e o token.
+  - a dica e o nome do PDF.
 
   Os imports desses arquivos têm `.ts` para o `node` rodar sem build.
 - **Sem persistência.** Estado só em memória (`state.ts`), sem banco e sem localStorage. A página
@@ -641,7 +695,7 @@ Histórico, para ninguém voltar atrás sem querer:
       O backend não libera `localhost` no CORS, e sem isso não dava para testar o PDF. Em
       produção não há exceção.
     - Para testar sem bater no backend, intercepte `**/api/lead` (`route.abort()` simula o CORS). O contato fica só em memória, em `RadarState.contact`.
-  - **Com o token de acesso** (`RadarState.directPdf`), as perguntas são puladas: depois do
+  - **Com `?access` na URL** (`RadarState.directPdf`), as perguntas são puladas: depois do
     cenário vem só "Baixar meu plano em PDF", e nenhum lead é enviado.
   - **Saíram** o modal `#radar-lead`, o "Quero conversar com a Ivory" e a nota "Você escolheu onde
     começar" depois do objetivo.
@@ -664,8 +718,9 @@ Histórico, para ninguém voltar atrás sem querer:
   - Depois de "Este é o seu cenário inicial." vêm as perguntas de contato e o PDF: saiu a Tela 07,
     com a linha do tempo, a prévia e o nome da empresa. O PDF sai sem a empresa na capa e no
     nome do arquivo.
-  - O cabeçalho mostra "Etapa X de 5" (`DISPLAY_STEP` em `script.ts`; as perguntas de contato são "Etapa 5 de 5 · Seu plano"): as telas internas seguem
-    a numeração do documento, que o painel e o motor usam.
+  - O cabeçalho mostra a régua de 5 etapas (`DISPLAY_STEP`, `STEP_NAMES` e `progressWithin` em
+    `script.ts`; ver "Revisão de clareza"). As telas internas seguem a numeração do documento,
+    que o painel e o motor usam.
   - Com o caminho completo, o centro do anel vira "Síntese".
   - O cartão "Este é o seu cenário inicial." mostra só objetivo, grupo, ambiente e indicador. O
     roteiro (Preparar → Expandir) e o "Como o IA para Equipes se encaixa" saíram do chat em
@@ -680,16 +735,21 @@ Histórico, para ninguém voltar atrás sem querer:
   selfh.st/icons (CC BY 4.0, o mesmo do `Structure.astro`), e Claude, ChatGPT e Gemini
   (`googlegemini`) do simple-icons (CC0). Selecionado, o logo fica verde-escuro, como os ícones.
   "Outros" e "Ainda estamos avaliando" seguem com ícone Solar.
-- **Token de acesso (`?access=`).** Dispensa o formulário antes do PDF para leads já conhecidos.
-  Formato `payload.hmac` (HMAC-SHA256, escopo `radar:pdf:direct`, validade), em
-  `src/lib/radar-token.ts`. Quem valida é `src/pages/api/radar/verify-access.ts`, a única rota sob
-  demanda do site (por isso o adapter `@astrojs/vercel`; o resto continua pré-renderizado). Fail
-  closed: sem segredo, token inválido, expirado ou falha de rede, o formulário continua exigido. O
-  token sai da URL na leitura, e `/diagnostico-ia` tem `Referrer-Policy: no-referrer`. Gere links com
-  `node scripts/radar-token.ts --dias 30 --label relacionamento` (precisa do
-  `RADAR_ACCESS_SECRET`, o mesmo da Vercel). É credencial de portador: quem tem o link usa até
-  expirar. Como o PDF nasce no navegador, o cadastro é controle comercial, não proteção
-  criptográfica do arquivo.
+- **Acesso direto (`?access`), desde 16/11/2026 (decisão do Thiago).**
+  - **Como funciona:** qualquer valor do parâmetro, por exemplo `/diagnostico-ia?access=1`,
+    dispensa as perguntas de contato antes do PDF.
+    - Depois do cenário vem só "Baixar meu plano em PDF".
+    - Nenhum lead é enviado, e a capa sai sem nome.
+    - Quem lê o parâmetro é o `src/components/radar/access.ts`, no `useEffect` (para não quebrar
+      a hidratação). Ele tira o parâmetro da barra de endereço.
+  - **O que saiu:** antes era um token assinado (HMAC, com validade) gerado por script e
+    validado numa rota de servidor. O Thiago achou complexo demais. Saíram:
+    - `src/lib/radar-token.ts`, `scripts/radar-token.ts` e `/api/radar/verify-access`;
+    - o `RADAR_ACCESS_SECRET` e o `.env.example`;
+    - o adapter `@astrojs/vercel`, que existia só por causa da rota. O site voltou a ser 100%
+      estático.
+  - **A troca:** quem conhecer o parâmetro baixa o PDF sem deixar contato. O cadastro é convenção
+    comercial, não proteção. Já era assim em parte, porque o PDF nasce no navegador.
 - **Vídeo "A IA pode fazer muito mais do que você imagina" (desde 16/11/2026).** Tela 04 do chat e
   página pública `/diagnostico-ia/video`, com o mesmo `VideoSlot.tsx`.
   - **Duas versões em `public/radar/video/`**, servidas como estão. São recompressões dos renders
@@ -710,7 +770,22 @@ Histórico, para ninguém voltar atrás sem querer:
     nada deve baixar antes do play. Testado: nenhuma requisição ao `.mp4` antes do play.
   - **A legenda está gravada na imagem.** A faixa `ia-possibilidades.vtt` vai no player desligada,
     para não duplicar o texto.
-  - **Moldura:** 16:9 no desktop; no reels, 9:16 centralizado com `max-h-[60vh]`.
+  - **No chat, primeiro o vídeo, depois a pergunta (16/11/2026, pedido do Thiago).** Antes, título,
+    vídeo e "Qual dessas possibilidades mais chamou sua atenção?" chegavam juntos. Com os quatro
+    cartões no compositor (~290 px), o vídeo aparecia cortado, e a pessoa era perguntada sobre um
+    vídeo que não tinha visto. Agora são dois passos em `script.ts`:
+    - `video`: o título, a frase `VIDEO_SCREEN.intro` ("Veja no vídeo quatro formas… Depois, me
+      conte qual chamou mais sua atenção.") e o vídeo, com o compositor só com "Continuar";
+    - `possibilidades`: a pergunta e os cartões, com o vídeo logo acima na conversa.
+
+    A régua enche em 0,4 e 0,8 da etapa.
+  - **Moldura que cabe na tela.**
+    - **Desktop:** 16:9 com `max-w-[calc((100dvh-27rem)*16/9)]`, que só encolhe em telas baixas
+      (em 1366×768, o título e o vídeo cabem inteiros).
+    - **Reels:** 9:16 centralizado com `max-h-[max(16rem,calc(100dvh-30rem))]`. Em 390×844 a frase
+      e o vídeo cabem inteiros, e só o título rola para cima.
+
+    A página pública `/diagnostico-ia/video` usa o mesmo limite.
   - **Só o player, sem atalhos de capítulo** (pedido do Thiago, 16/11/2026). Os tempos continuam
     em `chapterStart` (`capabilities.ts`, do `capitulos.txt` do render: Sistemas 0:17, Tarefas
     programadas 1:28, Arquivos 1:48, Entregas 2:08), para quando voltarem a ser usados.
@@ -723,7 +798,7 @@ Histórico, para ninguém voltar atrás sem querer:
   anéis tracejados, pontos de desafio, losangos de possibilidade e a trilha num SVG só, e ficou
   poluída. Agora (`RadarVivo.tsx`):
   - **em cima, um anel com quatro arcos nomeados** (Pessoas, Processos, Segurança, Disseminação)
-    e um disco navy no centro ("Sua organização" → "Retrato atual" → "Síntese" com o caminho completo).
+    e um disco navy no centro ("Sua empresa" → "Retrato atual" → "Síntese" com o caminho completo; o mini do celular não tem texto).
     O arco fica cinza até a pergunta da dimensão ser respondida e então ganha cor e estágio.
     O nome e o estágio ficam em cima e embaixo do anel, em linhas: sobrepostos ao anel, quebravam
     em 280 px;
@@ -747,7 +822,7 @@ Histórico, para ninguém voltar atrás sem querer:
   - As coordenadas são arredondadas: sem isso, servidor e navegador divergiam no último dígito e
     o React acusava erro de hidratação.
   - **Painel lateral:** `top-[6rem]` e `max-h-[calc(100dvh-6.5rem)]`, o máximo abaixo do header,
-    com `p-4`, espaçamentos justos e o anel em 54% da largura (66% no cartão do retrato). Assim, o
+    com `p-4`, espaçamentos justos e o anel em 48% da largura (66% no cartão do retrato). Assim, o
     fim da jornada cabe sem rolagem em 1440×900 (medido: `scrollHeight` igual a `clientHeight`).
     A rolagem interna fica como reserva para telas mais baixas.
   - **Ao responder, a página volta ao topo** (`window.scrollTo` em `respond`). A página e o chat
@@ -755,50 +830,111 @@ Histórico, para ninguém voltar atrás sem querer:
   - **Sem a nota de turma grande no chat:** "Mais de 50 colaboradores" não traz mais a fala sobre
     turmas de 50. A nota continua no PDF.
   - Sem rodapé "Não é uma nota": o Thiago tirou essa frase do painel e do cartão do retrato.
-- **PDF executivo visual (redesenho de 11/11/2026, pedido do Thiago: "monótono, muito texto").**
-  São blocos visuais no lugar de parágrafos, seguindo a skill da marca:
-  - fundo branco com malha sutil no topo;
-  - Navy como tinta e Turquesa como acento;
-  - Navy sólido só na capa, no card da descoberta, no card do vídeo e na contracapa;
-  - a onda uma vez, na capa.
+- **O plano em PDF é uma apresentação 16:9 (desde 16/11/2026, pedido do Thiago).** Quem fez o
+  diagnóstico leva o arquivo para a liderança, sem a Ivory na sala. O Thiago pediu uma interface
+  que se explique sozinha, com pouco texto e diagramas no lugar de parágrafos, e sem guia de
+  apresentador. A versão A4 anterior (documento de leitura, de 11/11) saiu.
+  - **Formato:** páginas de 960×540 pt, o 16:9 do PowerPoint, em `PlanDocument.tsx`.
+    - **Não use `wrap={false}` na `<Page>`:** no react-pdf 4.9 ele faz a altura virar automática.
+    - Cada slide precisa caber em 398 pt de altura útil. Quando passa, o react-pdf cria uma página
+      a mais, quase vazia. **Confira sempre a contagem de páginas:** 10 slides, mais 1 de abertura
+      do apêndice e 4 por desafio marcado (com 4 desafios, 27; com 1, 15). Um título que passa a
+      ter duas linhas já basta para transbordar.
+    - As notas de rodapé e a faixa do apêndice são absolutas e têm `fixed`. Sem isso, um conteúdo
+      que encosta no limite empurra a nota para outra página.
+  - **Regras do deck:**
+    - **Um slide, uma mensagem:** o título já é a conclusão e o visual a prova.
+    - **A régua do topo:** quatro etapas, Onde a empresa está · O que identificamos · O que é
+      possível · O que recomendamos (`DECK_STAGES`), a mesma ideia da régua do chat.
+    - **Voz de consultoria (desde 16/11/2026, pedido do Thiago).** A IA para Equipes entrega à
+      empresa a leitura e a recomendação ("A empresa reconhece", "Nossa leitura", "Recomendamos").
+      A primeira versão falava como a pessoa apresentando ("Reconhecemos", "nosso retrato"), e o
+      Thiago não gostou. A capa diz "Preparado para".
+    - **O conteúdo vem do chat e da matriz,** e os textos fixos do deck ficam no objeto `DECK`, em
+      `story.ts`.
+  - **Slides:**
+    0. **Capa:** Navy com a onda, "Preparado para {nome} · {cargo}", o mês e "por IA para Equipes
+       by Ivory". Com `?access`, só o mês.
+    1. **Os desafios:** "A empresa reconhece N desafios", um cartão por desafio, com a frase do
+       chat como citação.
+    2. **O retrato:** o anel com os nomes das dimensões e uma linha por dimensão (medidor de 4
+       degraus, estágio e resumo), mais a nota "Não é uma medição".
+    3. **A descoberta:** Navy, a citação grande, o porquê e o tema da regra (`axis`).
+    4. **A base e o ponto de atenção:** valor e atenção, lado a lado. Com o bloco "descobrir", o
+       título muda.
+    5. **As possibilidades:** as 4, cada uma com um mini fluxo de onde vem → IA → o que entrega
+       (campo `flow` em `capabilities.ts`), no lugar do exemplo em texto. As marcadas ganham
+       "Chamou a atenção" e as outras ficam esmaecidas. Ao lado, o cartão Navy com o QR do vídeo.
+    **"O que recomendamos" (simplificado em 16/11/2026, pedido do Thiago).** Antes misturava o
+    piloto, a linha Preparar → Expandir, o primeiro passo da matriz, as decisões e o apoio. Agora
+    são só as respostas da empresa e a capacitação, como o site apresenta:
+    6. **Aonde a empresa quer chegar:** só as respostas do chat. Objetivo → como perceber que deu
+       certo; embaixo, o primeiro grupo e as ferramentas, com os logos.
+    7. **Recomendamos a capacitação IA para Equipes:** os 4 cartões da seção "Como funciona" do
+       site (`Structure.astro`), com o mesmo texto (`DECK.facts`). **Se o site mudar, mude o
+       `DECK` também.**
+       - **Personalizado só onde ajuda:** "Para vocês: 1 turma" (ou "turmas de até 50,
+         definidas juntos") e os logos das ferramentas marcadas. Sem ferramenta concreta, vão os
+         3 logos do site e "ou outras soluções homologadas".
+       - **Embaixo,** as 3 competências do objetivo.
+       - **Sem preço.**
+    8. **Como a capacitação se estrutura:** as 3 etapas do site (Diagnóstico de maturidade →
+       Sessão 1 · Fundamentos → Sessão 2 · Aplicação). A Sessão 2 ganha "Com exemplos de vocês:"
+       com as duas atividades candidatas do objetivo. O `TECH_BOUNDARY` fica no rodapé.
+    9. **Contracapa:** o logo empilhado branco, o site, as redes e o QR do site.
 
-  Páginas:
-  1. **Capa:** título, subtítulo "Primeiros passos", "Preparado para {nome} · {cargo}" com a data
-     (sem contato, com o token, só a data) e a onda grande cortada na borda. O chip "Kit do
-     patrocinador de IA" saiu em 13/11/2026.
-  2. **Onde vocês estão** (desde 13/11/2026 junta o antigo resumo e a página do retrato, que
-     saiu):
-     - card Navy com a descoberta e o porquê, e o anel pequeno com os 4 estágios;
-     - tiles de objetivo, "Primeiro grupo a capacitar" (antes "Grupo inicial", que ficava solto)
-       e sinal de sucesso;
-     - os 4 temas com o resumo e a ressalva de autodeclaração;
-     - o bloco de valor e a atenção;
-     - chips dos desafios.
+    **Saíram** o quadro do piloto, a linha do tempo de 5 marcos (o `TRACK` segue nos dados), "O
+    primeiro passo que recomendamos" (o passo e a entrega continuam no cartão do retrato, no
+    chat), as decisões e o slide de apoio.
 
-     Saíram "Seu primeiro passo" e "Recomendação de partida": o passo fica em "O Radar
-     sugere", no plano de ação.
-  3. **Oportunidades:** grade 2×2 com ícones e o card do vídeo com QR.
-  4. **Plano de ação:** roteiro em linha do tempo; "Você indicou" em checklist; "O Radar sugere"
-     em card com borda turquesa.
-  5. **Proposta:** tiles, chips de competências, condições em checklist, decisões em stepper e
-     "Como a Ivory pode apoiar".
-  6. **Apêndice de recomendações:** em fluxo contínuo, com faixa Navy por desafio
-     (`minPresenceAhead`); com quebra por desafio, sobravam páginas quase vazias.
-  7. **Contracapa institucional:** logo empilhado branco, "Vamos dar o próximo passo com a sua
-     equipe.", site, LinkedIn e Instagram com link (`PDF.social`, os endereços do rodapé do site)
-     e o QR do site.
+    **Cartões de altura fixa:** os cartões do slide 7 têm `height` fixo. Com `minHeight` e a faixa
+    de competências embaixo, o react-pdf media o slide mais alto do que ele é e criava uma página
+    em branco (a imagem cabia). Para depurar a paginação sem percorrer o chat, renderize o
+    `PlanDocument` no Node: `esbuild --bundle --platform=node --packages=external` e
+    `renderToFile`, com as fontes servidas pelo `astro dev`.
 
-  Com 4 desafios, são 12 páginas.
-  - **Saíram** o apêndice "Argumentos para a reunião" (FAQ e riscos), as "Três mensagens para a
-    liderança" e o parágrafo-resumo (`summary` e `messages` do `planModel`).
-  - **Ícones:** o PDF desenha os ícones Solar de `icons.ts` (`SolarIcon` lê os `path`, `circle`,
-    `ellipse` e `rect`). O anel é o mesmo do site, com 4 degraus.
-  - **Arquivos novos em `public/radar/`:** `onda-capa.png` (900 px) e `logo-empilhado-branco.png`,
-    recortados da skill da marca sem outra edição.
+    **Apêndice "Como colocar em prática" (diagramas desde 16/11/2026, pedido do Thiago: "mais
+    criativo, que deixe a pessoa empolgada em implementar"):**
+    - **Abertura:** o que é o apêndice, como ler cada página (etapa, modelo, resultado) e o mapa
+      dos desafios marcados com as 3 práticas de cada um.
+    - **Um divisor por desafio,** com os 3 títulos como sumário.
+    - **Um slide por prática:**
+      - à esquerda, a etapa, o título, a frase de abertura e "Entra no plano";
+      - à direita, **um diagrama próprio**;
+      - embaixo, a faixa com o resultado.
+    - **Os 12 diagramas** ficam em `pdf/diagrams.tsx`, e os rótulos em
+      `src/data/radar/practice-visuals.ts`. O tipo de cada um segue a forma do conteúdo (regra da
+      guizang):
+
+      | Forma | Práticas |
+      |---|---|
+      | Leque convergente | áreas → inventário |
+      | Ficha modelo × "só o prompt" | — |
+      | Ciclo | 15 minutos de IA |
+      | Matriz 2×2 | frequência × tempo |
+      | Placar | antes × com IA |
+      | Trilha | 4 passos → entregas |
+      | Mapa da política | quem define → 3 grupos de temas |
+      | Fluxograma Sim/Não | — |
+      | Documento fictício marcado | com hachura no que exige proteção |
+      | Funil | 4 filtros |
+      | Linha | Hoje → 30 dias |
+      | Montagem do piloto | medidores vazios |
+    - **Nenhum número inventado:** os campos de medida ficam em branco ("a medir") e os medidores
+      não têm valor.
+    - **Só Navy e Turquesa:** o "Não" e o "proteger" usam contorno ou hachura Navy.
+    - Peças comuns (cores, `SolarIcon`, `IconBadge`, setas, selo "IA") em `pdf/kit.tsx`.
+  - **Saíram do PDF:** `NEXT_STEPS` e `CONDITIONS` (as decisões também saíram, em 16/11), a malha do
+    topo, o rodapé de texto e os "Três argumentos"/FAQ, que já tinham saído em 13/11.
+  - **Ícones:** o PDF desenha os Solar de `icons.ts` (`SolarIcon`). Ícone novo vai em
+    `scripts/radar-icons.mjs`; depois rode o script.
+  - **Arquivos em `public/radar/`:** `onda-capa.png`, `logo-empilhado-branco.png` e os logos
+    horizontais, recortados da skill da marca sem outra edição.
   - **Fontes:** em WOFF em `public/fonts/radar/` (o react-pdf não lê WOFF2).
-  - **Revisão visual:** salve o PDF pelo Playwright e renderize com PyMuPDF (`fitz`, instalado) em
-    PNG.
-- **Menu com seis itens.** No tablet, `gap-4` e 13 px; com 14 px o menu encostava no logo em 768 px.
+  - **Peso:** cerca de 3 MB com 4 desafios, quase todo em fontes e na onda.
+  - **Revisão visual:** percorra o chat pelo Playwright até o download (com `/api/lead`
+    interceptado devolvendo 202) e renderize as páginas com PyMuPDF (`fitz`) em PNG.
+- **Menu com seis itens.** No tablet, `gap-3` e 12 px (ver "Materiais"): com o "Diagnóstico IA", o menu encostava no logo em 768 px.
 - **Teste sem lead real:** intercepte `**/api/lead` (Playwright `page.route`) devolvendo 202.
 
 ## Skill de design Taste (instalada em 16/11/2026)
@@ -869,6 +1005,28 @@ Thiago pede, e o que ela indica é sugestão para ele decidir, nunca mudança ap
   - a troca de ícones (Phosphor, Heroicons).
 
   Aqui ficam Sora + Poppins, Solar, os tokens do `global.css` e a rolagem nativa.
+
+### Terceira skill: `guizang-ppt-skill` (referência de apresentação)
+
+- **O que é:** a skill de op7418 (歸藏) que gera apresentações em HTML de arquivo único, nos
+  estilos revista e suíço. Fica em `.claude/skills/guizang-ppt-skill/`, com a versão travada no
+  `skills-lock.json`. Instalada em 16/11/2026 a pedido do Thiago, para redesenhar o plano em PDF.
+- **Só como referência, sob pedido.** Tem `disable-model-invocation: true`; recoloque depois de
+  `npx skills update`. Ela gera um HTML estático escrito pelo agente, e o nosso PDF é montado no
+  navegador com as respostas de cada pessoa. Por isso usamos as ideias e não o gerador:
+  - o tipo de conteúdo escolhe o diagrama (ciclo, trilha, matriz, comparação…);
+  - nunca inventar dado num gráfico;
+  - cada slide com uma composição diferente.
+- **Licença AGPL-3.0.** Não copie código, CSS nem templates dela para o site: a AGPL obrigaria a
+  abrir o código do site. Use só como leitura.
+- **O que não rodar:**
+  - o `git fetch`/`git pull` do passo 0 do `SKILL.md`;
+  - os validadores (`validate-*.mjs`);
+  - o `gz-theme.mjs`;
+  - a geração de imagem.
+- **O que conflita com a marca:** as serifas (Playfair, Noto Serif), as cores de acento dela
+  (azul Klein, amarelo, laranja), o fundo WebGL, os cantos retos obrigatórios do estilo suíço e
+  os ícones Lucide. Aqui ficam Sora + Poppins, Navy + Turquesa, cantos arredondados e Solar.
 
 Ela foi feita para criar sites do zero e traz regras próprias. Neste projeto, **a marca e as
 decisões deste arquivo vencem**:

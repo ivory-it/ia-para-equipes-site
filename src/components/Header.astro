@@ -18,13 +18,14 @@ import logo from '../assets/marca/logo-empilhado-navy.svg';
       <Image src={logo} alt="IA para Equipes by Ivory" class="h-[4.5rem] w-auto" loading="eager" />
     </a>
 
-    {/* Tablet com seis itens (desde o Radar IA): gap-4 e 13 px, senão o menu
-        encostava no logo em 768 px. Com gap-8, o "Por que capacitar" quebrava. */}
-    <div class="hidden items-center gap-4 md:flex lg:gap-8">
+    {/* Tablet com seis itens: gap-3 e 12 px. Com "Diagnóstico IA" (16/11/2026), o
+        gap-4 e 13 px de antes encostavam o menu no logo em 768 px. A partir de lg
+        volta a gap-8 e 14 px. Com gap-8 no tablet, o "Por que capacitar" quebrava. */}
+    <div class="hidden items-center gap-3 md:flex lg:gap-8">
       {
         NAV_ITEMS.map((item) => (
           <a
-            class="relative whitespace-nowrap text-[13px] text-ink-soft lg:text-sm transition duration-300 ease-out hover:text-ink"
+            class="relative whitespace-nowrap text-[12px] text-ink-soft lg:text-sm transition duration-300 ease-out hover:text-ink"
             href={item.href}
           >
             {item.label}

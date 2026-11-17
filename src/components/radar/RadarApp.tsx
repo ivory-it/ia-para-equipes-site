@@ -38,7 +38,7 @@ import RadarVivo from './RadarVivo';
 import Composer from './chat/Composer';
 import { TypingDots, Typewriter, typingDelay } from './chat/Typewriter';
 import { renderBlock, type BlockContext } from './chat/blocks';
-import { answer, getStep, FIRST_STEP, DISPLAY_STEP, TOTAL_STEPS, type Block, type Say, type StepId } from './chat/script';
+import { answer, getStep, progressWithin, FIRST_STEP, DISPLAY_STEP, STEP_NAMES, TOTAL_STEPS, type Block, type Say, type StepId } from './chat/script';
 
 type PdfStatus = 'idle' | 'sending' | 'lead-error' | 'lead-invalid' | 'generating' | 'done' | 'error';
 
@@ -125,7 +125,7 @@ export default function RadarApp({ siteUrl }: { siteUrl: string }) {
 
   const toggle = (id: string) => {
     if (current.step === 'desafios') dispatch({ type: 'toggleChallenge', id: id as ChallengeId });
-    if (current.step === 'video') dispatch({ type: 'toggleCapability', id: id as CapabilityId });
+    if (current.step === 'possibilidades') dispatch({ type: 'toggleCapability', id: id as CapabilityId });
     if (current.step === 'ferramentas') dispatch({ type: 'toggleTool', id: id as ToolEnv });
   };
 
@@ -205,20 +205,24 @@ export default function RadarApp({ siteUrl }: { siteUrl: string }) {
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px] xl:gap-10">
       {/* Coluna do chat: altura da tela; mensagens rolam, o compositor fica no pé. */}
       <div className="flex h-[calc(100dvh-5.5rem-1.5rem)] min-h-[32rem] min-w-0 flex-col">
-        <header className="mx-auto flex w-full max-w-[860px] items-center gap-3 px-1 pb-3">
-          <div className="min-w-0 flex-1">
-            <p className="text-balance font-display text-lg font-semibold leading-tight tracking-tight text-ink sm:text-xl">Descubra seu próximo passo com IA</p>
-            <p className="mt-0.5 truncate text-[13px] text-ink-soft">Etapa {DISPLAY_STEP[onScreen.screen]} de {TOTAL_STEPS} · {onScreen.label}</p>
+        <header className="mx-auto w-full max-w-[860px] px-1 pb-3">
+          <div className="flex items-center gap-3">
+            <p className="min-w-0 flex-1 text-balance font-display text-lg font-semibold leading-tight tracking-tight text-ink sm:text-xl">Descubra seu próximo passo com IA</p>
+            {/* Celular: a pílula diz o que abre (antes, um mini-anel de 40 px sem nome). */}
+            <button type="button" onClick={() => radarSheet.current?.showModal()}
+              className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-ink/[0.12] bg-paper py-1 pl-1 pr-3.5 text-[13px] font-semibold text-ink transition-colors hover:border-accent-ink/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-ink/40 lg:hidden">
+              <span className="block h-8 w-8" aria-hidden="true"><RadarVivo state={state} variant="mini" /></span>
+              Sua jornada
+            </button>
           </div>
-          <button type="button" onClick={() => radarSheet.current?.showModal()} aria-label="Ver minha jornada"
-            className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-ink/[0.12] bg-paper lg:hidden">
-            <span className="block h-full w-full p-0.5" aria-hidden="true"><RadarVivo state={state} variant="mini" /></span>
-          </button>
+          <Progress step={DISPLAY_STEP[onScreen.screen]} within={progressWithin(onScreen.id)} />
         </header>
 
         <Conversation className="min-h-0 border-t border-ink/[0.06]" aria-label="Conversa: descubra seu próximo passo com IA">
+          {/* `min-h-full justify-end`: a conversa cresce de baixo para cima, como nos
+              apps de chat, e a pergunta da vez fica colada às opções do compositor. */}
           <ConversationContent
-            className={`mx-auto w-full max-w-[860px] gap-6 px-1 py-6 ${!hydrated ? 'motion-safe:invisible motion-safe:animate-radar-unhide' : ''}`}
+            className={`mx-auto min-h-full w-full max-w-[860px] justify-end gap-6 px-1 py-6 ${!hydrated ? 'motion-safe:invisible motion-safe:animate-radar-unhide' : ''}`}
             onClick={() => { if (!ready) showAll(); }}
           >
             {items.slice(0, shown).map((item) => <Done key={item.key} item={item} ctx={ctx} />)}
@@ -253,6 +257,37 @@ export default function RadarApp({ siteUrl }: { siteUrl: string }) {
       <Sheet refEl={radarSheet} title="Sua jornada">
         <div className="mx-auto max-w-sm"><RadarVivo state={state} highlight={highlight} heading={false} /></div>
       </Sheet>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------- progresso
+
+/**
+ * Régua das 5 etapas, o único indicador de avanço (antes havia "Etapa 2 de 5" no
+ * cabeçalho e "1 de 4" nas perguntas do retrato). Etapas feitas em turquesa, a
+ * atual enchendo em `accent-ink` (no retrato, em quartos), as próximas em cinza.
+ * Os nomes aparecem a partir de `sm`; no celular, só o da etapa atual.
+ */
+function Progress({ step, within }: { step: number; within: number }) {
+  const label = `Etapa ${step} de ${TOTAL_STEPS}: ${STEP_NAMES[step - 1]}`;
+  return (
+    <div className="mt-2.5" role="progressbar" aria-label="Progresso da conversa" aria-valuemin={1} aria-valuemax={TOTAL_STEPS} aria-valuenow={step} aria-valuetext={label}>
+      <div className="grid grid-cols-5 gap-1.5" aria-hidden="true">
+        {STEP_NAMES.map((name, i) => {
+          const n = i + 1;
+          const fill = n < step ? 100 : n === step ? Math.max(12, Math.round(within * 100)) : 0;
+          return (
+            <div key={name}>
+              <div className="h-1.5 overflow-hidden rounded-full bg-ink/[0.08]">
+                <div className={`h-full rounded-full motion-safe:transition-[width] motion-safe:duration-500 ${n < step ? 'bg-accent' : 'bg-accent-ink'}`} style={{ width: `${fill}%` }} />
+              </div>
+              <p className={`mt-1.5 hidden truncate text-[12px] sm:block ${n === step ? 'font-semibold text-ink' : n < step ? 'text-ink-2' : 'text-ink-soft/80'}`}>{name}</p>
+            </div>
+          );
+        })}
+      </div>
+      <p className="mt-1.5 text-[13px] text-ink-soft sm:hidden" aria-hidden="true">Etapa {step} de {TOTAL_STEPS} · <span className="font-semibold text-ink">{STEP_NAMES[step - 1]}</span></p>
     </div>
   );
 }

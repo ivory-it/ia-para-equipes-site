@@ -29,7 +29,7 @@ npm run preview   # serve o dist/ localmente
 
 ## Deploy na Vercel
 
-O site é **estático**, com uma rota de servidor para o Radar IA (adapter `@astrojs/vercel`). A Vercel detecta o Astro sozinha, e o
+O site é **estático**: não há rota de servidor nem variável de ambiente obrigatória. A Vercel detecta o Astro sozinha, e o
 `vercel.json` já traz os headers de cache e de segurança.
 
 1. Crie um repositório e envie este diretório:
@@ -42,15 +42,9 @@ O site é **estático**, com uma rota de servidor para o Radar IA (adapter `@ast
    É dele que saem as URLs absolutas do sitemap, das tags Open Graph e do link e do QR do vídeo
    no PDF do Radar. Para outro domínio (uma prévia, por exemplo), defina `SITE_URL`.
 
-4. Defina também `RADAR_ACCESS_SECRET` (um valor aleatório longo, veja `.env.example`). É o
-   segredo que valida os links de acesso direto do Radar IA (`/diagnostico-ia?access=...`). Sem ele, o
-   Radar funciona, mas todo download do PDF passa pelo formulário. Para gerar um link:
-   ```bash
-   RADAR_ACCESS_SECRET=... node scripts/radar-token.ts --dias 30 --label relacionamento
-   ```
-
-O site continua estático, com uma exceção: a rota `/api/radar/verify-access`, que roda como
-função na Vercel (adapter `@astrojs/vercel`).
+4. **Acesso direto ao PDF do Radar IA:** um link com `?access` (qualquer valor) pula as perguntas de
+   contato, por exemplo `https://iaparaequipes.com.br/diagnostico-ia?access=1`. Não precisa de
+   segredo nem de configuração na Vercel.
 
 Cada push na branch principal publica automaticamente.
 

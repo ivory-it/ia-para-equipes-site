@@ -1,12 +1,16 @@
 /**
- * Modo de acesso ao PDF (§8.5 e §9.4 do documento do Radar IA).
+ * Modo de acesso ao PDF do Radar IA.
  *
  * - Começa sempre em `cadastro_exigido`.
- * - Só um `?access=` validado pelo servidor muda para `download_direto_autorizado`.
- * - Token ausente, inválido, expirado ou falha de rede: continua exigindo cadastro
- *   (fail closed). UTMs e qualquer outro parâmetro não liberam nada.
- * - O token sai da URL visível logo na leitura, para não ir para analytics,
- *   favoritos ou capturas de tela.
+ * - Com `?access` na URL (qualquer valor, por exemplo `?access=1`), muda para
+ *   `download_direto_autorizado`: o chat pula as perguntas de contato e nenhum
+ *   lead é enviado. Decisão do Thiago (16/11/2026): basta o parâmetro, sem token
+ *   nem servidor. Quem conhecer o parâmetro baixa o PDF sem deixar contato; o
+ *   cadastro é convenção comercial, não proteção.
+ * - O parâmetro sai da barra de endereço logo na leitura, para o link ficar limpo.
+ *
+ * Fica no `useEffect` (e não no primeiro render) para o HTML do servidor e o da
+ * hidratação serem iguais.
  */
 import { useEffect, useState } from 'react';
 
@@ -17,24 +21,10 @@ export function useAccessMode(): AccessMode {
 
   useEffect(() => {
     const url = new URL(window.location.href);
-    const token = url.searchParams.get('access');
-    if (!token) return;
-
+    if (!url.searchParams.has('access')) return;
     url.searchParams.delete('access');
     history.replaceState(history.state, '', url.pathname + url.search + url.hash);
-
-    fetch('/api/radar/verify-access', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token }),
-      cache: 'no-store',
-      referrerPolicy: 'no-referrer',
-    })
-      .then((res) => (res.ok ? res.json() : { valid: false }))
-      .then((data: { valid?: unknown }) => {
-        if (data.valid === true) setMode('download_direto_autorizado');
-      })
-      .catch(() => {});
+    setMode('download_direto_autorizado');
   }, []);
 
   return mode;
