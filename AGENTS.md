@@ -301,6 +301,10 @@ O título é o mesmo texto dos CTAs, "Quero avaliar para minha equipe", desde 07
     "Personalizada"), `ferramentas` e as UTMs. Campo vazio não vai.
   - **UTMs:** `utm_source`, `utm_medium`, `utm_campaign` e `utm_content`, lidos da URL, como
     na página antiga.
+    - **Sem nenhuma UTM na URL** (desde 17/11/2026, decisão do Thiago), o lead vai com
+      `utm_source=LP` e `utm_medium=organico` (`UTM_DEFAULT` no `lead-api.ts`). Vale para a home e
+      para o diagnóstico.
+    - Se a URL traz ao menos uma UTM, só vão as da URL, sem completar com o padrão.
   - **O backend é dinâmico.** Só exige nome e e-mail e aceita os demais campos sem mudança.
   - **CORS:** o domínio onde o site for publicado precisa estar liberado no backend. Sem isso,
     todo envio cai no erro de rede.

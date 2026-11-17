@@ -13,6 +13,8 @@
 export const BACKEND_URL = 'https://func-ivory-lead-receiver-processor-prd-dpf5hgc2f5ddbff3.westus2-01.azurewebsites.net';
 export const CAMPAIGN_ID = 'capacitacao_ia';
 export const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+/** Canal padrão quando a URL não traz nenhuma UTM (17/11/2026, decisão do Thiago). */
+export const UTM_DEFAULT = { utm_source: 'LP', utm_medium: 'organico' };
 
 export const PERSONAL_DOMAINS = new Set([
   'gmail.com', 'googlemail.com', 'yahoo.com', 'yahoo.com.br', 'hotmail.com', 'outlook.com',
@@ -66,6 +68,8 @@ export async function sendLead(fields: Record<string, string>): Promise<number |
   const payload: Record<string, string> = { campaign_id: CAMPAIGN_ID, ...fields };
   const params = new URLSearchParams(location.search);
   for (const key of UTM_KEYS) payload[key] = params.get(key) ?? '';
+  // Sem nenhuma UTM na URL, o lead vai como LP / organico. Com ao menos uma, só a da URL.
+  if (UTM_KEYS.every((key) => !payload[key]?.trim())) Object.assign(payload, UTM_DEFAULT);
   const body = Object.fromEntries(Object.entries(payload).filter(([, v]) => v && v.trim()));
   const res = await fetch(`${BACKEND_URL}/api/lead`, {
     method: 'POST',
