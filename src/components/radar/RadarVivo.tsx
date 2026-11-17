@@ -2,9 +2,10 @@
  * Radar Vivo: o mapa que cresce com a conversa (§10.1 do documento, redesenhado
  * a partir da referência do Thiago depois da v1.6). Modelo híbrido:
  *
- * - em cima, um círculo segmentado com quatro arcos nomeados (Pessoas,
- *   Processos, Segurança, Disseminação). Cada arco ganha cor e estágio quando a
- *   pergunta da dimensão é respondida;
+ * - em cima, um círculo segmentado de traço fino com quatro arcos nomeados
+ *   (Pessoas, Processos, Segurança, Disseminação). Cada arco ganha cor e estágio
+ *   quando a pergunta da dimensão é respondida. Os rótulos ficam nos cantos, sem
+ *   fio-guia;
  * - embaixo, um bloco de texto curto que cresce etapa a etapa: desafios,
  *   leitura atual, interesses, objetivo, caminho e próximo foco.
  *
@@ -24,8 +25,11 @@ import { CHALLENGE_SHORT, CAPABILITY_SHORT, NEXT_FOCUS } from '../../data/radar/
 import { mirrorResult, isMirrorComplete, isPathComplete, type RadarState } from '../../scripts/radar/engine.ts';
 
 const C = 200;
-const R = 128;
-const SPAN = 38; // meia abertura de cada arco, em graus
+// Traço fino (12 em 400) e vãos visíveis entre os arcos (17/11/2026, pedido do
+// Thiago: com traço 30 o anel ficava grosseiro e os arcos quase se encostavam).
+const R = 150;
+const STROKE = 12;
+const SPAN = 39; // meia abertura de cada arco, em graus
 const rad = (deg: number) => (deg * Math.PI) / 180;
 // Arredondado: servidor e navegador calculam o último dígito de forma diferente,
 // e o React acusaria divergência na hidratação.
@@ -110,7 +114,7 @@ export default function RadarVivo({ state, variant = 'full', highlight = null, h
   const changed = useChanged(state, variant === 'full');
 
   const ring = (
-    <svg viewBox={variant === 'mini' ? '50 50 300 300' : '0 0 400 400'} className="h-full w-full" role="img" aria-labelledby={titleId}>
+    <svg viewBox={variant === 'mini' ? '36 36 328 328' : '0 0 400 400'} className="h-full w-full" role="img" aria-labelledby={titleId}>
       <title id={titleId}>Sua jornada: quatro temas do retrato da sua organização. O texto ao lado descreve cada um.</title>
       {QUESTIONS.map((q) => {
         const { angle } = DIM[q.id];
@@ -120,22 +124,17 @@ export default function RadarVivo({ state, variant = 'full', highlight = null, h
         return (
           <g key={q.id}>
             {/* Trilha: cinza antes da resposta, turquesa claro depois. */}
-            <path d={d} fill="none" stroke={st ? '#00a88e' : '#0a2540'} strokeOpacity={st ? 0.14 : 0.07} strokeWidth={30} strokeLinecap="round"
-              strokeDasharray={st === 'Não identificado' ? '4 9' : undefined} className="motion-safe:transition-all motion-safe:duration-700" />
+            {/* "Não sei": tracejado de ponta reta (com ponta redonda os traços se fundem). */}
+            <path d={d} fill="none" stroke={st ? '#00a88e' : '#0a2540'} strokeOpacity={st ? 0.14 : 0.1} strokeWidth={STROKE}
+              strokeLinecap={st === 'Não identificado' ? 'butt' : 'round'}
+              strokeDasharray={st === 'Não identificado' ? '5 7' : undefined} className="motion-safe:transition-all motion-safe:duration-700" />
             {stage && (
-              <path d={d} pathLength={100} fill="none" stroke="#00a88e" strokeOpacity={stage.opacity} strokeWidth={30} strokeLinecap="round"
+              <path d={d} pathLength={100} fill="none" stroke="#00a88e" strokeOpacity={stage.opacity} strokeWidth={STROKE} strokeLinecap="round"
                 strokeDasharray={`${stage.fill} 100`} className="motion-safe:transition-[stroke-dasharray] motion-safe:duration-700" />
             )}
             {stage && variant !== 'mini' && (
-              <circle key={`h-${st}`} cx={at(R, angle).x} cy={at(R, angle).y} r={24} fill="none" stroke="#00a88e" strokeWidth={2} className={halo} />
+              <circle key={`h-${st}`} cx={at(R, angle).x} cy={at(R, angle).y} r={14} fill="none" stroke="#00a88e" strokeWidth={1.5} className={halo} />
             )}
-            {variant !== 'mini' && (() => {
-              // Fio-guia do arco até o canto do rótulo.
-              const a = at(R + 18, angle);
-              const b = at(R + 52, angle);
-              const right = b.x > C;
-              return <path d={`M ${a.x} ${a.y} L ${b.x} ${b.y} L ${b.x + (right ? 22 : -22)} ${b.y}`} fill="none" stroke="#0a2540" strokeOpacity={st ? 0.35 : 0.15} strokeWidth={1.5} />;
-            })()}
           </g>
         );
       })}

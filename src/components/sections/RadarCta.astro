@@ -8,32 +8,38 @@
  * IA". "Radar IA" ficou só no código e na origem do lead no CRM.
  *
  * O desenho à direita é o anel do painel "Sua jornada" (RadarVivo.tsx), estático
- * e decorativo: 4 arcos com níveis diferentes e o disco Navy no centro.
+ * e decorativo: 4 arcos com níveis diferentes, o disco Navy no centro e cada
+ * rótulo no eixo do seu arco, fora do círculo de fundo.
  */
 import { Icon } from 'astro-icon/components';
 
+// Sem "em PDF" e "em vídeo" só aqui na home (17/11/2026, pedido do Thiago).
 const points = [
   'O retrato da empresa em quatro dimensões',
-  'O que a IA já pode fazer no trabalho, em vídeo',
-  'Um plano em PDF para apresentar à liderança',
+  'O que a IA já pode fazer no trabalho',
+  'Um plano dos próximos passos para evoluir com a Inteligência Artificial e apresentar à liderança',
 ];
 
-// Anel: mesma geometria do RadarVivo (arco de 76° por dimensão), em escala maior.
+// Anel: mesma geometria do RadarVivo (traço fino, arco de 78° por dimensão).
 const C = 200;
-const R = 140;
-const SPAN = 38;
-const at = (deg: number) => {
+const R = 150;
+const SPAN = 39;
+const point = (r: number, deg: number) => {
   const a = (deg * Math.PI) / 180;
-  return `${(C + R * Math.cos(a)).toFixed(1)} ${(C + R * Math.sin(a)).toFixed(1)}`;
+  return { x: +(C + r * Math.cos(a)).toFixed(1), y: +(C + r * Math.sin(a)).toFixed(1) };
 };
+const at = (deg: number) => { const p = point(R, deg); return `${p.x} ${p.y}`; };
 const arc = (from: number, to: number) => `M ${at(from)} A ${R} ${R} 0 0 1 ${at(to)}`;
+// Rótulo no eixo do arco, logo fora do círculo de fundo (r 182): o canto interno
+// do texto aponta para o meio do arco. Nos cantos fixos, caía em cima da borda.
+const LABEL_R = 196;
 // Ângulo central e preenchimento ilustrativo de cada dimensão (não é um resultado).
 const dims = [
-  { label: 'Pessoas', angle: 225, fill: 0.5, opacity: 0.65, x: 62, y: 46, anchor: 'start' },
-  { label: 'Processos', angle: 315, fill: 0.75, opacity: 0.85, x: 338, y: 46, anchor: 'end' },
-  { label: 'Segurança', angle: 45, fill: 0.25, opacity: 0.4, x: 338, y: 364, anchor: 'end' },
-  { label: 'Disseminação', angle: 135, fill: 1, opacity: 1, x: 62, y: 364, anchor: 'start' },
-];
+  { label: 'Pessoas', angle: 225, fill: 0.5, opacity: 0.65 },
+  { label: 'Processos', angle: 315, fill: 0.75, opacity: 0.85 },
+  { label: 'Segurança', angle: 45, fill: 0.25, opacity: 0.4 },
+  { label: 'Disseminação', angle: 135, fill: 1, opacity: 1 },
+].map((d) => ({ ...d, pos: point(LABEL_R, d.angle), anchor: point(LABEL_R, d.angle).x < C ? 'end' : 'start' }));
 ---
 
 <section class="relative overflow-hidden border-t border-ink/[0.09] px-5 pt-24 pb-24 sm:px-8 lg:px-10" id="diagnostico">
@@ -43,7 +49,7 @@ const dims = [
 <div data-reveal-skip>
 <p class="text-sm font-semibold uppercase tracking-[0.18em] text-accent-ink">Diagnóstico IA · Gratuito</p>
 <h2 class="mt-5 max-w-2xl font-display text-4xl font-medium leading-tight tracking-tighter text-ink sm:text-5xl">Descubra seu próximo passo com IA.</h2>
-<p class="mt-6 max-w-xl text-base leading-7 text-ink-soft sm:text-lg">Uma conversa guiada em 5 etapas rápidas. No fim, você recebe um plano em PDF, pronto para apresentar à liderança.</p>
+<p class="mt-6 max-w-xl text-base leading-7 text-ink-soft sm:text-lg">Uma conversa guiada em 5 etapas rápidas. No fim, você recebe um plano, pronto para apresentar à liderança.</p>
 <ul class="mt-6 space-y-2">
 {points.map((p) => (
 <li class="flex items-start gap-3 text-[15px] leading-6 text-ink-2">
@@ -58,13 +64,13 @@ Fazer o diagnóstico
 </a>
 </div>
 
-<svg class="mx-auto hidden w-full max-w-sm lg:block" viewBox="0 0 400 400" aria-hidden="true">
+<svg class="mx-auto hidden w-full max-w-md lg:block" viewBox="-64 0 528 400" aria-hidden="true">
 <circle cx={C} cy={C} r="182" fill="#f2f2f2" fill-opacity=".6" stroke="#0a2540" stroke-opacity=".08" />
 {dims.map((d) => (
 <>
-<path d={arc(d.angle - SPAN, d.angle + SPAN)} fill="none" stroke="#00a88e" stroke-opacity=".14" stroke-width="26" stroke-linecap="round" />
-<path d={arc(d.angle - SPAN, d.angle - SPAN + 2 * SPAN * d.fill)} fill="none" stroke="#00a88e" stroke-opacity={d.opacity} stroke-width="26" stroke-linecap="round" />
-<text x={d.x} y={d.y} text-anchor={d.anchor} font-family="Sora, sans-serif" font-size="15" font-weight="600" fill="#0a2540">{d.label}</text>
+<path d={arc(d.angle - SPAN, d.angle + SPAN)} fill="none" stroke="#00a88e" stroke-opacity=".14" stroke-width="12" stroke-linecap="round" />
+<path d={arc(d.angle - SPAN, d.angle - SPAN + 2 * SPAN * d.fill)} fill="none" stroke="#00a88e" stroke-opacity={d.opacity} stroke-width="12" stroke-linecap="round" />
+<text x={d.pos.x} y={d.pos.y} text-anchor={d.anchor} dominant-baseline="middle" font-family="Sora, sans-serif" font-size="17" font-weight="600" fill="#0a2540">{d.label}</text>
 </>
 ))}
 <circle cx={C} cy={C} r="86" fill="#0a2540" />

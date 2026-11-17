@@ -434,6 +434,14 @@ Jornada em `/diagnostico-ia`. O documento de referência é o "Radar IA — Jorn
     - os três pontos do que a pessoa leva hoje (retrato, vídeo, plano em PDF), sem tempo
       estimado;
     - o anel do painel "Sua jornada" como desenho, no lugar dos pontos e losangos antigos.
+    - **Sem "em PDF" e sem "em vídeo" (17/11/2026, pedido do Thiago, só na home):** o apoio diz
+      "você recebe um plano", e os pontos são "O que a IA já pode fazer no trabalho" e "Um plano
+      dos próximos passos para evoluir com a Inteligência Artificial e apresentar à liderança". A
+      página do vídeo, a descrição do `/diagnostico-ia`, o chat e a imagem og continuam citando o
+      PDF.
+    - **Rótulos do anel no eixo de cada arco,** fora do círculo de fundo (`LABEL_R` 196, com a
+      âncora voltada para o anel). Nos cantos fixos, caíam em cima da borda do círculo. O viewBox
+      é `-64 0 528 400`, para "Disseminação" caber, e a fonte é 17.
   - **"Radar IA" ficou só no código** (`src/components/radar`, `RadarApp`…) e na origem do lead,
     `origem: 'Radar IA'`, para o CRM não mudar.
   - **A imagem de compartilhamento** é `public/og/diagnostico-ia.png` (1200×630), gerada de um
@@ -802,6 +810,18 @@ Histórico, para ninguém voltar atrás sem querer:
     O arco fica cinza até a pergunta da dimensão ser respondida e então ganha cor e estágio.
     O nome e o estágio ficam em cima e embaixo do anel, em linhas: sobrepostos ao anel, quebravam
     em 280 px;
+  - **traço fino (desde 17/11/2026, pedido do Thiago: "muito grosseiro").** Num viewBox de 400,
+    o raio é 150, o traço 12 e a meia abertura 39°. Antes eram raio 128 e traço 30.
+    - Com a ponta redonda menor, sobra um vão visível de uns 10° entre os arcos. Antes, os arcos
+      quase se encostavam.
+    - Os fios-guia até os rótulos saíram: pareciam sobra, e os rótulos já ficam nos cantos.
+    - O "Não identificado" é tracejado com ponta reta (`5 7`). Com ponta redonda e traço 12, os
+      traços se fundiriam numa linha cheia.
+    - A trilha cinza de antes da resposta tem opacidade 0,1: com 0,07 e traço fino, sumia.
+    - O mini do celular usa o viewBox `36 36 328 328`, para o anel maior não ser cortado.
+
+    A mesma proporção vale no destaque da home (`RadarCta.astro`), no `Ring` do PDF (viewBox
+    200: raio 75, traço 6, disco 42) e na `og/diagnostico-ia.png`. Mudou um, mude os outros;
   - **embaixo, um bloco de texto que cresce por etapa:**
     1. Desafios identificados (chips; o da dica ganha anel turquesa);
     2. Leitura atual e Principal descoberta (`scenario.insight`);

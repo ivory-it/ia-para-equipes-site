@@ -78,8 +78,9 @@ const SHORT_DIM: Record<DimensionId, string> = { pessoas: 'Pessoas', processos: 
 
 function Ring({ dims, size, center }: { dims: { id: DimensionId; state: QualState }[]; size: number; center: readonly string[] }) {
   const C = 100;
-  const R = 70;
-  const SPAN = 38;
+  // Traço fino, como o anel do chat (17/11/2026).
+  const R = 75;
+  const SPAN = 39;
   const at = (deg: number) => ({ x: C + R * Math.cos((deg * Math.PI) / 180), y: C + R * Math.sin((deg * Math.PI) / 180) });
   const arc = (from: number, to: number) => { const a = at(from); const b = at(to); return `M ${a.x} ${a.y} A ${R} ${R} 0 0 1 ${b.x} ${b.y}`; };
   return (
@@ -90,13 +91,14 @@ function Ring({ dims, size, center }: { dims: { id: DimensionId; state: QualStat
           const st = STAGE[d.state];
           return (
             <G key={d.id}>
-              <Path d={arc(a - SPAN, a + SPAN)} stroke={ACCENT} strokeOpacity={0.14} strokeWidth={17} fill="none" strokeLinecap="round"
-                strokeDasharray={d.state === 'Não identificado' ? '3 6' : undefined} />
-              {st && <Path d={arc(a - SPAN, a - SPAN + 2 * SPAN * st.fill)} stroke={ACCENT} strokeOpacity={st.opacity} strokeWidth={17} fill="none" strokeLinecap="round" />}
+              <Path d={arc(a - SPAN, a + SPAN)} stroke={ACCENT} strokeOpacity={0.14} strokeWidth={6} fill="none"
+                strokeLinecap={d.state === 'Não identificado' ? 'butt' : 'round'}
+                strokeDasharray={d.state === 'Não identificado' ? '2.5 3.5' : undefined} />
+              {st && <Path d={arc(a - SPAN, a - SPAN + 2 * SPAN * st.fill)} stroke={ACCENT} strokeOpacity={st.opacity} strokeWidth={6} fill="none" strokeLinecap="round" />}
             </G>
           );
         })}
-        <Circle cx={C} cy={C} r={46} fill={NAVY} />
+        <Circle cx={C} cy={C} r={42} fill={NAVY} />
       </Svg>
       <View style={{ position: 'absolute', top: 0, left: 0, width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
         {center.map((t) => (
