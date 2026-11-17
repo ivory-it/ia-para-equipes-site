@@ -207,7 +207,12 @@ export default function RadarApp({ siteUrl }: { siteUrl: string }) {
       <div className="flex h-[calc(100dvh-5.5rem-1.5rem)] min-h-[32rem] min-w-0 flex-col">
         <header className="mx-auto w-full max-w-[860px] px-1 pb-3">
           <div className="flex items-center gap-3">
-            <p className="min-w-0 flex-1 text-balance font-display text-lg font-semibold leading-tight tracking-tight text-ink sm:text-xl">Descubra seu próximo passo com IA</p>
+            <p className="hidden min-w-0 flex-1 text-balance font-display text-lg font-semibold leading-tight tracking-tight text-ink sm:block sm:text-xl">Descubra seu próximo passo com IA</p>
+            {/* Celular: sem o título (o h1 em sr-only continua na página) e com a etapa
+                ao lado da pílula, para sobrar espaço para a pergunta (17/11/2026). */}
+            <p className="min-w-0 flex-1 truncate text-[12px] text-ink-soft sm:hidden" aria-hidden="true">
+              Etapa {DISPLAY_STEP[onScreen.screen]} de {TOTAL_STEPS} · <span className="font-semibold text-ink">{STEP_NAMES[DISPLAY_STEP[onScreen.screen] - 1]}</span>
+            </p>
             {/* Celular: a pílula diz o que abre (antes, um mini-anel de 40 px sem nome). */}
             <button type="button" onClick={() => radarSheet.current?.showModal()}
               className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-ink/[0.12] bg-paper py-1 pl-1 pr-3.5 text-[13px] font-semibold text-ink transition-colors hover:border-accent-ink/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-ink/40 lg:hidden">
@@ -272,7 +277,7 @@ export default function RadarApp({ siteUrl }: { siteUrl: string }) {
 function Progress({ step, within }: { step: number; within: number }) {
   const label = `Etapa ${step} de ${TOTAL_STEPS}: ${STEP_NAMES[step - 1]}`;
   return (
-    <div className="mt-2.5" role="progressbar" aria-label="Progresso da conversa" aria-valuemin={1} aria-valuemax={TOTAL_STEPS} aria-valuenow={step} aria-valuetext={label}>
+    <div className="mt-2 sm:mt-2.5" role="progressbar" aria-label="Progresso da conversa" aria-valuemin={1} aria-valuemax={TOTAL_STEPS} aria-valuenow={step} aria-valuetext={label}>
       <div className="grid grid-cols-5 gap-1.5" aria-hidden="true">
         {STEP_NAMES.map((name, i) => {
           const n = i + 1;
@@ -287,7 +292,6 @@ function Progress({ step, within }: { step: number; within: number }) {
           );
         })}
       </div>
-      <p className="mt-1.5 text-[13px] text-ink-soft sm:hidden" aria-hidden="true">Etapa {step} de {TOTAL_STEPS} · <span className="font-semibold text-ink">{STEP_NAMES[step - 1]}</span></p>
     </div>
   );
 }

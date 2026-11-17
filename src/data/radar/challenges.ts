@@ -32,8 +32,6 @@ export interface Challenge {
 
 export const CHALLENGES_INTRO = {
   eyebrow: 'Tela 1 de 7 · A provocação',
-  /** Primeira fala: o combinado da conversa (revisão de clareza, 16/11/2026). */
-  opening: 'São 5 etapas rápidas. No fim, você recebe um plano em PDF para levar à liderança.',
   title: 'Quais situações são realidade na empresa?',
   question: 'Quais destas situações se parecem com a realidade da sua organização?',
   hint: 'Pode marcar mais de uma opção.',

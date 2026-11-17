@@ -33,7 +33,8 @@ interface Props {
   pdf: PdfControls;
 }
 
-const pill = 'inline-flex items-center gap-2 rounded-2xl border px-3.5 py-2 text-left text-sm leading-5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50';
+// Celular: pílulas mais justas (17/11/2026), para a pergunta caber acima delas.
+const pill = 'inline-flex items-center gap-2 rounded-2xl border px-3.5 py-1.5 text-left text-sm leading-5 transition-colors sm:py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50';
 
 export default function Composer({ stepKey, reply, ready, animate, onPick, onToggle, onSubmit, onText, pdf }: Props) {
   const box = useRef<HTMLDivElement>(null);
@@ -90,7 +91,7 @@ export default function Composer({ stepKey, reply, ready, animate, onPick, onTog
     // Thiago para a Tela 01). Duas colunas a partir de `sm` e uma no celular, com
     // o ícone ao lado do título: em 4 colunas o título quebrava em 3 linhas.
     options = (
-      <div role="group" aria-label={multi ? 'Marque uma ou mais respostas' : 'Escolha uma resposta'} className="grid gap-2 sm:grid-cols-2 sm:gap-2.5">
+      <div role="group" aria-label={multi ? 'Marque uma ou mais respostas' : 'Escolha uma resposta'} className="grid gap-1.5 sm:grid-cols-2 sm:gap-2.5">
         {reply.options.map((o) => {
           const on = multi && reply.selected.includes(o.id);
           return (
@@ -100,22 +101,24 @@ export default function Composer({ stepKey, reply, ready, animate, onPick, onTog
               role={multi ? 'checkbox' : undefined}
               aria-checked={multi ? on : undefined}
               onClick={live(() => (multi ? onToggle(o.id) : onPick(o.id)))}
-              className={`relative flex flex-col gap-1.5 rounded-2xl border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 sm:p-3.5 ${on ? 'border-accent-ink bg-accent/[0.08] shadow-[0_6px_20px_rgba(0,168,142,0.12)]' : 'border-ink/[0.12] bg-paper hover:border-accent-ink/50 hover:bg-accent/[0.04]'}`}
+              className={`relative flex flex-col rounded-2xl border px-3 py-2 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 sm:gap-1.5 sm:p-3.5 ${on ? 'border-accent-ink bg-accent/[0.08] shadow-[0_6px_20px_rgba(0,168,142,0.12)]' : 'border-ink/[0.12] bg-paper hover:border-accent-ink/50 hover:bg-accent/[0.04]'}`}
             >
               {/* Ícone ao lado do título, e não em cima (revisão de clareza,
                   16/11/2026): os cartões ficam mais baixos e o conteúdo acima
                   (o vídeo, a pergunta) continua à vista. */}
               <span className="flex min-w-0 items-center gap-2.5 pr-7">
                 {o.icon && (
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent/[0.12] text-ink" aria-hidden="true">
-                    <Icon name={o.icon} size={17} />
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/[0.12] text-ink sm:h-8 sm:w-8" aria-hidden="true">
+                    <Icon name={o.icon} size={16} />
                   </span>
                 )}
                 <span className="min-w-0 font-display text-[15px] font-semibold leading-5 text-ink">{o.label}</span>
               </span>
-              <span className="block text-[13px] leading-[1.15rem] text-ink-2">{o.desc}</span>
+              {/* Celular: só ícone e título (17/11/2026, pedido do Thiago). A descrição
+                  sai da tela, mas o leitor de tela continua lendo. */}
+              <span className="sr-only text-[13px] leading-[1.15rem] text-ink-2 sm:not-sr-only sm:block">{o.desc}</span>
               {multi && (
-                <span className={`absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-md border ${on ? 'border-accent-ink bg-accent-ink text-paper' : 'border-ink/25 bg-paper'}`} aria-hidden="true">
+                <span className={`absolute right-3 top-1/2 flex h-5 w-5 -translate-y-1/2 sm:top-3 sm:translate-y-0 items-center justify-center rounded-md border ${on ? 'border-accent-ink bg-accent-ink text-paper' : 'border-ink/25 bg-paper'}`} aria-hidden="true">
                   {on && <Icon name="check" size={14} />}
                 </span>
               )}
@@ -131,7 +134,7 @@ export default function Composer({ stepKey, reply, ready, animate, onPick, onTog
     // Respostas longas (as do retrato) empilham; as curtas, com ícone, fluem lado a lado.
     const stacked = reply.options.some((o) => o.label.length > 48);
     options = (
-      <div role="group" aria-label={multi ? 'Marque uma ou mais respostas' : 'Escolha uma resposta'} className={stacked ? 'grid gap-2' : 'flex flex-wrap gap-2'}>
+      <div role="group" aria-label={multi ? 'Marque uma ou mais respostas' : 'Escolha uma resposta'} className={stacked ? 'grid gap-1.5 sm:gap-2' : 'flex flex-wrap gap-1.5 sm:gap-2'}>
         {reply.options.map((o) => {
           const on = multi && reply.selected.includes(o.id);
           return (
@@ -145,7 +148,10 @@ export default function Composer({ stepKey, reply, ready, animate, onPick, onTog
             >
               {o.logo ? (
                 <svg viewBox={o.logo.viewBox} width={16} height={16} aria-hidden="true" className={`shrink-0 ${on ? 'text-accent-ink' : 'text-ink-soft'}`}><path fill="currentColor" d={o.logo.d} /></svg>
-              ) : o.icon && <Icon name={o.icon} size={18} className={on ? 'text-accent-ink' : 'text-ink-soft'} />}
+              ) : o.icon && (
+                // Empilhadas (respostas longas): sem ícone no celular, o texto ganha a largura.
+                <Icon name={o.icon} size={18} className={`${stacked ? 'hidden shrink-0 sm:block' : 'shrink-0'} ${on ? 'text-accent-ink' : 'text-ink-soft'}`} />
+              )}
               {/* Sem as letras A–D do retrato: vêm da matriz e não dizem nada a quem responde. */}
               <span>{o.label}</span>
               {multi && on && <Icon name="check" size={14} className="text-accent-ink" />}
@@ -190,7 +196,7 @@ export default function Composer({ stepKey, reply, ready, animate, onPick, onTog
           <div className="min-w-0 flex-1">
             <AnimatePresence mode="wait" initial={false}>
               {ready && (
-                <motion.div key={stepKey} data-options initial={enter} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }} className={`${cards ? 'max-h-[50vh]' : 'max-h-[36vh]'} overflow-x-hidden overflow-y-auto`}>
+                <motion.div key={stepKey} data-options initial={enter} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }} className={`max-h-[calc(100dvh-24rem)] ${cards ? 'sm:max-h-[50dvh]' : 'sm:max-h-[36dvh]'} overflow-x-hidden overflow-y-auto`}>
                   {options}
                 </motion.div>
               )}

@@ -533,12 +533,31 @@ Histórico, para ninguém voltar atrás sem querer:
     Seu plano).
     - As etapas feitas ficam em turquesa e a atual enche em `accent-ink`. No retrato, enche em
       quartos; em "Seu plano", pergunta a pergunta (`progressWithin`).
-    - No celular aparecem só os segmentos e "Etapa X de 5 · Nome".
+    - No celular aparecem só os segmentos, e "Etapa X de 5 · Nome" vai para a linha da pílula "Sua
+      jornada" (ver "Celular", abaixo).
     - Saíram o "Etapa 2 de 5 · Retrato" em texto e o "· 1 de 4" do selo das perguntas do retrato,
       porque eram dois contadores diferentes.
-  - **Abertura com o combinado:** "São 5 etapas rápidas. No fim, você recebe um plano em PDF
-    para levar à liderança." (`CHALLENGES_INTRO.opening`). Não cita tempo, porque o número não foi
-    confirmado.
+  - **Sem a fala de abertura (desde 17/11/2026, pedido do Thiago).** A Tela 01 abre direto na
+    pergunta. A frase "São 5 etapas rápidas. No fim, você recebe um plano em PDF para levar à
+    liderança." (`CHALLENGES_INTRO.opening`) saiu.
+  - **Celular: a pergunta sempre à vista (17/11/2026).** No Android do Thiago (~360×625 px úteis),
+    a caixa de cartões tinha `50vh` (~330 px). Sobravam uns 50 px para a conversa, e a pergunta
+    da Tela 01 ficava escondida. O retrato, o objetivo e o indicador tinham o mesmo problema. Abaixo
+    de `sm`, quatro regras:
+    - **Limite da caixa de opções:** `max-h-[calc(100dvh-24rem)]` em qualquer resposta, o que
+      deixa uns 11rem para a conversa. Se as opções passarem disso, rolam dentro da caixa. De `sm`
+      para cima ficam `50dvh` nos cartões e `36dvh` nas pílulas. É `dvh`, e não `vh`, porque no
+      Android o `vh` passa da área visível.
+    - **Cartões (desafios e possibilidades):** só ícone e título, uns 50 px cada. A descrição fica
+      em `sr-only`, para o leitor de tela continuar lendo, e a caixa de seleção fica centrada.
+    - **Pílulas:** `py-1.5` e `gap-1.5`. As empilhadas (retrato e indicador) perdem o ícone, e o
+      texto ganha a largura toda.
+    - **Topo do chat:** sem o título visível (o `h1` em `sr-only` continua). A linha "Etapa X de 5 ·
+      Nome", em 12 px e numa linha só, fica ao lado da pílula "Sua jornada", com a régua embaixo.
+
+    Medido com Playwright em 360×640 e 390×844, passo a passo: a pergunta fica acima das opções
+    em todos os 11 passos. No retrato, no objetivo e no indicador em 360 px, a última opção rola
+    dentro da caixa.
   - **O painel mostra o que vai ser montado.** Cada bloco (desafios, descoberta, interesses,
     objetivo, caminho) nasce em cinza com "A definir". Interesses vira "Nenhum em especial" se a
     pessoa pula as possibilidades.

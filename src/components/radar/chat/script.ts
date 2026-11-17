@@ -111,8 +111,9 @@ export function getStep(id: StepId): Step {
     case 'desafios':
       return {
         id, screen: 1, label: 'Meus desafios',
-        // Abre dizendo o combinado (quantas etapas e o que a pessoa recebe).
-        ia: () => [say({ text: CHALLENGES_INTRO.opening }), say({ title: CHALLENGES_INTRO.title, text: CHALLENGES_INTRO.hint })],
+        // Abre direto na pergunta (17/11/2026, pedido do Thiago: a frase do
+        // combinado, "São 5 etapas rápidas…", saiu).
+        ia: () => [say({ title: CHALLENGES_INTRO.title, text: CHALLENGES_INTRO.hint })],
         reply: (s) => ({
           kind: 'multi',
           options: CHALLENGES.map((c) => ({ id: c.id, label: c.label, desc: c.text, icon: CHALLENGE_ICON[c.id] })),
