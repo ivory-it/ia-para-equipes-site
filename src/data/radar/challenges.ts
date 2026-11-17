@@ -133,7 +133,7 @@ export const CHALLENGES: Challenge[] = [
   },
   {
     id: 'seguranca',
-    label: 'Segurança e governança',
+    label: 'Preocupação com segurança',
     text: 'Existe interesse, mas temos preocupações com segurança.',
     pills: [
       {

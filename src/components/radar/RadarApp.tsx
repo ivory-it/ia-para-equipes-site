@@ -198,6 +198,14 @@ export default function RadarApp({ siteUrl }: { siteUrl: string }) {
     },
   };
 
+  // Retrato: quando o cartão não cabe (celular), a conversa para no começo dele,
+  // na fala "Pronto. Este é o retrato…", em vez de rolar até o fim (17/11/2026).
+  const portraitIdx = current.step === 'retrato'
+    ? items.findIndex((i) => i.step === 'retrato' && i.kind === 'ia' && i.block.type === 'portrait')
+    : -1;
+  const portraitAnchor = portraitIdx > 0 ? items[portraitIdx - 1]!.key : null;
+  const anchorOn = portraitIdx > 0 && shown > portraitIdx;
+
   // O ponto do desafio da dica fica em destaque enquanto a dica é a novidade.
   const highlight = current.step === 'espelho-pessoas' ? (tipChallenge(state.tipPill)?.id ?? null) : null;
 
@@ -230,10 +238,13 @@ export default function RadarApp({ siteUrl }: { siteUrl: string }) {
             className={`mx-auto min-h-full w-full max-w-[860px] justify-end gap-6 px-1 py-6 ${!hydrated ? 'motion-safe:invisible motion-safe:animate-radar-unhide' : ''}`}
             onClick={() => { if (!ready) showAll(); }}
           >
-            {items.slice(0, shown).map((item) => <Done key={item.key} item={item} ctx={ctx} />)}
+            {items.slice(0, shown).map((item) =>
+              item.key === portraitAnchor
+                ? <div key={item.key} data-anchor><Done item={item} ctx={ctx} /></div>
+                : <Done key={item.key} item={item} ctx={ctx} />)}
             {!ready && next && next.kind === 'ia' && <Current key={next.key} item={next} ctx={ctx} onDone={advance} />}
           </ConversationContent>
-          <FollowLatest trigger={`${shown}-${ready}`} />
+          <FollowLatest trigger={`${shown}-${ready}`} anchor={anchorOn} />
           <ConversationScrollButton aria-label="Ir para a mensagem mais recente" className="bg-paper" />
         </Conversation>
 
@@ -303,12 +314,26 @@ function Progress({ step, within }: { step: number; within: number }) {
  * e a área da conversa encolhe. O use-stick-to-bottom acompanha o conteúdo, não
  * a caixa; sem isto, no celular a última pergunta ficava escondida acima.
  */
-function FollowLatest({ trigger }: { trigger: string }) {
-  const { scrollToBottom } = useStickToBottomContext();
+function FollowLatest({ trigger, anchor = false }: { trigger: string; anchor?: boolean }) {
+  const { scrollToBottom, stopScroll, scrollRef } = useStickToBottomContext();
   useEffect(() => {
-    const id = window.requestAnimationFrame(() => { void scrollToBottom(); });
+    const id = window.requestAnimationFrame(() => {
+      const box = scrollRef.current;
+      const mark = anchor ? box?.querySelector<HTMLElement>('[data-anchor]') : null;
+      if (box && mark) {
+        // Do começo da âncora ao fim da conversa: se não cabe, a pessoa leria só o
+        // fim do retrato. Para o acompanhamento e mostra o começo.
+        const top = mark.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - 8;
+        if (box.scrollHeight - top > box.clientHeight) {
+          stopScroll();
+          box.scrollTo({ top });
+          return;
+        }
+      }
+      void scrollToBottom();
+    });
     return () => window.cancelAnimationFrame(id);
-  }, [trigger, scrollToBottom]);
+  }, [trigger, anchor, scrollToBottom, stopScroll, scrollRef]);
   return null;
 }
 

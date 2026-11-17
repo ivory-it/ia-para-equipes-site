@@ -25,6 +25,17 @@ export default function VideoSlot({ onPlay }: { onPlay?: () => void }) {
   const video = useRef<HTMLVideoElement>(null);
   const [variant, setVariant] = useState<Variant>('desktop');
   const started = useRef(false);
+  const [playing, setPlaying] = useState(false);
+
+  // Celular: no player nativo do Android, a tela cheia fica no menu de três
+  // pontinhos. O botão deixa à mão (17/11/2026, pedido do Thiago).
+  const fullscreen = () => {
+    const v = video.current as (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null;
+    if (!v) return;
+    if (v.requestFullscreen) v.requestFullscreen().catch(() => v.webkitEnterFullscreen?.());
+    else v.webkitEnterFullscreen?.(); // iOS: o <video> só aceita este
+    void v.play().catch(() => {});
+  };
 
   useEffect(() => {
     const mq = window.matchMedia(VIDEO_MOBILE_QUERY);
@@ -51,12 +62,21 @@ export default function VideoSlot({ onPlay }: { onPlay?: () => void }) {
             controls
             playsInline
             preload="none"
-            onPlay={() => { started.current = true; onPlay?.(); }}
+            onPlay={() => { started.current = true; setPlaying(true); onPlay?.(); }}
+            onPause={() => setPlaying(false)}
+            onEnded={() => setPlaying(false)}
             className="block h-full w-full bg-paper object-contain"
           >
             {VIDEO_CAPTIONS && <track kind="captions" src={VIDEO_CAPTIONS} srcLang="pt-BR" label="Português" />}
           </video>
-        ) : (
+        ) : null}
+        {VIDEO_READY && !playing && (
+          <button type="button" onClick={fullscreen} aria-label="Assistir em tela cheia"
+            className="absolute right-3 top-3 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-ink/60 text-paper shadow-md backdrop-blur-sm transition-colors hover:bg-ink/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 sm:hidden">
+            <Icon name="full-screen" size={20} />
+          </button>
+        )}
+        {!VIDEO_READY && (
           <div className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center">
             <span className="flex h-14 w-14 items-center justify-center rounded-full border border-ink/[0.14] bg-paper/80 text-ink-soft" aria-hidden="true">
               <Icon name="play" size={22} />

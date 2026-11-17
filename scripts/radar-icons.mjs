@@ -15,7 +15,7 @@ const set = JSON.parse(readFileSync(require.resolve('@iconify-json/solar/icons.j
 
 const NAMES = [
   // interface
-  'arrow-right', 'arrow-left', 'arrow-down', 'arrow-up', 'download-minimalistic', 'list', 'radar-2', 'play',
+  'arrow-right', 'arrow-left', 'arrow-down', 'arrow-up', 'download-minimalistic', 'list', 'radar-2', 'play', 'full-screen',
   'alt-arrow-down', 'lightbulb', 'star-shine', 'info-circle',
   // desafios
   'users-group-rounded', 'widget-4', 'shield-warning', 'compass',

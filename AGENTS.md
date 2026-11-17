@@ -558,6 +558,18 @@ Histórico, para ninguém voltar atrás sem querer:
     Medido com Playwright em 360×640 e 390×844, passo a passo: a pergunta fica acima das opções
     em todos os 11 passos. No retrato, no objetivo e no indicador em 360 px, a última opção rola
     dentro da caixa.
+  - **"Preocupação com segurança" no lugar de "Segurança e governança" (17/11/2026, pedido do
+    Thiago).** No celular o cartão mostra só o nome, e "Segurança e governança" não soava como
+    desafio, ao lado de "Pouca aplicação prática" e "Falta de direcionamento". O nome novo repete
+    a descrição do cartão. Ele vai ao cartão, ao PDF e ao `radar_desafios` do CRM, porque todos
+    leem o `label`. O id `seguranca` e o chip "Segurança" do painel não mudaram.
+  - **O retrato abre do começo quando não cabe (17/11/2026).** A conversa sempre rola até o fim
+    (`FollowLatest`), e no celular a pessoa via só o fim do cartão do retrato.
+    - **Como funciona:** no passo `retrato`, a fala "Pronto. Este é o retrato…" leva
+      `data-anchor`. Se do topo dela até o fim da conversa não cabe na área visível, o
+      `FollowLatest` chama o `stopScroll()` do `use-stick-to-bottom` e rola até a âncora.
+    - **Quando cabe** (o desktop), segue até o fim, como antes.
+    - Medido: em 360 e 390 px a âncora fica a 8 px do topo, e em 1440 px a conversa vai até o fim.
   - **O painel mostra o que vai ser montado.** Cada bloco (desafios, descoberta, interesses,
     objetivo, caminho) nasce em cinza com "A definir". Interesses vira "Nenhum em especial" se a
     pessoa pula as possibilidades.
@@ -795,6 +807,15 @@ Histórico, para ninguém voltar atrás sem querer:
     não reiniciar o vídeo.
   - **Começa com um toque** (decisão do Thiago): capa e `preload="none"`, porque tem narração e
     nada deve baixar antes do play. Testado: nenhuma requisição ao `.mp4` antes do play.
+  - **Botão de tela cheia no celular (17/11/2026, pedido do Thiago).** No player nativo do
+    Android, a tela cheia fica no menu de três pontinhos.
+    - **Onde:** um botão redondo no canto de cima, à direita (`full-screen`, Solar), abaixo de
+      `sm`.
+    - **O toque:** chama o `requestFullscreen()` (no iOS, o `webkitEnterFullscreen()`) e dá
+      `play()`.
+    - **Durante a reprodução:** o botão some, e volta na pausa ou no fim.
+    - **Testado:** nenhum `.mp4` baixado antes do toque, e depois dele o vídeo fica em tela cheia
+      e tocando.
   - **A legenda está gravada na imagem.** A faixa `ia-possibilidades.vtt` vai no player desligada,
     para não duplicar o texto.
   - **No chat, primeiro o vídeo, depois a pergunta (16/11/2026, pedido do Thiago).** Antes, título,

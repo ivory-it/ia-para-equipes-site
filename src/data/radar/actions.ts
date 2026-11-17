@@ -15,7 +15,7 @@ export const ACTIONS = {
   'priorizar-tres-atividades': 'Mapear e priorizar três atividades para experimentação com IA.',
   'experimento-com-sem-ia': 'Realizar um experimento comparando uma tarefa com e sem IA.',
   'desafios-praticos': 'Criar desafios práticos de IA relacionados às atividades das equipes.',
-  // Tela 01 — Segurança e governança
+  // Tela 01 — Preocupação com segurança (antes "Segurança e governança")
   'politica-uso-ia': 'Estruturar ou revisar uma Política Corporativa de Uso de IA.',
   'checklist-uso-responsavel': 'Criar um checklist de uso responsável de IA para os colaboradores.',
   'exercicios-cenarios-ficticios': 'Realizar exercícios de uso responsável de IA com cenários fictícios.',
